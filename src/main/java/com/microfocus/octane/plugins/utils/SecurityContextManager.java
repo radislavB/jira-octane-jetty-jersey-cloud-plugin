@@ -65,9 +65,9 @@ public class SecurityContextManager {
         getSecurityContextFile(clientKey).delete();
     }
 
-    public String getSharedSecret(String clientKey) {
+    public JiraTenantSecurityContext getSecurityContext(String clientKey) {
         if (contexts.containsKey(clientKey)) {
-            return contexts.get(clientKey).getSharedSecret();
+            return contexts.get(clientKey);
         } else {
             throw new RuntimeException("Client not found");
         }
