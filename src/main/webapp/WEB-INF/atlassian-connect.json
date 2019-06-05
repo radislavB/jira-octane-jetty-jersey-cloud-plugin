@@ -1,0 +1,32 @@
+{
+  "key": "com.mf.example.myapp",
+  "baseUrl": "https://c285f58b.ngrok.io/",
+  
+  "name": "Jira Octane Quality Insight Cloud Plugin",
+ "vendor": {
+   "name": "Microfocus",
+   "url": "http://wwww.microfocus.com"
+},
+  "authentication": {
+    "type": "jwt"
+  },
+  "lifecycle": {
+    "installed": "/rest/lifecycle/installed",
+    "uninstalled": "/rest/lifecycle/uninstalled"
+  },
+  "modules": {
+
+    "webPanels": [{
+      "key" : "mf-greetings",
+      "name": {
+        "value": "Microfocus greetings"
+      },
+      "url": "/rest/resource?project_key={project.key}&issue_key={issue.key}&issue_id={issue.id}&issuetype_id={issuetype.id}",
+      "location": "atl.jira.view.issue.right.context"
+    }]
+  },
+  "scopes": ["READ"],
+  "apiMigrations": {
+    "gdpr": true
+  }
+}
