@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 
@@ -46,20 +47,23 @@ public class JwtUtils {
 
         try {
             DecodedJWT decodedJWT = JWT.decode(token);
-            String sharedSecret = SecurityContextManager.getInstance().getSharedSecret(decodedJWT.getIssuer());
+            JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
 
             //TODO : validate qsh
 
 
-            Algorithm algorithm = Algorithm.HMAC256(sharedSecret);
+            Algorithm algorithm = Algorithm.HMAC256(securityContext.getSharedSecret());
             JWTVerifier verifier = JWT.require(algorithm).withIssuer(decodedJWT.getIssuer()).build();
             return verifier.verify(token);
         } catch (JWTVerificationException e) {
             throw e;
         }
     }
+    private static void computeQsh(){
 
-    private static void validateQsh(DecodedJWT decodedJWT) {
+
+    }
+    private static void extractQsh(DecodedJWT decodedJWT) {
         String str = StringUtils.newStringUtf8(Base64.decodeBase64(decodedJWT.getPayload()));
         final ObjectMapper mapper = new ObjectMapper();
         Map map = null;

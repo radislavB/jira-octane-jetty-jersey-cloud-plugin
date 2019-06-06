@@ -1,7 +1,10 @@
 package com.microfocus.octane.plugins.rest;
 
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.JwtUtils;
+import com.microfocus.octane.plugins.utils.SecurityContextManager;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +24,9 @@ public class MyResource {
     @Context
     private HttpHeaders httpheaders;
 
+    @Context
+    private Request request;
+
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.
@@ -30,8 +36,14 @@ public class MyResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String getIt() {
-        JwtUtils.validateToken(JwtUtils.extractTokenFromUri(uriInfo));
+
+        DecodedJWT decodedJWT = JwtUtils.validateToken(JwtUtils.extractTokenFromUri(uriInfo));
         MultivaluedMap<String, String> map = uriInfo.getQueryParameters();
+        String canonicalMethod = request.getMethod().toUpperCase();
+        JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
+        String baseUrl = securityContext.getBaseUrl();
+        String fullUrl = uriInfo.getRequestUri().toString();
+
 
 
         String str = "<!DOCTYPE html> <html lang=\"en\"> <head> <link rel=\"stylesheet\" href=\"https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css\" media=\"all\">" +
