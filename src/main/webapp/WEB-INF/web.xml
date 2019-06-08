@@ -14,9 +14,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>AtlassianConnectServlet</servlet-name>
+        <servlet-class>com.microfocus.octane.plugins.AttlassianConnectServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Not found servlet</servlet-name>
         <servlet-class>com.microfocus.octane.plugins.NotFoundServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
@@ -28,6 +31,10 @@
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AtlassianConnectServlet</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Not found servlet</servlet-name>
