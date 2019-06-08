@@ -6,6 +6,7 @@ import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.JwtUtils;
 import com.microfocus.octane.plugins.utils.SecurityContextManager;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,6 +28,8 @@ public class MyResource {
     @Context
     private Request request;
 
+    @Context
+    private HttpServletRequest httpRequest;
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.

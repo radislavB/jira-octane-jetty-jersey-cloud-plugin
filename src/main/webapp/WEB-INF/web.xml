@@ -41,4 +41,13 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name> <!-- mandatory -->
+        <filter-class>com.microfocus.octane.plugins.rest.AuthenticationFilter</filter-class> <!-- mandatory -->
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
+
 </web-app>
