@@ -10,6 +10,7 @@ import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -19,29 +20,8 @@ import java.util.Map;
 public class JwtUtils {
 
 
-    public static String extractToken(HttpHeaders httpheaders, UriInfo uriInfo) {
-        String jwtToken = extractTokenFromHeaders(httpheaders);
-        if (jwtToken == null) {
-            jwtToken = extractTokenFromUri(uriInfo);
-        }
-        return jwtToken;
-    }
 
-    public static String extractTokenFromUri(UriInfo uriInfo) {
-        MultivaluedMap<String, String> map = uriInfo.getQueryParameters();
-        String jwtToken = map.getFirst("jwt");
-        return jwtToken;
-    }
 
-    public static String extractTokenFromHeaders(HttpHeaders httpheaders) {
-        String jwtHeaderStart = "JWT ";
-        String headerValue = httpheaders.getHeaderString("Authorization");
-        if (headerValue != null && headerValue.startsWith(jwtHeaderStart)) {
-            return headerValue.substring(jwtHeaderStart.length());
-        } else {
-            return null;
-        }
-    }
 
     public static DecodedJWT validateToken(String token) {
 

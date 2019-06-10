@@ -1,6 +1,6 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://c285f58b.ngrok.io/",
+  "baseUrl": "https://ec2b92c4.ngrok.io/",
   
   "name": "Jira Octane Quality Insight Cloud Plugin",
  "vendor": {

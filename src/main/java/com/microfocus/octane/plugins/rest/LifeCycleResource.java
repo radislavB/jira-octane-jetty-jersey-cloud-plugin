@@ -4,15 +4,17 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.JwtUtils;
+import com.microfocus.octane.plugins.utils.PluginConstants;
 import com.microfocus.octane.plugins.utils.SecurityContextManager;
+import com.sun.deploy.net.HttpRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 
 /**
@@ -27,6 +29,9 @@ public class LifeCycleResource {
     @Context
     private HttpHeaders httpheaders;
 
+    @Context
+    private HttpServletRequest httpRequest;
+
     @POST
     @Path("installed")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -40,7 +45,8 @@ public class LifeCycleResource {
     @Path("uninstalled")
     @Consumes(MediaType.APPLICATION_JSON)
     public void uninstalled(String body) {
-        DecodedJWT decodedJWT = JwtUtils.validateToken(JwtUtils.extractTokenFromHeaders(httpheaders));
+
+        DecodedJWT decodedJWT = (DecodedJWT)httpRequest.getAttribute(PluginConstants.JWT_ATTRIBUTE);
         SecurityContextManager.getInstance().uninstall(decodedJWT.getIssuer());
     }
 }

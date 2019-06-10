@@ -4,13 +4,17 @@ package com.microfocus.octane.plugins.rest;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.JwtUtils;
+import com.microfocus.octane.plugins.utils.PluginConstants;
+import com.microfocus.octane.plugins.utils.ResourceUtils;
 import com.microfocus.octane.plugins.utils.SecurityContextManager;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
+import java.io.IOException;
 
 
 /**
@@ -29,6 +33,10 @@ public class MyResource {
     private Request request;
 
     @Context
+    private ServletContext context;
+
+
+    @Context
     private HttpServletRequest httpRequest;
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -38,9 +46,9 @@ public class MyResource {
      */
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String getIt() {
+    public String getIt() throws IOException {
 
-        DecodedJWT decodedJWT = JwtUtils.validateToken(JwtUtils.extractTokenFromUri(uriInfo));
+        DecodedJWT decodedJWT = (DecodedJWT)httpRequest.getAttribute(PluginConstants.JWT_ATTRIBUTE);
         MultivaluedMap<String, String> map = uriInfo.getQueryParameters();
         String canonicalMethod = request.getMethod().toUpperCase();
         JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
@@ -48,11 +56,11 @@ public class MyResource {
         String fullUrl = uriInfo.getRequestUri().toString();
 
 
+        String filename = "/WEB-INF/rightPanelTemplate.html";
+        String content = ResourceUtils.readFile(context, filename);
+        String result = content.replace("{body}","<div>Hello World FROM MF from Radi to Daniel3</div>");
 
-        String str = "<!DOCTYPE html> <html lang=\"en\"> <head> <link rel=\"stylesheet\" href=\"https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css\" media=\"all\">" +
-                "<script src=\"https://connect-cdn.atl-paas.net/all.js\" async></script> </head> <body> <section id=\"content\" class=\"ac-content\">" +
-                "<div>Hello World FROM MF from Radi to Daniel2</div> </section> </body> </html>";
-        return str;
+        return result;
     }
 
 }

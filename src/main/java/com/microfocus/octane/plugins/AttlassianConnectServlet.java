@@ -1,14 +1,13 @@
 package com.microfocus.octane.plugins;
 
-import org.apache.commons.codec.Charsets;
+import com.microfocus.octane.plugins.utils.ResourceUtils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.stream.Collectors;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class AttlassianConnectServlet extends HttpServlet {
 
@@ -20,16 +19,7 @@ public class AttlassianConnectServlet extends HttpServlet {
 
 
         String filename = "/WEB-INF/atlassian-connect.json";
-        ServletContext context = getServletContext();
-        InputStream is = context.getResourceAsStream(filename);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8))) {
-            String str = br.lines().collect(Collectors.joining(System.lineSeparator()));
-            out.print(str);
-        }
-        super.doGet(req, resp);
+        String content = ResourceUtils.readFile(getServletContext(), filename);
+        out.print(content);
     }
-
-
-
-
 }
