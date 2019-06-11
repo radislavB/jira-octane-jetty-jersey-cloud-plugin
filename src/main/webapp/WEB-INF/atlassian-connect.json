@@ -1,6 +1,6 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://ec2b92c4.ngrok.io/",
+  "baseUrl": "https://258e4493.ngrok.io/",
   
   "name": "Jira Octane Quality Insight Cloud Plugin",
  "vendor": {
@@ -23,7 +23,24 @@
       },
       "url": "/rest/resource?project_key={project.key}&issue_key={issue.key}&issue_id={issue.id}&issuetype_id={issuetype.id}",
       "location": "atl.jira.view.issue.right.context"
-    }]
+    }],
+
+    "adminPages": [
+      {
+        "url": "/rest/configuration/admin",
+        "name": {
+          "value": "ALM Octane Configuration"
+        },
+        "key": "alm-octane-admin"
+      }
+    ],
+    "configurePage": {
+      "url": "/rest/configuration/conf",
+      "name": {
+        "value": "ALM Octane Configuration"
+      },
+      "key": "alm-octane-config"
+    }
   },
   "scopes": ["READ"],
   "apiMigrations": {

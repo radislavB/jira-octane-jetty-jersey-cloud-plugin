@@ -15,26 +15,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
  * Root resource (exposed at "myresource" path)
  */
-@Path("resource")
-public class MyResource {
-
-    @Context
-    private UriInfo uriInfo;
-
-    @Context
-    private HttpHeaders httpheaders;
-
-    @Context
-    private Request request;
+@Path("coverage")
+public class CoverageResource {
 
     @Context
     private ServletContext context;
-
 
     @Context
     private HttpServletRequest httpRequest;
@@ -48,13 +39,7 @@ public class MyResource {
     @Produces(MediaType.TEXT_HTML)
     public String getIt() throws IOException {
 
-        DecodedJWT decodedJWT = (DecodedJWT)httpRequest.getAttribute(PluginConstants.JWT_ATTRIBUTE);
-        MultivaluedMap<String, String> map = uriInfo.getQueryParameters();
-        String canonicalMethod = request.getMethod().toUpperCase();
-        JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
-        String baseUrl = securityContext.getBaseUrl();
-        String fullUrl = uriInfo.getRequestUri().toString();
-
+        Map<String, String[]>params =  httpRequest.getParameterMap();
 
         String filename = "/WEB-INF/rightPanelTemplate.html";
         String content = ResourceUtils.readFile(context, filename);

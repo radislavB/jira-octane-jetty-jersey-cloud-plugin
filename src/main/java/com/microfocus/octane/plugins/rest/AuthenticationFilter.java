@@ -30,7 +30,7 @@ public class AuthenticationFilter implements Filter {
 
             if (jwtToken != null) {
                 try {
-                    DecodedJWT decodedJWT = JwtUtils.validateToken(jwtToken);
+                    DecodedJWT decodedJWT = JwtUtils.validateToken(req, jwtToken);
                     req.setAttribute(PluginConstants.JWT_ATTRIBUTE, decodedJWT);
 
                 } catch (Exception e) {
