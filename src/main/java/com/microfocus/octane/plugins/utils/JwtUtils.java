@@ -29,11 +29,13 @@ public class JwtUtils {
             DecodedJWT decodedJWT = JWT.decode(token);
             JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
 
-            //validate qsh
+            //validate qsh if exist
             String qsh = extractQsh(decodedJWT);
-            String computedQsh = computeQsh(request);
-            if(!qsh.equals(computedQsh)){
-                throw new JWTVerificationException("QSH validation is failed");
+            if (qsh != null) {
+                String computedQsh = computeQsh(request);
+                if (!qsh.equals(computedQsh)) {
+                    throw new JWTVerificationException("QSH validation is failed");
+                }
             }
 
             //main validations

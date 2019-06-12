@@ -1,8 +1,8 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://258e4493.ngrok.io/",
+  "baseUrl": "https://499d3bdd.ngrok.io/",
   
-  "name": "Jira Octane Quality Insight Cloud Plugin",
+  "name": "ALM Octane Quality Plugin for Jira Cloud",
  "vendor": {
    "name": "Microfocus",
    "url": "http://wwww.microfocus.com"
@@ -27,7 +27,7 @@
 
     "adminPages": [
       {
-        "url": "/rest/configuration",
+        "url": "/static/configuration.html",
         "name": {
           "value": "ALM Octane Configuration"
         },
@@ -35,7 +35,7 @@
       }
     ],
     "configurePage": {
-      "url": "/rest/configuration",
+      "url": "/static/configuration.html",
       "name": {
         "value": "ALM Octane Configuration"
       },

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <!-- AUI https://aui-cdn.atlassian.com/ -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+        <!--script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script-->
+        <script src="https://aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui.js"></script>
+        <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
+
+
+        <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css" media="all">
+        <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
+        <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+
+        <!-- custom code-->
+        <link rel="stylesheet" href="configuration.css">
+        <script src="configuration.js"></script>
+    </head>
+    <body>
+        <section id="content" class="ac-content">
+            <h2 >ALM Octane Configuration</h2>
+            <h3 class="formtitle">Space</h3>
+            <form id="octane-admin" class="aui">
+                <div class="form-body">
+                    <div class="field-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="text medium-long-field">
+                        <div class="description">Enter the URL of your ALM Octane application.
+                            <br/>For example: http://myServer.myCompany.com:8081/ui/?p=1001/1002
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label for="clientId">Client ID</label>
+                        <input type="text" id="clientId" name="clientId" class="text medium-long-field" autocomplete="off">
+                        <div class="description">Client ID used for logging into the ALM Octane server</div>
+                    </div>
+                    <div class="field-group">
+                        <label for="clientSecret" >Client secret</label>
+                        <input type="password" id="clientSecret" name="clientSecret" class="text medium-long-field" autocomplete="off">
+                        <div class="description">Client secret used for logging into the ALM Octane server</div>
+                    </div>
+
+                    <div class="field-group">
+                        <div id="button-group" style="position: relative;">
+                            <input type="button" class="aui-button" id="save-space-configuration" value="Save">
+                            <span class="aui-icon aui-icon-small space-save-status"></span>
+                        </div>
+                        <div><span id="reloadSpinner"></span></div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+    </body>
+    <script>
+        initConfigurationPage();
+    </script>
+</html>

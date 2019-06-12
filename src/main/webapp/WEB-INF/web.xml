@@ -12,11 +12,6 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <servlet>
-        <servlet-name>AtlassianConnectServlet</servlet-name>
-        <servlet-class>com.microfocus.octane.plugins.AttlassianConnectServlet</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>Not found servlet</servlet-name>
         <servlet-class>com.microfocus.octane.plugins.NotFoundServlet</servlet-class>
@@ -25,10 +20,6 @@
     <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AtlassianConnectServlet</servlet-name>
-        <url-pattern>/atlassian-connect.json</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name>
