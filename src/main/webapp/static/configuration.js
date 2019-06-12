@@ -17,12 +17,9 @@ function loadSpaceConfiguration() {
             success: function (result) {
                 console.log("success : " + result);
             },
-            error: function(xhr) { // if error occured
+            error: function(xhr) { // if error occurred
                 console.log("error : " + xhr);
-            },
-            complete: function() {
-                console.log("complete : " + result);
-            },
+            }
         });
     });
 }
