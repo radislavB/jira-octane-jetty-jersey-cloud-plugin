@@ -24,12 +24,12 @@ public class ConfigurationResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, String> getConfigurationPage() {
-
         String tenantId = (String) httpRequest.getAttribute(PluginConstants.TENANT_ID);
         Map<String, String> map = new HashMap<>();
         map.put("a1", "a2");
         map.put("b1", "b2");
+
+        //return Response.ok(map).build();
         return map;
     }
-
 }

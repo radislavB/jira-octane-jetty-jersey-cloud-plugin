@@ -20,6 +20,7 @@
 
 
     <dependencies>
+        <!-- jersey -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
@@ -31,8 +32,13 @@
             <artifactId>jersey-hk2</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
 
-        <!-- EXTERNAL -->
+        <!-- jackson -->
         <dependency>
             <artifactId>jackson-databind</artifactId>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -44,13 +50,8 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!--<dependency>
-            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-            <artifactId>jersey-test-framework-provider-bundle</artifactId>
-            <version>${jersey.version}</version>
-            <scope>test</scope>
-        </dependency>-->
 
+        <!-- jetty -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -73,7 +74,7 @@
         </dependency>
 
 
-    <!--JWT-->
+        <!--JWT-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>

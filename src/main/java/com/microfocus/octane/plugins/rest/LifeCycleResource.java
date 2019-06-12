@@ -1,6 +1,5 @@
 package com.microfocus.octane.plugins.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import com.microfocus.octane.plugins.utils.SecurityContextManager;
@@ -14,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 /**
- * Root resource (exposed at "myresource" path)
+ * :ifecycle resource
  */
 @Path("lifecycle")
 public class LifeCycleResource {
@@ -25,9 +24,7 @@ public class LifeCycleResource {
     @POST
     @Path("installed")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void installed(String rawSecurityContext) throws IOException {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JiraTenantSecurityContext securityContext = mapper.readValue(rawSecurityContext, JiraTenantSecurityContext.class);
+    public void installed(JiraTenantSecurityContext securityContext) throws IOException {
         SecurityContextManager.getInstance().install(securityContext);
     }
 

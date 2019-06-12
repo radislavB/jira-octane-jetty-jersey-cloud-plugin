@@ -15,8 +15,14 @@ function loadSpaceConfiguration() {
                 xhr.setRequestHeader("Authorization", "JWT " + token);
             },
             success: function (result) {
-                console.log("responce : " + result);
-            }
+                console.log("success : " + result);
+            },
+            error: function(xhr) { // if error occured
+                console.log("error : " + xhr);
+            },
+            complete: function() {
+                console.log("complete : " + result);
+            },
         });
     });
 }

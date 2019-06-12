@@ -2,6 +2,7 @@ package com.microfocus.octane.plugins;
 
 import com.microfocus.octane.plugins.utils.SecurityContextManager;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -32,6 +33,7 @@ public class Main {
         final String webappDirLocation = "src/main/webapp/";
         root.setDescriptor(webappDirLocation + "/WEB-INF/web.xml");
         root.setResourceBase(webappDirLocation);
+        //root.setErrorHandler(new ErrorHandler());
 
         server.setHandler(root);
 

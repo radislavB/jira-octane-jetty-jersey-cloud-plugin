@@ -1,6 +1,6 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://499d3bdd.ngrok.io/",
+  "baseUrl": "https://30bf1446.ngrok.io",
   
   "name": "ALM Octane Quality Plugin for Jira Cloud",
  "vendor": {
