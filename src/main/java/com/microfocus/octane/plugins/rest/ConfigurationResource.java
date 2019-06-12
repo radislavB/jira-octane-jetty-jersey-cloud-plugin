@@ -35,31 +35,12 @@ public class ConfigurationResource {
     @Context
     private HttpServletRequest httpRequest;
 
-    /**
-     * Method handling HTTP GET requests. The returned object will be sent
-     * to the client as "text/plain" media type.
-     *
-     * @return String that will be returned as a text/plain response.
-     */
 
-    @Path("admin")
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String getAdminPage() throws IOException {
+    public String getConfigurationPage() throws IOException {
 
-        String filename = "/WEB-INF/rightPanelTemplate.html";
-        String content = ResourceUtils.readFile(context, filename);
-        String result = content.replace("{body}","<div>Hello World FROM MF from Admin</div>");
-
-        return result;
-    }
-
-    @Path("conf")
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String getCongPage() throws IOException {
-
-        String filename = "/WEB-INF/rightPanelTemplate.html";
+        String filename = "/WEB-INF/frameTemplate.html";
         String content = ResourceUtils.readFile(context, filename);
         String result = content.replace("{body}","<div>Hello World FROM MF from Conf</div>");
 

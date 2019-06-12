@@ -41,7 +41,7 @@ public class CoverageResource {
 
         Map<String, String[]>params =  httpRequest.getParameterMap();
 
-        String filename = "/WEB-INF/rightPanelTemplate.html";
+        String filename = "/WEB-INF/frameTemplate.html";
         String content = ResourceUtils.readFile(context, filename);
         String result = content.replace("{body}","<div>Hello World FROM MF from Radi to Daniel3</div>");
 

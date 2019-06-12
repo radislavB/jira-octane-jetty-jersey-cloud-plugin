@@ -17,9 +17,9 @@
   "modules": {
 
     "webPanels": [{
-      "key" : "mf-greetings",
+      "key" : "alm-octane-coverage",
       "name": {
-        "value": "Microfocus greetings"
+        "value": "ALM Octane Test Coverage"
       },
       "url": "/rest/resource?project_key={project.key}&issue_key={issue.key}&issue_id={issue.id}&issuetype_id={issuetype.id}",
       "location": "atl.jira.view.issue.right.context"
@@ -27,7 +27,7 @@
 
     "adminPages": [
       {
-        "url": "/rest/configuration/admin",
+        "url": "/rest/configuration",
         "name": {
           "value": "ALM Octane Configuration"
         },
@@ -35,7 +35,7 @@
       }
     ],
     "configurePage": {
-      "url": "/rest/configuration/conf",
+      "url": "/rest/configuration",
       "name": {
         "value": "ALM Octane Configuration"
       },
