@@ -3,10 +3,13 @@
     <head>
 
         <!-- AUI https://aui-cdn.atlassian.com/ -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
         <!--script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script-->
-        <script src="https://aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui.js"></script>
+        <script src="//aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui.js"></script>
+        <script src="//aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui-experimental.js"></script>
         <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
+        <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
+
 
 
         <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css" media="all">
@@ -51,6 +54,11 @@
 
                 </div>
             </form>
+
+            <h3 class="formtitle">Workspaces</h3>
+            <p><button id="show-add-dialog" class="aui-button aui-button-link">Create</button> a new ALM Octane workspace configuration.</p>
+
+            <table id="configuration-rest-table"></table>
         </section>
     </body>
     <script>

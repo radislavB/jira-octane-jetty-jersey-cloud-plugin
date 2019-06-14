@@ -50,8 +50,8 @@ public class AuthenticationFilter implements Filter {
     }
 
     private static boolean skipValidation(HttpServletRequest req) {
-        return true;
-        //return req.getMethod().equals("POST") && req.getRequestURI().equals("/rest/lifecycle/installed");
+        //return true;
+        return req.getMethod().equals("POST") && req.getRequestURI().equals("/rest/lifecycle/installed");
     }
 
     private static String tryExtractTokenFromQueryString(HttpServletRequest req) {

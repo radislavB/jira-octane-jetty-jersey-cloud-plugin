@@ -1,6 +1,101 @@
 function initConfigurationPage() {
+    initWorkspaceTables();
     loadSpaceConfiguration();
     //configureSpaceButtons();
+}
+
+function initWorkspaceTables() {
+
+    var ListReadView = AJS.RestfulTable.CustomReadView.extend({
+        render: function (self) {
+            var output = _.reduce(self.value, function (memo, current) {
+                return memo + '<li>' + current + '</li>';
+            }, '<ul class="simple-list">');
+            output += '</ul>';
+            return output;
+        }
+    });
+
+    var MyRow = AJS.RestfulTable.Row.extend({
+        renderOperations: function () {
+            var instance = this;
+
+
+            var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
+                octanePluginContext.currentRow = instance;
+                showWorkspaceConfigDialog();
+            });
+            var deleteButton = $('<aui-item-link >Remove</aui-item-link>').click(function (e) {
+                removeRow(instance);
+            });
+
+            //add action button
+            var dropdownId = "split-container-dropdown" + instance.model.id;
+            var topLevelEl = $('<div class="aui-buttons">' +
+                '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact" aria-controls="' + dropdownId + '">...</button></div>');
+            var bottomLevelEl = $('<aui-dropdown-menu id="' + dropdownId + '"></aui-dropdown-menu>').append(editButton, deleteButton);
+            var parentEl = $('<div></div>').append(topLevelEl, bottomLevelEl);
+            return parentEl;
+        }
+    });
+
+    var configRestTable = new AJS.RestfulTable({
+        el: jQuery("#configuration-rest-table"),
+        resources: {
+            all: loadWorkspaces,//"/rest/configuration/workspaces",
+            self: "/rest/configuration/workspaces/self"
+        },
+        columns: [
+            {id: "id", header: "Workspace Id"},
+            {id: "workspaceName", header: "Workspace Name"},
+            //{id: "octaneUdf", header: "Mapping Field"},
+            //{id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
+            //{id: "jiraIssueTypes", header: "Jira Issue Types", readView: ListReadView},
+            //{id: "jiraProjects", header: "Jira Project", readView: ListReadView}
+        ],
+        autoFocus: false,
+        allowEdit: false,
+        allowReorder: false,
+        allowCreate: false,
+        allowDelete: false,
+        noEntriesMsg: "No workspace configuration is defined.",
+        loadingMsg: "Loading ...",
+        views: {
+            row: MyRow
+        }
+    });
+}
+
+function reloadTable(table){
+
+    table.$tbody.empty();
+    table.fetchInitialResources();
+
+}
+
+
+function loadWorkspaces(callback) {
+
+    AP.context.getToken(function (token) {
+        $.ajax({
+            url: "/rest/configuration/workspaces",
+            type: "GET",
+            dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "JWT " + token);
+            },
+            success: function (result) {
+                console.log("loadWorkspaces success : " + result);
+                if(callback && $.isFunction(callback)){
+                    callback(result)
+                }
+
+            },
+            error: function(xhr) { // if error occurred
+                console.log("error : " + xhr);
+            }
+        });
+    });
 }
 
 function loadSpaceConfiguration() {
@@ -23,6 +118,7 @@ function loadSpaceConfiguration() {
         });
     });
 }
+
 
 function configureSpaceButtons() {
     console.log("configureSpaceButtons");
