@@ -1,12 +1,16 @@
 {
   "key": "com.mf.example.myapp",
   "baseUrl": "https://8eb847e2.ngrok.io",
-  
+  "version":"1.0.1",
   "name": "ALM Octane Quality Plugin for Jira Cloud",
- "vendor": {
-   "name": "Microfocus",
-   "url": "http://wwww.microfocus.com"
-},
+
+  "vendor": {
+    "name": "Microfocus",
+    "url": "http://wwww.microfocus.com"
+  },
+  "links": {
+    "self": "https://8eb847e2.ngrok.io/static/atlassian-connect.json"
+  },
   "authentication": {
     "type": "jwt"
   },
@@ -15,16 +19,16 @@
     "uninstalled": "/rest/lifecycle/uninstalled"
   },
   "modules": {
-
-    "webPanels": [{
-      "key" : "alm-octane-coverage",
-      "name": {
-        "value": "ALM Octane Test Coverage"
-      },
-      "url": "/rest/resource?project_key={project.key}&issue_key={issue.key}&issue_id={issue.id}&issuetype_id={issuetype.id}",
-      "location": "atl.jira.view.issue.right.context"
-    }],
-
+    "webPanels": [
+      {
+        "key": "alm-octane-coverage",
+        "name": {
+          "value": "ALM Octane Test Coverage"
+        },
+        "url": "/rest/resource?project_key={project.key}&issue_key={issue.key}&issue_id={issue.id}&issuetype_id={issuetype.id}",
+        "location": "atl.jira.view.issue.right.context"
+      }
+    ],
     "adminPages": [
       {
         "url": "/static/configuration.html",
@@ -40,9 +44,22 @@
         "value": "ALM Octane Configuration"
       },
       "key": "alm-octane-config"
-    }
+    },
+    "dialogs": [
+      {
+        "url": "/static/spaceDialog.html",
+        "key": "space-dialog-key",
+        "options":{
+          "header":{
+            "value":"Example Dialog"
+          }
+        }
+      }
+    ]
   },
-  "scopes": ["READ"],
+  "scopes": [
+    "READ"
+  ],
   "apiMigrations": {
     "gdpr": true
   }
