@@ -1,7 +1,10 @@
+var workspacesRestfulTable;
 function initConfigurationPage() {
     initWorkspaceTables();
     loadSpaceConfiguration();
     //configureSpaceButtons();
+    configureWorkspaceButtons();
+
 }
 
 function initWorkspaceTables() {
@@ -39,7 +42,7 @@ function initWorkspaceTables() {
         }
     });
 
-    var configRestTable = new AJS.RestfulTable({
+    workspacesRestfulTable = new AJS.RestfulTable({
         el: jQuery("#configuration-rest-table"),
         resources: {
             all: loadWorkspaces,//"/rest/configuration/workspaces",
@@ -67,7 +70,7 @@ function initWorkspaceTables() {
 }
 
 function reloadTable(table){
-
+    console.log("reloadTable");
     table.$tbody.empty();
     table.fetchInitialResources();
 
@@ -119,15 +122,20 @@ function loadSpaceConfiguration() {
     });
 }
 
-
+function configureWorkspaceButtons() {
+    AJS.$("#reload-workspaces").click(function () {
+        reloadTable(workspacesRestfulTable);
+    });
+}
 function configureSpaceButtons() {
     console.log("configureSpaceButtons");
     console.log(AJS.$("#save-space-configuration"));
     AJS.$("#save-space-configuration").click(function () {
-        updateSpaceConfig();
+        //updateSpaceConfig();
+        //reloadTable();
     });
 
-    function updateSpaceConfig() {
+    /*function updateSpaceConfig() {
         console.log("updateSpaceConfig clicked");
         var data = {
             location: $("#location").attr("value"),
@@ -166,5 +174,5 @@ function configureSpaceButtons() {
             $('.space-save-status').addClass("aui-iconfont-error");
             $("#reloadSpinner").spinStop();
         });
-    }
+    }*/
 }
