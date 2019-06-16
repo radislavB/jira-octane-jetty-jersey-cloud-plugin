@@ -132,28 +132,28 @@ function activateOctaneConfigPage() {
     }
 
     function configureCreateSpaceButton(){
-        function onCloseCallback(p1){
-            console.log("onCloseCallback : ",p1);
+
+        var customData={
+            url1: 'url1-text'
         }
+
+        function onCloseCallback(result){
+            console.log("onCloseCallback : ", result);
+        }
+
         //https://developer.atlassian.com/cloud/jira/software/jsapi/classes/dialogoptions/
         //https://developer.atlassian.com/cloud/jira/software/modules/dialog/
         AJS.$("#create-space-configuration").click(function () {
             AP.dialog.create({
                 key: 'space-dialog-key',
-                width: '500px',
-                height: '200px',
+                width: '600px',
+                height: '250px',
                 chrome: true,
+                customData: customData,
                 header:'Create space configuration',
                 submitText:'Save',
-                /*buttons: [
-                    {
-                        text: 'my button',
-                        identifier: 'my_unique_identifier'
-                    }
-                ]*/
             }).on("close", onCloseCallback);
         });
-
     }
     function configureSpaceButtons() {
         console.log("configureSpaceButtons");

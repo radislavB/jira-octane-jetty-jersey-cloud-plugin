@@ -19,6 +19,11 @@ h3 {
 
 
 
+
+.aui-dialog2-header{
+    padding-bottom: 5px;
+}
+
 .simple-list {
     list-style: none;
     padding: 0;
