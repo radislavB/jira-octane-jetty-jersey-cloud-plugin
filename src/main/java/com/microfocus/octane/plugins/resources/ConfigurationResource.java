@@ -1,4 +1,4 @@
-package com.microfocus.octane.plugins.rest;
+package com.microfocus.octane.plugins.resources;
 
 
 import com.microfocus.octane.plugins.utils.PluginConstants;

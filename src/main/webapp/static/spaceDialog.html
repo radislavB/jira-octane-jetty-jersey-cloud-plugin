@@ -44,12 +44,13 @@
 
     AP.dialog.disableCloseOnSubmit();
     AP.events.on('dialog.button.click', function(data){
-        console.log("dialog.button.click", data);
-        console.log("data.button", data.button);
-        console.log("data.button.name", data.button.name);
+        console.log("dialog.button.click", data.button);
         if(data.button.name === 'submit') {
             console.log('submit button pressed');
             AP.dialog.close({foo: 'bar'});
+        }
+        else if(data.button.name === 'test_connection') {
+            console.log('test_connection button pressed');
         }
     });
 

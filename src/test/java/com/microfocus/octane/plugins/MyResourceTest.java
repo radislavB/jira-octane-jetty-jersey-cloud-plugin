@@ -2,7 +2,7 @@
 
 import javax.ws.rs.core.Application;
 
-import com.microfocus.octane.plugins.rest.MyResource;
+import com.microfocus.octane.plugins.resources.MyResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 
@@ -20,7 +20,7 @@ public class MyResourceTest extends JerseyTest {
 
     @Test
     public void testGetIt() {
-        final String responseMsg = target().path("rest/resource").request().get(String.class);
+        final String responseMsg = target().path("resources/resource").request().get(String.class);
 
         assertEquals("Hello, Heroku!", responseMsg);
     }

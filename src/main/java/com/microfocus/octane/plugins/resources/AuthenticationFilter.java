@@ -1,4 +1,4 @@
-package com.microfocus.octane.plugins.rest;
+package com.microfocus.octane.plugins.resources;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.microfocus.octane.plugins.utils.JwtUtils;
@@ -51,7 +51,7 @@ public class AuthenticationFilter implements Filter {
 
     private static boolean skipValidation(HttpServletRequest req) {
         //return true;
-        return req.getMethod().equals("POST") && req.getRequestURI().equals("/rest/lifecycle/installed");
+        return req.getMethod().equals("POST") && req.getRequestURI().equals("/resources/lifecycle/installed");
     }
 
     private static String tryExtractTokenFromQueryString(HttpServletRequest req) {

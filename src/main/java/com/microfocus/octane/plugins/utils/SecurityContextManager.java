@@ -2,7 +2,7 @@ package com.microfocus.octane.plugins.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.microfocus.octane.plugins.rest.pojo.JiraTenantSecurityContext;
+import com.microfocus.octane.plugins.resources.pojo.JiraTenantSecurityContext;
 
 import java.io.File;
 import java.io.IOException;

@@ -46,10 +46,10 @@ function activateOctaneConfigPage() {
         });
 
         workspacesRestfulTable = new AJS.RestfulTable({
-            el: jQuery("#configuration-rest-table"),
+            el: jQuery("#configuration-resources-table"),
             resources: {
-                all: loadWorkspaces,//"/rest/configuration/workspaces",
-                self: "/rest/configuration/workspaces/self"
+                all: loadWorkspaces,//"/resources/configuration/workspaces",
+                self: "/resources/configuration/workspaces/self"
             },
             columns: [
                 {id: "id", header: "Workspace Id"},
@@ -84,7 +84,7 @@ function activateOctaneConfigPage() {
 
         AP.context.getToken(function (token) {
             $.ajax({
-                url: "/rest/configuration/workspaces",
+                url: "/resources/configuration/workspaces",
                 type: "GET",
                 dataType: "json",
                 beforeSend: function (xhr) {
@@ -108,7 +108,7 @@ function activateOctaneConfigPage() {
 
         AP.context.getToken(function (token) {
             $.ajax({
-                url: "/rest/configuration",
+                url: "/resources/configuration",
                 type: "GET",
                 //data: { testdata: "1234" },
                 dataType: "json",
@@ -152,6 +152,12 @@ function activateOctaneConfigPage() {
                 customData: customData,
                 header:'Create space configuration',
                 submitText:'Save',
+                buttons: [
+                    {
+                        text: 'Test connection',
+                        identifier: 'test_connection'
+                    }
+                ]
             }).on("close", onCloseCallback);
         });
     }
