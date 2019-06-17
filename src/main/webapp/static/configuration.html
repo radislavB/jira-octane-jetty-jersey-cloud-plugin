@@ -26,36 +26,7 @@
             <h3 class="formtitle">Space</h3>
 
             <p><button id="create-space-configuration" class="aui-button aui-button-link">Create </button> space configuration.</p>
-            <form id="octane-admin" class="aui">
-                <div class="form-body">
-                    <div class="field-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" name="location" class="text medium-long-field">
-                        <div class="description">Enter the URL of your ALM Octane application.
-                            <br/>For example: http://myServer.myCompany.com:8081/ui/?p=1001/1002
-                        </div>
-                    </div>
-                    <div class="field-group">
-                        <label for="clientId">Client ID</label>
-                        <input type="text" id="clientId" name="clientId" class="text medium-long-field" autocomplete="off">
-                        <div class="description">Client ID used for logging into the ALM Octane server</div>
-                    </div>
-                    <div class="field-group">
-                        <label for="clientSecret" >Client secret</label>
-                        <input type="password" id="clientSecret" name="clientSecret" class="text medium-long-field" autocomplete="off">
-                        <div class="description">Client secret used for logging into the ALM Octane server</div>
-                    </div>
 
-                    <div class="field-group">
-                        <div id="button-group" style="position: relative;">
-                            <input type="button" class="aui-button" id="save-space-configuration" value="Save">
-                            <span class="aui-icon aui-icon-small space-save-status"></span>
-                        </div>
-                        <div><span id="reloadSpinner"></span></div>
-                    </div>
-
-                </div>
-            </form>
 
             <h3 class="formtitle">Workspaces</h3>
             <p><button id="show-add-dialog" class="aui-button aui-button-link">Create</button> a new ALM Octane workspace configuration.</p>
@@ -64,6 +35,7 @@
         </section>
     </body>
     <script>
+        console.log("before activateOctaneConfigPage");
         activateOctaneConfigPage();
     </script>
 </html>

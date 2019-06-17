@@ -16,18 +16,22 @@
 
 package com.microfocus.octane.plugins.octane.rest.entities;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by berkovir on 21/11/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaneEntityCollection {
 
     private int totalCount;
-
     private boolean exceedsTotalCount;
-
     private List<OctaneEntity> data = new ArrayList<>();
 
     public List<OctaneEntity> getData() {
@@ -38,18 +42,22 @@ public class OctaneEntityCollection {
         this.data = data;
     }
 
+    @JsonGetter("total_count")
     public int getTotalCount() {
         return totalCount;
     }
 
+    @JsonSetter("total_count")
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
     }
 
+    @JsonGetter("exceeds_total_count")
     public boolean isExceedsTotalCount() {
         return exceedsTotalCount;
     }
 
+    @JsonSetter("exceeds_total_count")
     public void setExceedsTotalCount(boolean exceedsTotalCount) {
         this.exceedsTotalCount = exceedsTotalCount;
     }

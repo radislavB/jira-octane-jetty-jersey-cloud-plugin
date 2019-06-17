@@ -13,18 +13,15 @@
  *     limitations under the License.
  */
 
-
 package com.microfocus.octane.plugins.octane.rest;
 
-import com.google.gson.Gson;
+import com.microfocus.octane.plugins.utils.JsonUtils;
 
 import java.util.Map;
 
-;
 
 /**
  * Thrown if status is not 200 or 201
- * Created by berkovir on 20/11/2016.
  */
 public class RestStatusException extends RuntimeException {
     private Response response;
@@ -37,7 +34,7 @@ public class RestStatusException extends RuntimeException {
 
         try {
             if (response.getResponseData().startsWith("{")) {
-                Map statusData = new Gson().fromJson(response.getResponseData(), Map.class);
+                Map statusData = JsonUtils.parseToMap(response.getResponseData());
                 error_code = (String) statusData.get("error_code");
                 description = (String) statusData.get("description");
             }

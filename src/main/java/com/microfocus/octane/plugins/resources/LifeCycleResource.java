@@ -2,7 +2,7 @@ package com.microfocus.octane.plugins.resources;
 
 import com.microfocus.octane.plugins.resources.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.PluginConstants;
-import com.microfocus.octane.plugins.utils.SecurityContextManager;
+import com.microfocus.octane.plugins.managers.SecurityContextManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;

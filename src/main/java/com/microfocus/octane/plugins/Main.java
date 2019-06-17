@@ -1,8 +1,8 @@
 package com.microfocus.octane.plugins;
 
-import com.microfocus.octane.plugins.utils.SecurityContextManager;
+import com.microfocus.octane.plugins.managers.ConfigurationManager;
+import com.microfocus.octane.plugins.managers.SecurityContextManager;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -49,5 +49,6 @@ public class Main {
 
         String repositoryFolder = System.getProperty("repositoryFolder");
         SecurityContextManager.getInstance().init(repositoryFolder);
+        ConfigurationManager.getInstance().init(repositoryFolder);
     }
 }

@@ -15,6 +15,9 @@
 
 package com.microfocus.octane.plugins.octane.rest.entities;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,13 +30,11 @@ import java.util.Map;
 /**
  * Created by berkovir on 28/05/2015.
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MapBasedObject {
 
-    @XmlElement(name = "fields")
     private Map<String, Object> fields = new HashMap<String, Object>();
 
+    @JsonAnySetter
     public void put(String fieldName, Object fieldValue) {
         fields.put(fieldName, fieldValue);
     }
@@ -42,6 +43,7 @@ public class MapBasedObject {
         return fields;
     }
 
+    @JsonAnyGetter
     public Object get(String fieldName) {
         return fields.get(fieldName);
     }
@@ -49,7 +51,6 @@ public class MapBasedObject {
     public String getString(String fieldName) {
         return (String) fields.get(fieldName);
     }
-
 
     public void remove(String fieldName) {
         fields.remove(fieldName);

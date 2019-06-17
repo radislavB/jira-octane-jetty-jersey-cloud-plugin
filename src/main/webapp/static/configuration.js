@@ -2,8 +2,8 @@ function activateOctaneConfigPage() {
 
     var workspacesRestfulTable;
     function initConfigurationPage() {
-        initWorkspaceTables();
-        loadSpaceConfiguration();
+        //initWorkspaceTables();
+        //loadSpaceConfiguration();
         configureCreateSpaceButton();
         //configureSpaceButtons();
         configureWorkspaceButtons();

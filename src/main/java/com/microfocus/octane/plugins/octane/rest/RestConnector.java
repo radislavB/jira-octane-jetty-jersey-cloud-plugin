@@ -15,11 +15,14 @@
 
 package com.microfocus.octane.plugins.octane.rest;
 
-import com.google.common.base.Charsets;
-import com.microfocus.octane.plugins.components.api.Constants;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microfocus.octane.plugins.octane.rest.*;
+
+import org.apache.commons.codec.Charsets;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +47,7 @@ public class RestConnector {
     private String baseUrl;
     private String user;
     private String password;
-    private ProxyConfiguration proxyConfiguration;
+    //private ProxyConfiguration proxyConfiguration;
     private static final Logger log = LoggerFactory.getLogger(RestConnector.class);
 
     private String csrfHeaderName;
@@ -67,7 +70,7 @@ public class RestConnector {
         //Get LWSSO COOKIE
         Map<String, String> headers = new HashMap<>();
         headers.put(HEADER_CONTENT_TYPE, HEADER_APPLICATION_JSON);
-        Response authResponse = doHttp("POST", Constants.URL_AUTHENTICATION, null, jsonString, headers, true);
+        Response authResponse = doHttp("POST", UrlConstants.URL_AUTHENTICATION, null, jsonString, headers, true);
         if (authResponse.getStatusCode() == HttpStatus.SC_OK) {
             ret = true;
         }
@@ -156,7 +159,7 @@ public class RestConnector {
             boolean relogin) {
 
 
-        //add query params
+        //save query params
         if ((queryParams != null) && !queryParams.isEmpty()) {
 
             if (url.contains("?")) {
@@ -172,9 +175,9 @@ public class RestConnector {
         try {
 
             HttpURLConnection con;
-            if (proxyConfiguration == null) {
+            //if (proxyConfiguration == null) {
                 con = (HttpURLConnection) new URL(fullUrl).openConnection();
-            } else {
+            /*} else {
                 try {
                     Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyConfiguration.getHost(), proxyConfiguration.getPort()));
                     con = (HttpURLConnection) new URL(fullUrl).openConnection(proxy);
@@ -189,7 +192,7 @@ public class RestConnector {
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to define connection with proxy parameters");
                 }
-            }
+            }*/
 
             con.setRequestMethod(type);
             String cookieString = getCookieString();
@@ -281,7 +284,7 @@ public class RestConnector {
 
             con.setDoOutput(true);
 
-            //warning: if you add content-TYPE header then you MUST send information.. or receive error. so only do so if you're writing information...
+            //warning: if you save content-TYPE header then you MUST send information.. or receive error. so only do so if you're writing information...
             if (contentType != null) {
                 con.setRequestProperty("Content-Type", contentType);
             }
@@ -395,11 +398,11 @@ public class RestConnector {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
 
-        try {
+        /*try {
             proxyConfiguration = ProxyHelper.getProxyConfiguration(new URL(url));
         } catch (MalformedURLException e) {
             log.error("Failed to check getProxyConfiguration : " + e.getMessage());
-        }
+        }*/
     }
 
     public String getUser() {

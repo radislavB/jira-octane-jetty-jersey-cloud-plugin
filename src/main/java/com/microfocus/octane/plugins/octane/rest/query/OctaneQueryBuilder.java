@@ -15,7 +15,9 @@
 
 package com.microfocus.octane.plugins.octane.rest.query;
 
-import org.apache.commons.lang.StringUtils;
+
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

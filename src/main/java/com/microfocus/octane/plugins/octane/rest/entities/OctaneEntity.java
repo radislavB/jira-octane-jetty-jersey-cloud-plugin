@@ -16,23 +16,17 @@
 
 package com.microfocus.octane.plugins.octane.rest.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by berkovir on 21/11/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaneEntity extends MapBasedObject {
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
-
-    private String type;
-
-    public OctaneEntity(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
+    public static final String FIELD_TYPE = "type";
 
 
     public String getId() {
@@ -43,10 +37,13 @@ public class OctaneEntity extends MapBasedObject {
         return getString(FIELD_NAME);
     }
 
+    public String getType() {
+        return getString(FIELD_TYPE);
+    }
 
     @Override
     public String toString() {
-        return getType() + " #" + getId() + " " + getName();
+        return getType() + " #" + getId() + (isFieldSetAndNotEmpty(FIELD_NAME) ? " " + getName() : "");
     }
 }
 

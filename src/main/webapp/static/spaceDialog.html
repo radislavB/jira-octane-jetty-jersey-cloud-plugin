@@ -9,6 +9,7 @@
     <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
     <script src="spaceDialog.js"></script>
+    <script src="hostajax.js"></script>
 </head>
 <body style="background: none">
 
@@ -27,7 +28,7 @@
             <div class="description">Client ID used for logging into the ALM Octane server</div>
         </div>
         <div class="field-group">
-            <label for="clientSecret" >Client secret</label>
+            <label for="clientSecret">Client secret</label>
             <input type="password" id="clientSecret" name="clientSecret" class="text medium-long-field" autocomplete="off">
             <div class="description">Client secret used for logging into the ALM Octane server</div>
         </div>
@@ -51,6 +52,25 @@
         }
         else if(data.button.name === 'test_connection') {
             console.log('test_connection button pressed');
+
+            var data = {
+                location: $("#location").attr("value"),
+                clientId: $("#clientId").attr("value"),
+                clientSecret: $("#clientSecret").attr("value")
+            };
+
+            console.log('before JSON.stringify');
+            var dataJson = JSON.stringify(data);
+            console.log('after JSON.stringify');
+
+            hostAjaxPost("/rest/configuration/test",dataJson,
+                function (data){
+                    console.log("test is ok")
+                },
+                function (e){
+                    console.log("test is failed " + e)
+                }
+            );
         }
     });
 
