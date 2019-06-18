@@ -1,0 +1,11 @@
+.statusSuccess{
+    color: green;
+}
+
+.statusFailed{
+    color: red;
+}
+
+#statusDialog{
+    margin-left: 145px;
+}

@@ -146,8 +146,8 @@ function activateOctaneConfigPage() {
         AJS.$("#create-space-configuration").click(function () {
             AP.dialog.create({
                 key: 'space-dialog-key',
-                width: '600px',
-                height: '250px',
+                width: '640px',
+                height: '300px',
                 chrome: true,
                 customData: customData,
                 header:'Create space configuration',

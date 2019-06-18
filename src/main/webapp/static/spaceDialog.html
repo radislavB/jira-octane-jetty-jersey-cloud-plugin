@@ -4,12 +4,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
+    <link rel="stylesheet" href="general.css" media="all">
 
     <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
     <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
     <script src="spaceDialog.js"></script>
-    <script src="hostajax.js"></script>
+    <script src="general.js"></script>
 </head>
 <body style="background: none">
 
@@ -17,7 +18,8 @@
     <div class="form-body">
         <div class="field-group">
             <label for="location">Location</label>
-            <input type="text" id="location" name="location" class="text medium-long-field">
+            <input type="text" id="location" name="location" class="text long-field">
+            <div class="error" id="locationError"></div>
             <div class="description">Enter the URL of your ALM Octane application.
                 <br/>For example: http://myServer.myCompany.com:8081/ui/?p=1001/1002
             </div>
@@ -25,54 +27,24 @@
         <div class="field-group">
             <label for="clientId">Client ID</label>
             <input type="text" id="clientId" name="clientId" class="text medium-long-field" autocomplete="off">
+            <div class="error" id="clientIdError"></div>
             <div class="description">Client ID used for logging into the ALM Octane server</div>
         </div>
         <div class="field-group">
             <label for="clientSecret">Client secret</label>
-            <input type="password" id="clientSecret" name="clientSecret" class="text medium-long-field" autocomplete="off">
+            <input type="password" id="clientSecret" name="clientSecret" class="text medium-long-field"
+                   autocomplete="off">
+            <div class="error" id="clientSecretError"></div>
             <div class="description">Client secret used for logging into the ALM Octane server</div>
         </div>
-
     </div>
+    <div id="statusDialog"></div>
 </form>
 
 </div>
 </body>
 <script>
-    AP.dialog.getCustomData(function (customData) {
-        console.log("received custom data2", customData);
-    });
 
-    AP.dialog.disableCloseOnSubmit();
-    AP.events.on('dialog.button.click', function(data){
-        console.log("dialog.button.click", data.button);
-        if(data.button.name === 'submit') {
-            console.log('submit button pressed');
-            AP.dialog.close({foo: 'bar'});
-        }
-        else if(data.button.name === 'test_connection') {
-            console.log('test_connection button pressed');
-
-            var data = {
-                location: $("#location").attr("value"),
-                clientId: $("#clientId").attr("value"),
-                clientSecret: $("#clientSecret").attr("value")
-            };
-
-            console.log('before JSON.stringify');
-            var dataJson = JSON.stringify(data);
-            console.log('after JSON.stringify');
-
-            hostAjaxPost("/rest/configuration/test",dataJson,
-                function (data){
-                    console.log("test is ok")
-                },
-                function (e){
-                    console.log("test is failed", e);
-                }
-            );
-        }
-    });
 
 
 </script>
