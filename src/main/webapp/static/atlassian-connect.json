@@ -54,6 +54,14 @@
             "value":"Space configuration"
           }
         }
+      },{
+        "url": "/static/confirmationDialog.html",
+        "key": "confirmation-dialog-key",
+        "options":{
+          "header":{
+            "value":"Confirmation"
+          }
+        }
       }
     ]
   },

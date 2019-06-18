@@ -1,0 +1,32 @@
+<html>
+<head>
+    <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
+    <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
+    <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <script src="general.js"></script>
+</head>
+<body style="background: none">
+<div id="confirmationText">Are you sure</div>
+
+
+</div>
+</body>
+<script>
+    AP.dialog.getCustomData(function (data) {
+        if(data && data.confirmationText){
+            $("#confirmationText").text(data.confirmationText);
+        }
+    });
+    AP.events.on('dialog.button.click', function (data) {
+        console.log("confirmationDialog dialog.button.click", data.button);
+        if (data.button.name === 'submit') {
+            console.log("submit clicked");
+            AP.dialog.close({result: 'true'});
+        } else if (data.button.name === 'cancel') {
+            console.log("cancel clicked");
+            AP.dialog.close({result: 'false'});
+        }
+    });
+</script>
+</html>

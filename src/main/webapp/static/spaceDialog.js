@@ -4,14 +4,13 @@ AP.dialog.getCustomData(function (customData) {
     console.log("received custom data2", customData);
 });
 AP.events.on('dialog.button.click', function (data) {
-    console.log("dialog.button.click", data.button);
+    console.log("SpaceDialog dialog.button.click", data.button);
     if (data.button.name === 'submit') {
         saveSpaceConfig();
     } else if (data.button.name === 'test_connection') {
         testConnection();
     }
 });
-
 
 function getPropertiesAsJson() {
     var data = {

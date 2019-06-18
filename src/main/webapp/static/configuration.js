@@ -72,7 +72,19 @@ function activateOctaneConfigPage() {
             renderOperations: function () {
                 var rowInstance = this;
 
-                var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
+                var editButtonEl = $('<button class=\"aui-button aui-button-link\">Edit</button>').click(function (e) {
+                    console.log("edit clicked");
+                });
+
+                var testConnectionButtonEl = $('<button class=\"aui-button aui-button-link\">Test Connection</button>').click(function (e) {
+                    console.log("test connection clicked");
+                });
+
+                var deleteButtonEl = $('<button class=\"aui-button aui-button-link\">Delete</button>').click(function (e) {
+                    removeSpace(rowInstance);
+                });
+
+                /*var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
                     octanePluginContext.currentRow = rowInstance;
                     showWorkspaceConfigDialog();
                 });
@@ -83,9 +95,10 @@ function activateOctaneConfigPage() {
                 //add action button
                 var dropdownId = "split-container-dropdown" + rowInstance.model.id;
                 var topLevelEl = $('<div class="aui-buttons">' +
-                    '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact aui-dropdown2-trigger-arrowless" aria-controls="' + dropdownId + '">...</button></div>');
+                    '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact" aria-controls="' + dropdownId + '">...</button></div>');
                 var bottomLevelEl = $('<aui-dropdown-menu id="' + dropdownId + '"></aui-dropdown-menu>').append(editButton, deleteButton);
-                var parentEl = $('<div></div>').append(topLevelEl, bottomLevelEl);
+                var parentEl = $('<div></div>').append(topLevelEl, bottomLevelEl);*/
+                var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl, testConnectionButtonEl);
                 return parentEl;
             }
         });
@@ -114,7 +127,11 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function removeRow(row){
+    function removeSpace(row) {
+        var text = "Are you sure you want to delete space configuration '" + row.model.attributes.label + "' ?";
+        confirm("Delete", text, "Delete").then(function (data) {
+            console.log("removeRow, confirmation", data);
+        });
         /*$("#workspace-to-delete").text(row.model.attributes.workspaceName);//update workspace name in dialog text
 
         AJS.dialog2("#warning-dialog").show();
@@ -134,28 +151,24 @@ function activateOctaneConfigPage() {
         });*/
     }
 
+    function confirm(confirmationTitle, confirmationText, submitButtonText) {
+        return new Promise(function (resolve, reject) {
+            function onCloseCallback(result) {
+                console.log("onCloseCallback : ", result);
+                resolve(true);
+            }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            AP.dialog.create({
+                key: 'confirmation-dialog-key',
+                width: '450px',
+                height: '100px',
+                chrome: true,
+                customData: {confirmationText: confirmationText},
+                submitText: submitButtonText,
+                header: confirmationTitle
+            }).on("close", onCloseCallback);
+        });
+    }
 
 
     function reloadTable(table) {
