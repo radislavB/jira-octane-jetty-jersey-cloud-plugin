@@ -1,3 +1,4 @@
+var validateRequiredFieldsFilledAuto = false;
 AP.dialog.disableCloseOnSubmit();
 AP.dialog.getCustomData(function (customData) {
     console.log("received custom data2", customData);
@@ -11,8 +12,10 @@ AP.events.on('dialog.button.click', function (data) {
     }
 });
 
+
 function getPropertiesAsJson() {
     var data = {
+        label: $("#label").attr("value"),
         location: $("#location").attr("value"),
         clientId: $("#clientId").attr("value"),
         clientSecret: $("#clientSecret").attr("value")
@@ -20,31 +23,36 @@ function getPropertiesAsJson() {
     return JSON.stringify(data);
 }
 
-function validateRequiredFieldsFilled(){
+
+function validateRequiredFieldsFilled() {
+    if (!validateRequiredFieldsFilledAuto) {
+        validateRequiredFieldsFilledAuto = true;
+        $(".required").change(function () {
+            validateRequiredFieldsFilled();
+        });
+    }
+
     var validationFailed = !validateMissingRequiredAndUpdateErrorField($("#location").val(), "#locationError");
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#label").val(), "#labelError") || validationFailed;
     validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientId").val(), "#clientIdError") || validationFailed;
     validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientSecret").val(), "#clientSecretError") || validationFailed;
     return !validationFailed;
 }
 
-function clearStatus() {
-    $("#statusDialog").text("")
-}
-
 function setStatus(text, status) {
     $("#statusDialog").text(text);
     $("#statusDialog").removeClass("statusSuccess").removeClass("statusFailed");
-    if (status){
-        if(status==='success'){
+    if (status) {
+        if (status === 'success') {
             $("#statusDialog").addClass("statusSuccess");
-        }else if (status==='failed'){
+        } else if (status === 'failed') {
             $("#statusDialog").addClass("statusFailed");
         }
     }
 }
 
-function testConnection(){
-    if(!validateRequiredFieldsFilled()){
+function testConnection() {
+    if (!validateRequiredFieldsFilled()) {
         return;
     }
     setStatus("Test connection ...")
@@ -56,8 +64,8 @@ function testConnection(){
     });
 }
 
-function saveSpaceConfig(){
-    if(!validateRequiredFieldsFilled()){
+function saveSpaceConfig() {
+    if (!validateRequiredFieldsFilled()) {
         return;
     }
     setStatus("Saving ...")
@@ -67,7 +75,7 @@ function saveSpaceConfig(){
 
             var flag = AP.flag.create({
                 //title: 'Saving',
-                close:'auto',
+                close: 'auto',
                 body: 'Space configuration saved successfully.',
                 type: 'success'
             });

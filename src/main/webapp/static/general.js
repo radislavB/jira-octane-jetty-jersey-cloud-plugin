@@ -1,4 +1,5 @@
 function hostAjaxGet(url) {
+    console.log("hostAjaxGet");
     return hostAjaxSend('GET', url, "");
 }
 

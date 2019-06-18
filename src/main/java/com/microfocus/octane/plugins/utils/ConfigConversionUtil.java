@@ -78,10 +78,13 @@ public class ConfigConversionUtil {
             throw new IllegalArgumentException( "Client ID is required");
         } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getClientSecret())) {
             throw new IllegalArgumentException( "Client secret is required");
+        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getLabel())) {
+            throw new IllegalArgumentException("Label is required");
         }
 
         SpaceConfiguration spaceConf = new SpaceConfiguration();
         spaceConf.setId(spaceConfigurationOutgoing.getId());
+        spaceConf.setLabel(spaceConfigurationOutgoing.getLabel());
         spaceConf.setLocation(spaceConfigurationOutgoing.getLocation());
         spaceConf.setClientSecret(spaceConfigurationOutgoing.getClientSecret());
         spaceConf.setClientId(spaceConfigurationOutgoing.getClientId());
@@ -92,6 +95,7 @@ public class ConfigConversionUtil {
     public static SpaceConfigurationOutgoing convert(SpaceConfiguration internalSpaceConf) {
         SpaceConfigurationOutgoing spaceConf = new SpaceConfigurationOutgoing();
         spaceConf.setId(internalSpaceConf.getId());
+        spaceConf.setLabel(internalSpaceConf.getLabel());
         spaceConf.setLocation(internalSpaceConf.getLocation());
         spaceConf.setClientSecret(internalSpaceConf.getClientSecret());
         spaceConf.setClientId(internalSpaceConf.getClientId());

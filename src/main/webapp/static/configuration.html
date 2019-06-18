@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
 
+
         <!-- AUI https://aui-cdn.atlassian.com/ -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
         <!--script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script-->
@@ -18,14 +19,16 @@
 
         <!-- custom code-->
         <link rel="stylesheet" href="configuration.css">
+        <script src="general.js"></script>
         <script src="configuration.js"></script>
+
     </head>
     <body>
         <section id="content" class="ac-content">
             <h2 >ALM Octane Configuration</h2>
             <h3 class="formtitle">Space</h3>
-
             <p><button id="create-space-configuration" class="aui-button aui-button-link">Create </button> space configuration.</p>
+            <table id="space-table"></table>
 
 
             <h3 class="formtitle">Workspaces</h3>

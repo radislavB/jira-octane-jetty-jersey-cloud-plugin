@@ -15,10 +15,16 @@
 
 package com.microfocus.octane.plugins.managers.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class LocationParts {
 
     private String baseUrl;
+
     private long spaceId;
+
+    @JsonIgnore
+    private String key;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -34,5 +40,13 @@ public class LocationParts {
 
     public void setSpaceId(long spaceId) {
         this.spaceId = spaceId;
+    }
+
+    @JsonIgnore
+    public String getKey() {
+        if (key == null) {
+            key = (baseUrl + "?p=" + spaceId).toLowerCase();
+        }
+        return key;
     }
 }

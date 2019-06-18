@@ -1,31 +1,76 @@
 function activateOctaneConfigPage() {
 
+    var spaceTable;
     var workspacesRestfulTable;
+
     function initConfigurationPage() {
+        configureCreateSpaceButton();
+        initSpaceTables();
+
         //initWorkspaceTables();
         //loadSpaceConfiguration();
-        configureCreateSpaceButton();
+
         //configureSpaceButtons();
-        configureWorkspaceButtons();
+        //configureWorkspaceButtons();
 
     };
 
-    function initWorkspaceTables() {
+    function configureCreateSpaceButton() {
 
-        var ListReadView = AJS.RestfulTable.CustomReadView.extend({
-            render: function (self) {
-                var output = _.reduce(self.value, function (memo, current) {
-                    return memo + '<li>' + current + '</li>';
-                }, '<ul class="simple-list">');
-                output += '</ul>';
-                return output;
-            }
+        var dataForDialog = {
+            url1: 'url1-text'
+        }
+
+        function onCloseCallback(result) {
+            console.log("onCloseCallback : ", result);
+        }
+
+        //https://developer.atlassian.com/cloud/jira/software/jsapi/classes/dialogoptions/
+        //https://developer.atlassian.com/cloud/jira/software/modules/dialog/
+        AJS.$("#create-space-configuration").click(function () {
+            AP.dialog.create({
+                key: 'space-dialog-key',
+                width: '640px',
+                height: '340px',
+                chrome: true,
+                customData: dataForDialog,
+                header: 'Create space configuration',
+                submitText: 'Save',
+                buttons: [
+                    {
+                        text: 'Test connection',
+                        identifier: 'test_connection'
+                    }
+                ]
+            }).on("close", onCloseCallback);
         });
+    }
+
+    //view that show list items in stacked format
+    var ListReadView = AJS.RestfulTable.CustomReadView.extend({
+        render: function (self) {
+            var output = _.reduce(self.value, function (memo, current) {
+                return memo + '<li>' + current + '</li>';
+            }, '<ul class="simple-list">');
+            output += '</ul>';
+            return output;
+        }
+    });
+
+
+    function loadSpaces(callback) {
+        console.log("loadSpaces");
+        hostAjaxGet("/rest/configuration/spaces")
+            .then(function (data) {
+                callback(data);
+            });
+    }
+
+    function initSpaceTables() {
 
         var MyRow = AJS.RestfulTable.Row.extend({
             renderOperations: function () {
                 var instance = this;
-
 
                 var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
                     octanePluginContext.currentRow = instance;
@@ -45,26 +90,23 @@ function activateOctaneConfigPage() {
             }
         });
 
-        workspacesRestfulTable = new AJS.RestfulTable({
-            el: jQuery("#configuration-resources-table"),
+        spaceTable = new AJS.RestfulTable({
+            el: jQuery("#space-table"),
             resources: {
-                all: loadWorkspaces,//"/resources/configuration/workspaces",
-                self: "/resources/configuration/workspaces/self"
+                all: loadSpaces,
+                //self: "/resources/configuration/workspaces/self"
             },
             columns: [
-                {id: "id", header: "Workspace Id"},
-                {id: "workspaceName", header: "Workspace Name"},
-                //{id: "octaneUdf", header: "Mapping Field"},
-                //{id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
-                //{id: "jiraIssueTypes", header: "Jira Issue Types", readView: ListReadView},
-                //{id: "jiraProjects", header: "Jira Project", readView: ListReadView}
+                {id: "label", header: "Label"},
+                {id: "location", header: "Location"},
+                {id: "clientId", header: "Client Id"}
             ],
             autoFocus: false,
             allowEdit: false,
             allowReorder: false,
             allowCreate: false,
             allowDelete: false,
-            noEntriesMsg: "No workspace configuration is defined.",
+            noEntriesMsg: "No space configuration is defined.",
             loadingMsg: "Loading ...",
             views: {
                 row: MyRow
@@ -72,7 +114,30 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function reloadTable(table){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function reloadTable(table) {
         console.log("reloadTable");
         table.$tbody.empty();
         table.fetchInitialResources();
@@ -92,12 +157,12 @@ function activateOctaneConfigPage() {
                 },
                 success: function (result) {
                     console.log("loadWorkspaces success : " + result);
-                    if(callback && $.isFunction(callback)){
+                    if (callback && $.isFunction(callback)) {
                         callback(result)
                     }
 
                 },
-                error: function(xhr) { // if error occurred
+                error: function (xhr) { // if error occurred
                     console.log("error : " + xhr);
                 }
             });
@@ -118,7 +183,7 @@ function activateOctaneConfigPage() {
                 success: function (result) {
                     console.log("success : " + result);
                 },
-                error: function(xhr) { // if error occurred
+                error: function (xhr) { // if error occurred
                     console.log("error : " + xhr);
                 }
             });
@@ -131,36 +196,7 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function configureCreateSpaceButton(){
 
-        var customData={
-            url1: 'url1-text'
-        }
-
-        function onCloseCallback(result){
-            console.log("onCloseCallback : ", result);
-        }
-
-        //https://developer.atlassian.com/cloud/jira/software/jsapi/classes/dialogoptions/
-        //https://developer.atlassian.com/cloud/jira/software/modules/dialog/
-        AJS.$("#create-space-configuration").click(function () {
-            AP.dialog.create({
-                key: 'space-dialog-key',
-                width: '640px',
-                height: '300px',
-                chrome: true,
-                customData: customData,
-                header:'Create space configuration',
-                submitText:'Save',
-                buttons: [
-                    {
-                        text: 'Test connection',
-                        identifier: 'test_connection'
-                    }
-                ]
-            }).on("close", onCloseCallback);
-        });
-    }
     function configureSpaceButtons() {
         console.log("configureSpaceButtons");
         console.log(AJS.$("#save-space-configuration"));

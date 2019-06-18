@@ -22,6 +22,7 @@ import java.util.List;
 public class SpaceConfiguration {
 
     private String id;
+    private String label;
     private String location;
     private LocationParts locationParts;
     private String clientId;
@@ -75,5 +76,13 @@ public class SpaceConfiguration {
 
     public void setLocationParts(LocationParts locationParts) {
         this.locationParts = locationParts;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

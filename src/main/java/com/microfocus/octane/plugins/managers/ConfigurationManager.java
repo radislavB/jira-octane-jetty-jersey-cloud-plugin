@@ -5,6 +5,7 @@ import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class ConfigurationManager extends BaseManager<ClientConfiguration> {
 
@@ -21,16 +22,11 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
 
     public SpaceConfiguration addSpaceConfiguration(String clientKey, SpaceConfiguration spaceConfiguration) throws IOException {
 
-        spaceConfiguration.setId(generateId(spaceConfiguration));
+        spaceConfiguration.setId(UUID.randomUUID().toString());
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         conf.getSpaces().add(spaceConfiguration);
         save(clientKey, conf);
         return spaceConfiguration;
-    }
-
-    private String generateId(SpaceConfiguration spaceConfiguration) {
-        String key = spaceConfiguration.getLocationParts().getBaseUrl() + "?p=" + spaceConfiguration.getLocationParts().getSpaceId();
-        return key.toLowerCase();
     }
 
     public SpaceConfiguration updateSpaceConfiguration(String clientKey, SpaceConfiguration spaceConfiguration) throws IOException {
