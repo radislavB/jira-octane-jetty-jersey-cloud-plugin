@@ -154,8 +154,9 @@ function activateOctaneConfigPage() {
     function confirm(confirmationTitle, confirmationText, submitButtonText) {
         return new Promise(function (resolve, reject) {
             function onCloseCallback(result) {
-                console.log("onCloseCallback : ", result);
-                resolve(true);
+                var output = (result && result.confirmed) ? true : false;
+                console.log("onCloseCallback", result, output);
+                resolve(output);
             }
 
             AP.dialog.create({
