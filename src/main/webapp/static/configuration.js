@@ -70,20 +70,20 @@ function activateOctaneConfigPage() {
 
         var MyRow = AJS.RestfulTable.Row.extend({
             renderOperations: function () {
-                var instance = this;
+                var rowInstance = this;
 
                 var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
-                    octanePluginContext.currentRow = instance;
+                    octanePluginContext.currentRow = rowInstance;
                     showWorkspaceConfigDialog();
                 });
                 var deleteButton = $('<aui-item-link >Remove</aui-item-link>').click(function (e) {
-                    removeRow(instance);
+                    removeRow(rowInstance);
                 });
 
                 //add action button
-                var dropdownId = "split-container-dropdown" + instance.model.id;
+                var dropdownId = "split-container-dropdown" + rowInstance.model.id;
                 var topLevelEl = $('<div class="aui-buttons">' +
-                    '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact" aria-controls="' + dropdownId + '">...</button></div>');
+                    '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact aui-dropdown2-trigger-arrowless" aria-controls="' + dropdownId + '">...</button></div>');
                 var bottomLevelEl = $('<aui-dropdown-menu id="' + dropdownId + '"></aui-dropdown-menu>').append(editButton, deleteButton);
                 var parentEl = $('<div></div>').append(topLevelEl, bottomLevelEl);
                 return parentEl;
@@ -113,6 +113,27 @@ function activateOctaneConfigPage() {
             }
         });
     }
+
+    function removeRow(row){
+        /*$("#workspace-to-delete").text(row.model.attributes.workspaceName);//update workspace name in dialog text
+
+        AJS.dialog2("#warning-dialog").show();
+        AJS.$("#warning-dialog-confirm").click(function (e) {
+            e.preventDefault();
+            AJS.dialog2("#warning-dialog").hide();
+
+            $.ajax({url: octanePluginContext.configRestTable.options.resources.self +"/" + row.model.id, type: "DELETE",
+            }).done(function () {
+                octanePluginContext.configRestTable.removeRow(row);
+            });
+        });
+
+        AJS.$("#warning-dialog-cancel").click(function (e) {
+            e.preventDefault();
+            AJS.dialog2("#warning-dialog").hide();
+        });*/
+    }
+
 
 
 

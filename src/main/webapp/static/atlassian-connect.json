@@ -51,7 +51,7 @@
         "key": "space-dialog-key",
         "options":{
           "header":{
-            "value":"Example Dialog"
+            "value":"Space configuration"
           }
         }
       }
