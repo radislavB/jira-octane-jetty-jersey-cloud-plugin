@@ -88,11 +88,10 @@ function activateOctaneConfigPage() {
 
                 var editButtonEl = $('<button class=\"aui-button aui-button-link\">Edit</button>').click(function (e) {
                     showSpaceConfigurationDialog(rowInstance);
-                    console.log("edit clicked");
                 });
 
                 var testConnectionButtonEl = $('<button class=\"aui-button aui-button-link\">Test Connection</button>').click(function (e) {
-                    console.log("test connection clicked");
+                    testConnection(rowInstance);
                 });
 
                 var deleteButtonEl = $('<button class=\"aui-button aui-button-link\">Delete</button>').click(function (e) {
@@ -163,6 +162,40 @@ function activateOctaneConfigPage() {
         });
     }
 
+    function testConnection(row) {
+
+        var statusEl = row.$el.children().eq(4);
+        var firstChild = statusEl.children().first();
+        if (!firstChild.hasClass("aui-icon")) {
+            firstChild.remove();
+            statusEl.append("<span class=\"aui-icon aui-icon-small space-save-status\"></span>");
+            firstChild = statusEl.children().first();
+        }
+        console.log("testConnection", statusEl);
+        console.log("firstChild", firstChild);
+
+        hostAjaxPost("/rest/configuration/spaces/test-connection", JSON.stringify(row.model.attributes))
+            .then(function () {
+                console.log("test connection is successful");
+                firstChild.addClass("aui-iconfont-successful-build");
+            }).catch(function (error) {
+            console.log("test connection failed ", error.message);
+        });
+    }
+
+    function setRowStatus() {
+
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     function reloadTable(table) {
         console.log("reloadTable");
         table.$tbody.empty();
