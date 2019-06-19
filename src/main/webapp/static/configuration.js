@@ -129,15 +129,31 @@ function activateOctaneConfigPage() {
 
     function removeSpace(table, row) {
         console.log(row);
-        var text = "Are you sure you want to delete space configuration '" + row.model.attributes.label + "' ?";
+        var spaceName = row.model.attributes.label;
+        var text = "Are you sure you want to delete space configuration '" + spaceName + "' ?";
         confirmDelete(text).then(function (isConfirmed) {
             if (isConfirmed) {
                 hostAjaxDelete(table.options.resources.self + row.model.id)
                     .then(function (data) {
                         table.removeRow(row);
-                    });
+                        showFlag("Space configuration '" + spaceName + "' was deleted successfully.");
+                    }).catch(function (error) {
+                        console.log(error);
+                        showFlag("Failed to delete space  configuration '" + spaceName + "' : " + error.message, "error");
+                });
             }
+        });
+    }
 
+    function showFlag(text, type) {
+        if (!type) {
+            type = 'success';
+        }
+        var close = (type === "success") ? "auto" : "manual";
+        var flag = AP.flag.create({
+            close: close,
+            body: text,
+            type: type
         });
     }
 
@@ -158,14 +174,11 @@ function activateOctaneConfigPage() {
         });
     }
 
-
     function reloadTable(table) {
         console.log("reloadTable");
         table.$tbody.empty();
         table.fetchInitialResources();
-
     }
-
 
     function loadWorkspaces(callback) {
 

@@ -18,6 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,6 +53,14 @@ public class ConfigurationResource {
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
+    }
+
+    @DELETE
+    @Path("spaces/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean deleteSpaceConfiguration(@PathParam("id") String id) throws IOException {
+        boolean isRemoved = ConfigurationManager.getInstance().removeSpaceConfiguration(getTenantId(), id);
+        return isRemoved;
     }
 
     @POST

@@ -28,20 +28,19 @@ function hostAjaxSend(requestType, url, data) {
                     resolve(result);
                 },
                 error: function (xhr) { // if error occurred
-                    console.log("error", requestType, url, xhr.statusText, xhr.responseText);
-                    var reason = new Error(xhr.responseText);
-                    reject(reason);
+                    console.log("error", requestType, url, "status : ", xhr.statusText, "message : ", xhr.responseText);
+                    reject(Error(!xhr.responseText ? xhr.statusText : xhr.responseText));
                 }
             });
         });
     });
 }
 
-function validateMissingRequiredAndUpdateErrorField(value, errorSelector){
+function validateMissingRequiredAndUpdateErrorField(value, errorSelector) {
     return validateConditionAndUpdateErrorField(value, 'Value is missing', errorSelector);
 }
 
-function validateConditionAndUpdateErrorField(condition, errorMessage, errorSelector){
+function validateConditionAndUpdateErrorField(condition, errorMessage, errorSelector) {
     if (!condition) {
         $(errorSelector).text(errorMessage);
         return false;
