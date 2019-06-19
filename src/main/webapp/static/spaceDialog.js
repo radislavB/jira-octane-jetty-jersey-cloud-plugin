@@ -54,7 +54,7 @@ function testConnection() {
     if (!validateRequiredFieldsFilled()) {
         return;
     }
-    setStatus("Test connection ...")
+    setStatus("Test connection ...");
     hostAjaxPost("/rest/configuration/test", getPropertiesAsJson())
         .then(function () {
             setStatus("Test connection is successful", "success");
@@ -67,7 +67,7 @@ function saveSpaceConfig() {
     if (!validateRequiredFieldsFilled()) {
         return;
     }
-    setStatus("Saving ...")
+    setStatus("Saving ...");
     hostAjaxPost("/rest/configuration/spaces", getPropertiesAsJson())
         .then(function (result) {
             setStatus("Saved successfully", "success");

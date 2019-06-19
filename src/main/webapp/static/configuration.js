@@ -13,13 +13,13 @@ function activateOctaneConfigPage() {
         //configureSpaceButtons();
         //configureWorkspaceButtons();
 
-    };
+    }
 
     function configureCreateSpaceButton() {
 
         var dataForDialog = {
-            url1: 'url1-text'
-        }
+            url1: "url1-text"
+        };
 
         function onCloseCallback(result) {
             console.log("onCloseCallback : ", result);
@@ -81,7 +81,7 @@ function activateOctaneConfigPage() {
                 });
 
                 var deleteButtonEl = $('<button class=\"aui-button aui-button-link\">Delete</button>').click(function (e) {
-                    removeSpace(rowInstance);
+                    removeSpace(spaceTable, rowInstance);
                 });
 
                 /*var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
@@ -107,7 +107,7 @@ function activateOctaneConfigPage() {
             el: jQuery("#space-table"),
             resources: {
                 all: loadSpaces,
-                //self: "/resources/configuration/workspaces/self"
+                self: "/rest/configuration/spaces/"
             },
             columns: [
                 {id: "label", header: "Label"},
@@ -127,46 +127,33 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function removeSpace(row) {
+    function removeSpace(table, row) {
+        console.log(row);
         var text = "Are you sure you want to delete space configuration '" + row.model.attributes.label + "' ?";
-        confirm("Delete", text, "Delete").then(function (data) {
-            console.log("removeRow, confirmation", data);
+        confirmDelete(text).then(function (isConfirmed) {
+            if (isConfirmed) {
+                hostAjaxDelete(table.options.resources.self + row.model.id)
+                    .then(function (data) {
+                        table.removeRow(row);
+                    });
+            }
+
         });
-        /*$("#workspace-to-delete").text(row.model.attributes.workspaceName);//update workspace name in dialog text
-
-        AJS.dialog2("#warning-dialog").show();
-        AJS.$("#warning-dialog-confirm").click(function (e) {
-            e.preventDefault();
-            AJS.dialog2("#warning-dialog").hide();
-
-            $.ajax({url: octanePluginContext.configRestTable.options.resources.self +"/" + row.model.id, type: "DELETE",
-            }).done(function () {
-                octanePluginContext.configRestTable.removeRow(row);
-            });
-        });
-
-        AJS.$("#warning-dialog-cancel").click(function (e) {
-            e.preventDefault();
-            AJS.dialog2("#warning-dialog").hide();
-        });*/
     }
 
-    function confirm(confirmationTitle, confirmationText, submitButtonText) {
+    function confirmDelete(confirmationText) {
         return new Promise(function (resolve, reject) {
             function onCloseCallback(result) {
                 var output = (result && result.confirmed) ? true : false;
-                console.log("onCloseCallback", result, output);
                 resolve(output);
             }
 
             AP.dialog.create({
                 key: 'confirmation-dialog-key',
-                width: '450px',
-                height: '100px',
-                chrome: true,
-                customData: {confirmationText: confirmationText},
-                submitText: submitButtonText,
-                header: confirmationTitle
+                width: '500px',
+                height: '300px',
+                chrome: false,
+                customData: {confirmationText: confirmationText}
             }).on("close", onCloseCallback);
         });
     }
@@ -193,7 +180,7 @@ function activateOctaneConfigPage() {
                 success: function (result) {
                     console.log("loadWorkspaces success : " + result);
                     if (callback && $.isFunction(callback)) {
-                        callback(result)
+                        callback(result);
                     }
 
                 },
@@ -283,6 +270,6 @@ function activateOctaneConfigPage() {
     }
 
     initConfigurationPage();
-};
+}
 
 

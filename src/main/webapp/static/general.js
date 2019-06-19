@@ -1,10 +1,12 @@
 function hostAjaxGet(url) {
-    console.log("hostAjaxGet");
     return hostAjaxSend('GET', url, "");
 }
 
+function hostAjaxDelete(url) {
+    return hostAjaxSend('DELETE', url, "");
+}
+
 function hostAjaxPost(url, data) {
-    console.log('post');
     return hostAjaxSend('POST', url, data);
 }
 
@@ -12,7 +14,6 @@ function hostAjaxSend(requestType, url, data) {
     console.log(requestType, ":", url);
     return new Promise(function (resolve, reject) {
         AP.context.getToken(function (token) {
-            console.log("token received");
             $.ajax({
                 url: url,
                 type: requestType,

@@ -1,6 +1,6 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://68fa89d7.ngrok.io",
+  "baseUrl": "https://0a454363.ngrok.io",
   "version":"1.0.2",
   "name": "ALM Octane Quality Plugin for Jira Cloud",
 
@@ -9,7 +9,7 @@
     "url": "http://wwww.microfocus.com"
   },
   "links": {
-    "self": "https://68fa89d7.ngrok.io/static/atlassian-connect.json"
+    "self": "https://0a454363.ngrok.io/static/atlassian-connect.json"
   },
   "authentication": {
     "type": "jwt"

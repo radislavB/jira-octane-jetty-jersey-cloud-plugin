@@ -5,26 +5,39 @@
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
     <script src="general.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
 </head>
 <body style="background: none">
-<div id="confirmationText">Are you sure</div>
+<section class="aui-dialog2 aui-dialog2-small aui-dialog2-warning aui-layer">
+    <header class="aui-dialog2-header">
+        <h2 class="aui-dialog2-header-main">Delete</h2>
+    </header>
+    <div class="aui-dialog2-content">
+        <p id="confirmationText">...</p>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button id="confirm-button" class="aui-button aui-button-primary">Delete</button>
+            <button id="cancel-button" class="aui-button aui-button-link">Cancel</button>
+        </div>
+    </footer>
+</section>
 
-
-</div>
 </body>
 <script>
-    AP.dialog.disableCloseOnSubmit();
     AP.dialog.getCustomData(function (data) {
-        if(data && data.confirmationText){
+        if (data && data.confirmationText) {
             $("#confirmationText").text(data.confirmationText);
         }
     });
-    AP.events.on('dialog.button.click', function (data) {
-        console.log("confirmationDialog dialog.button.click", data.button);
-        if (data.button.name === 'submit') {
-            console.log("submit clicked");
-            AP.dialog.close({confirmed: true});
-        }
+    $("#confirm-button").click(function (e) {
+        e.preventDefault();
+        AP.dialog.close({confirmed: true});
+    });
+    $("#cancel-button").click(function (e) {
+        e.preventDefault();
+        AP.dialog.close({confirmed: false});
     });
 </script>
 </html>
