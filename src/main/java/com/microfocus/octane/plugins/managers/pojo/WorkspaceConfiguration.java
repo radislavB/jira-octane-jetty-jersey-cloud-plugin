@@ -16,10 +16,11 @@
 package com.microfocus.octane.plugins.managers.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WorkspaceConfiguration {
 
     private long workspaceId;

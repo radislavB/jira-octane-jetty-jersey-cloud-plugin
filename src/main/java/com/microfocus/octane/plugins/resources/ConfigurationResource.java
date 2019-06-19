@@ -47,7 +47,7 @@ public class ConfigurationResource {
     public Response addSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
             SpaceConfiguration spaceConfig = ConfigConversionUtil.convert(spaceConfigurationOutgoing);
-            validateSpaceConfigurationConnectivity(spaceConfig);
+            //validateSpaceConfigurationConnectivity(spaceConfig);
             ConfigurationManager.getInstance().addSpaceConfiguration(getTenantId(), spaceConfig);
             return Response.ok(ConfigConversionUtil.convert(spaceConfig)).build();
         } catch (Exception e) {

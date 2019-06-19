@@ -23,6 +23,9 @@ function activateOctaneConfigPage() {
 
         function onCloseCallback(result) {
             console.log("onCloseCallback : ", result);
+            if (result && result.entity) {
+                spaceTable.addRow(result.entity);
+            }
         }
 
         //https://developer.atlassian.com/cloud/jira/software/jsapi/classes/dialogoptions/
@@ -110,7 +113,7 @@ function activateOctaneConfigPage() {
                 self: "/rest/configuration/spaces/"
             },
             columns: [
-                {id: "label", header: "Label"},
+                {id: "name", header: "Name"},
                 {id: "location", header: "Location"},
                 {id: "clientId", header: "Client Id"}
             ],
@@ -129,7 +132,7 @@ function activateOctaneConfigPage() {
 
     function removeSpace(table, row) {
         console.log(row);
-        var spaceName = row.model.attributes.label;
+        var spaceName = row.model.attributes.name;
         var text = "Are you sure you want to delete space configuration '" + spaceName + "' ?";
         confirmDelete(text).then(function (isConfirmed) {
             if (isConfirmed) {
@@ -138,22 +141,10 @@ function activateOctaneConfigPage() {
                         table.removeRow(row);
                         showFlag("Space configuration '" + spaceName + "' was deleted successfully.");
                     }).catch(function (error) {
-                        console.log(error);
-                        showFlag("Failed to delete space  configuration '" + spaceName + "' : " + error.message, "error");
+                    console.log(error);
+                    showFlag("Failed to delete space  configuration '" + spaceName + "' : " + error.message, "error");
                 });
             }
-        });
-    }
-
-    function showFlag(text, type) {
-        if (!type) {
-            type = 'success';
-        }
-        var close = (type === "success") ? "auto" : "manual";
-        var flag = AP.flag.create({
-            close: close,
-            body: text,
-            type: type
         });
     }
 
@@ -166,7 +157,7 @@ function activateOctaneConfigPage() {
 
             AP.dialog.create({
                 key: 'confirmation-dialog-key',
-                width: '500px',
+                width: '550px',
                 height: '300px',
                 chrome: false,
                 customData: {confirmationText: confirmationText}

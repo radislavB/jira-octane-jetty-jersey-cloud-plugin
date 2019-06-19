@@ -75,16 +75,16 @@ public class ConfigConversionUtil {
         if (StringUtils.isEmpty(spaceConfigurationOutgoing.getLocation())) {
             throw new IllegalArgumentException("Location URL is required");
         } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getClientId())) {
-            throw new IllegalArgumentException( "Client ID is required");
+            throw new IllegalArgumentException("Client ID is required");
         } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getClientSecret())) {
-            throw new IllegalArgumentException( "Client secret is required");
-        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getLabel())) {
-            throw new IllegalArgumentException("Label is required");
+            throw new IllegalArgumentException("Client secret is required");
+        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getName())) {
+            throw new IllegalArgumentException("Name is required");
         }
 
         SpaceConfiguration spaceConf = new SpaceConfiguration();
         spaceConf.setId(spaceConfigurationOutgoing.getId());
-        spaceConf.setLabel(spaceConfigurationOutgoing.getLabel());
+        spaceConf.setName(spaceConfigurationOutgoing.getName());
         spaceConf.setLocation(spaceConfigurationOutgoing.getLocation());
         spaceConf.setClientSecret(spaceConfigurationOutgoing.getClientSecret());
         spaceConf.setClientId(spaceConfigurationOutgoing.getClientId());
@@ -95,7 +95,7 @@ public class ConfigConversionUtil {
     public static SpaceConfigurationOutgoing convert(SpaceConfiguration internalSpaceConf) {
         SpaceConfigurationOutgoing spaceConf = new SpaceConfigurationOutgoing();
         spaceConf.setId(internalSpaceConf.getId());
-        spaceConf.setLabel(internalSpaceConf.getLabel());
+        spaceConf.setName(internalSpaceConf.getName());
         spaceConf.setLocation(internalSpaceConf.getLocation());
         spaceConf.setClientSecret(internalSpaceConf.getClientSecret());
         spaceConf.setClientId(internalSpaceConf.getClientId());

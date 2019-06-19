@@ -36,6 +36,18 @@ function hostAjaxSend(requestType, url, data) {
     });
 }
 
+function showFlag(text, type) {
+    if (!type) {
+        type = 'success';
+    }
+    var close = (type === "success") ? "auto" : "manual";
+    var flag = AP.flag.create({
+        close: close,
+        body: text,
+        type: type
+    });
+}
+
 function validateMissingRequiredAndUpdateErrorField(value, errorSelector) {
     return validateConditionAndUpdateErrorField(value, 'Value is missing', errorSelector);
 }

@@ -14,7 +14,7 @@ AP.events.on('dialog.button.click', function (data) {
 
 function getPropertiesAsJson() {
     var data = {
-        label: $("#label").attr("value"),
+        name: $("#name").attr("value"),
         location: $("#location").attr("value"),
         clientId: $("#clientId").attr("value"),
         clientSecret: $("#clientSecret").attr("value")
@@ -32,7 +32,7 @@ function validateRequiredFieldsFilled() {
     }
 
     var validationFailed = !validateMissingRequiredAndUpdateErrorField($("#location").val(), "#locationError");
-    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#label").val(), "#labelError") || validationFailed;
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#name").val(), "#nameError") || validationFailed;
     validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientId").val(), "#clientIdError") || validationFailed;
     validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientSecret").val(), "#clientSecretError") || validationFailed;
     return !validationFailed;
@@ -71,13 +71,7 @@ function saveSpaceConfig() {
     hostAjaxPost("/rest/configuration/spaces", getPropertiesAsJson())
         .then(function (result) {
             setStatus("Saved successfully", "success");
-
-            var flag = AP.flag.create({
-                //title: 'Saving',
-                close: 'auto',
-                body: 'Space configuration saved successfully.',
-                type: 'success'
-            });
+            showFlag('Space configuration saved successfully.');
 
             AP.dialog.close({entity: result});
         }).catch(function (error) {

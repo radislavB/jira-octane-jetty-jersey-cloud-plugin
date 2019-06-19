@@ -16,13 +16,15 @@
 package com.microfocus.octane.plugins.managers.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SpaceConfiguration {
 
     private String id;
-    private String label;
+    private String name;
     private String location;
     private LocationParts locationParts;
     private String clientId;
@@ -78,11 +80,11 @@ public class SpaceConfiguration {
         this.locationParts = locationParts;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 }
