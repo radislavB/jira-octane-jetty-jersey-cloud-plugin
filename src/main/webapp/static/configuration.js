@@ -16,38 +16,49 @@ function activateOctaneConfigPage() {
     }
 
     function configureCreateSpaceButton() {
+        AJS.$("#create-space-configuration").click(function () {
+            showSpaceConfigurationDialog();
+        });
+    }
 
-        var dataForDialog = {
-            url1: "url1-text"
-        };
+    function showSpaceConfigurationDialog(rowForEdit) {
+
+        var editMode = !!rowForEdit;
+        var editEntity = editMode ? rowForEdit.model.attributes : null;
 
         function onCloseCallback(result) {
-            console.log("onCloseCallback : ", result);
             if (result && result.entity) {
-                spaceTable.addRow(result.entity);
+                if (editMode) {
+                    var rowModel = rowForEdit.model.attributes;
+                    rowModel.location = result.entity.location;
+                    rowModel.name = result.entity.name;
+                    rowModel.clientId = result.entity.clientId;
+                    rowModel.clientSecret = result.entity.clientSecret;
+                    rowForEdit.render();
+                } else {
+                    spaceTable.addRow(result.entity);
+                }
+
             }
         }
 
-        //https://developer.atlassian.com/cloud/jira/software/jsapi/classes/dialogoptions/
-        //https://developer.atlassian.com/cloud/jira/software/modules/dialog/
-        AJS.$("#create-space-configuration").click(function () {
-            AP.dialog.create({
-                key: 'space-dialog-key',
-                width: '640px',
-                height: '340px',
-                chrome: true,
-                customData: dataForDialog,
-                header: 'Create space configuration',
-                submitText: 'Save',
-                buttons: [
-                    {
-                        text: 'Test connection',
-                        identifier: 'test_connection'
-                    }
-                ]
-            }).on("close", onCloseCallback);
-        });
+        AP.dialog.create({
+            key: 'space-dialog-key',
+            width: '640px',
+            height: '340px',
+            chrome: true,
+            customData: {editMode: editMode, entity: editEntity},
+            header: 'Create space configuration',
+            submitText: 'Save',
+            buttons: [
+                {
+                    text: 'Test connection',
+                    identifier: 'test_connection'
+                }
+            ]
+        }).on("close", onCloseCallback);
     }
+
 
     //view that show list items in stacked format
     var ListReadView = AJS.RestfulTable.CustomReadView.extend({
@@ -76,6 +87,7 @@ function activateOctaneConfigPage() {
                 var rowInstance = this;
 
                 var editButtonEl = $('<button class=\"aui-button aui-button-link\">Edit</button>').click(function (e) {
+                    showSpaceConfigurationDialog(rowInstance);
                     console.log("edit clicked");
                 });
 
@@ -87,20 +99,6 @@ function activateOctaneConfigPage() {
                     removeSpace(spaceTable, rowInstance);
                 });
 
-                /*var editButton = $('<aui-item-link >Edit</aui-item-link>').click(function (e) {
-                    octanePluginContext.currentRow = rowInstance;
-                    showWorkspaceConfigDialog();
-                });
-                var deleteButton = $('<aui-item-link >Remove</aui-item-link>').click(function (e) {
-                    removeRow(rowInstance);
-                });
-
-                //add action button
-                var dropdownId = "split-container-dropdown" + rowInstance.model.id;
-                var topLevelEl = $('<div class="aui-buttons">' +
-                    '<button class="aui-button aui-dropdown2-trigger aui-button-split-more aui-button-subtle aui-button-compact" aria-controls="' + dropdownId + '">...</button></div>');
-                var bottomLevelEl = $('<aui-dropdown-menu id="' + dropdownId + '"></aui-dropdown-menu>').append(editButton, deleteButton);
-                var parentEl = $('<div></div>').append(topLevelEl, bottomLevelEl);*/
                 var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl, testConnectionButtonEl);
                 return parentEl;
             }

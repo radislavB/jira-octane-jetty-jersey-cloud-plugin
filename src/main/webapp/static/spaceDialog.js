@@ -1,27 +1,41 @@
 var validateRequiredFieldsFilledAuto = false;
+var customData;
 AP.dialog.disableCloseOnSubmit();
-AP.dialog.getCustomData(function (customData) {
-    console.log("received custom data2", customData);
+AP.dialog.getCustomData(function (data) {
+    customData = data;
+    if (isEditMode()) {
+        $("#name").val(customData.entity.name);
+        $("#location").val(customData.entity.location);
+        $("#clientId").val(customData.entity.clientId);
+        $("#clientSecret").val(customData.entity.clientSecret);
+    }
 });
+
 AP.events.on('dialog.button.click', function (data) {
     console.log("SpaceDialog dialog.button.click", data.button);
     if (data.button.name === 'submit') {
-        saveSpaceConfig();
+        submit();
     } else if (data.button.name === 'test_connection') {
         testConnection();
     }
 });
 
-function getPropertiesAsJson() {
+function getProperties() {
     var data = {
         name: $("#name").attr("value"),
         location: $("#location").attr("value"),
         clientId: $("#clientId").attr("value"),
         clientSecret: $("#clientSecret").attr("value")
     };
-    return JSON.stringify(data);
+    if (isEditMode()) {
+        data.id = customData.entity.id;
+    }
+    return data;
 }
 
+function isEditMode() {
+    return customData && customData.editMode && customData.entity;
+}
 
 function validateRequiredFieldsFilled() {
     if (!validateRequiredFieldsFilledAuto) {
@@ -55,7 +69,7 @@ function testConnection() {
         return;
     }
     setStatus("Test connection ...");
-    hostAjaxPost("/rest/configuration/test", getPropertiesAsJson())
+    hostAjaxPost("/rest/configuration/spaces/test-connection", JSON.stringify(getProperties()))
         .then(function () {
             setStatus("Test connection is successful", "success");
         }).catch(function (error) {
@@ -63,16 +77,25 @@ function testConnection() {
     });
 }
 
-function saveSpaceConfig() {
+function submit() {
     if (!validateRequiredFieldsFilled()) {
         return;
     }
     setStatus("Saving ...");
-    hostAjaxPost("/rest/configuration/spaces", getPropertiesAsJson())
-        .then(function (result) {
-            setStatus("Saved successfully", "success");
-            showFlag('Space configuration saved successfully.');
+    var entityProperties = getProperties();
+    var requestType;
+    var url;
+    if (isEditMode()) {
+        requestType = "PUT";
+        url = "/rest/configuration/spaces/" + entityProperties.id;
+    } else {
+        requestType = "POST";
+        url = "/rest/configuration/spaces";
+    }
 
+    hostAjaxSend(requestType, url, JSON.stringify(entityProperties))
+        .then(function (result) {
+            showFlag('Space configuration saved successfully.');
             AP.dialog.close({entity: result});
         }).catch(function (error) {
         setStatus("Failed to save : " + error.message, "failed");

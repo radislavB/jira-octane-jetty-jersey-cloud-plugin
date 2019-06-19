@@ -4,23 +4,20 @@ package com.microfocus.octane.plugins.resources;
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
-import com.microfocus.octane.plugins.octane.rest.RestConnector;
-import com.microfocus.octane.plugins.octane.rest.UrlConstants;
-import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
-import com.microfocus.octane.plugins.octane.rest.query.OctaneQueryBuilder;
-import com.microfocus.octane.plugins.utils.ConfigConversionUtil;
-import com.microfocus.octane.plugins.utils.JsonUtils;
+import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.PluginConstants;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.net.ssl.SSLHandshakeException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -35,7 +32,7 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<SpaceConfigurationOutgoing> getAllSpaces() {
         List<SpaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId())
-                .stream().map(c -> ConfigConversionUtil.convert(c)).collect(Collectors.toList());
+                .stream().map(c -> ConfigurarionUtil.convert(c)).collect(Collectors.toList());
 
         return spaces;
     }
@@ -46,14 +43,35 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
-            SpaceConfiguration spaceConfig = ConfigConversionUtil.convert(spaceConfigurationOutgoing);
-            //validateSpaceConfigurationConnectivity(spaceConfig);
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, true);
+            ConfigurarionUtil.validateSpaceUrlIsUnique(getTenantId(), spaceConfig);
+            ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
             ConfigurationManager.getInstance().addSpaceConfiguration(getTenantId(), spaceConfig);
-            return Response.ok(ConfigConversionUtil.convert(spaceConfig)).build();
+            return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
     }
+
+    @PUT
+    @Path("spaces/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateSpaceConfiguration(@PathParam("id") String id, SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
+        try {
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, false);
+            if (!spaceConfig.getId().equals(spaceConfig.getId())) {
+                return Response.status(Response.Status.CONFLICT).entity("Space id in entity should be equal to id in path parameter").build();
+            }
+            ConfigurarionUtil.validateSpaceUrlIsUnique(getTenantId(), spaceConfig);
+            ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
+            ConfigurationManager.getInstance().updateSpaceConfiguration(getTenantId(), spaceConfig);
+            return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+    }
+
 
     @DELETE
     @Path("spaces/{id}")
@@ -64,13 +82,14 @@ public class ConfigurationResource {
     }
 
     @POST
-    @Path("test")
+    @Path("spaces/test-connection")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response testConnection(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
-            SpaceConfiguration spaceConfig = ConfigConversionUtil.convert(spaceConfigurationOutgoing);
-            validateSpaceConfigurationConnectivity(spaceConfig);
+            boolean isNewConfig = StringUtils.isEmpty(spaceConfigurationOutgoing.getId());
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, isNewConfig);
+            ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
             return Response.ok().build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
@@ -108,52 +127,4 @@ public class ConfigurationResource {
         return (String) httpRequest.getAttribute(PluginConstants.TENANT_ID);
     }
 
-    private void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {
-        try {
-
-                /*String secret = OctaneConfigurationManager.PASSWORD_REPLACE.equals(spaceModel.getClientSecret()) ?
-                        OctaneConfigurationManager.getInstance().getConfiguration().getClientSecret() :
-                        spaceModel.getClientSecret();*/
-            RestConnector restConnector = new RestConnector();
-            restConnector.setBaseUrl(spaceConfig.getLocationParts().getBaseUrl());
-            restConnector.setCredentials(spaceConfig.getClientId(), spaceConfig.getClientSecret());
-            boolean isConnected = restConnector.login();
-            if (!isConnected) {
-                throw new IllegalArgumentException("Failed to authenticate.");
-            } else {
-                String getWorspacesUrl = String.format(UrlConstants.PUBLIC_API_SHAREDSPACE_LEVEL_ENTITIES, spaceConfig.getLocationParts().getSpaceId(), "workspaces");
-                String queryString = OctaneQueryBuilder.create().addSelectedFields("id").addPageSize(1).build();
-                Map<String, String> headers = new HashMap<>();
-                headers.put(RestConnector.HEADER_ACCEPT, RestConnector.HEADER_APPLICATION_JSON);
-
-
-                String entitiesCollectionStr = restConnector.httpGet(getWorspacesUrl, Arrays.asList(queryString), headers).getResponseData();
-
-                OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
-                if (workspaces.getData().isEmpty()) {
-                    throw new IllegalArgumentException("Incorrect shared space ID.");
-                }
-            }
-        } catch (Exception exc) {
-            String myErrorMessage = null;
-            if (exc.getMessage().contains("platform.not_authorized")) {
-                myErrorMessage = "Ensure your credentials are correct.";
-            } else if (exc.getMessage().contains("SharedSpaceNotFoundException")) {
-                myErrorMessage = "Shared space '" + spaceConfig.getLocationParts().getSpaceId() + "' does not exist.";
-            } else if (exc.getCause() != null && exc.getCause() instanceof SSLHandshakeException && exc.getCause().getMessage().contains("Received fatal alert")) {
-                myErrorMessage = "Network exception, proxy settings may be missing.";
-            } else if (exc.getMessage().startsWith("Connection timed out")) {
-                myErrorMessage = "Timed out exception, proxy settings may be misconfigured.";
-            } else if (exc.getCause() != null && exc.getCause() instanceof UnknownHostException) {
-                myErrorMessage = "Location is not available.";
-            } else {
-                myErrorMessage = exc.getMessage();
-                //errorMsg = "Exception " + exc.getClass().getName() + " : " + exc.getMessage();
-                        /*if (exc.getCause() != null) {
-                            errorMsg += " . Cause : " + exc.getCause();//"Validate that location is correct.";
-                        }*/
-            }
-            throw new IllegalArgumentException(myErrorMessage);
-        }
-    }
 }

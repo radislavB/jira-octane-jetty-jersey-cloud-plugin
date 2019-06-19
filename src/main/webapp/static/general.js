@@ -10,6 +10,10 @@ function hostAjaxPost(url, data) {
     return hostAjaxSend('POST', url, data);
 }
 
+function hostAjaxPut(url, data) {
+    return hostAjaxSend('PUT', url, data);
+}
+
 function hostAjaxSend(requestType, url, data) {
     console.log(requestType, ":", url);
     return new Promise(function (resolve, reject) {
