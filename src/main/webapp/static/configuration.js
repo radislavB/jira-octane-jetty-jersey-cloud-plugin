@@ -207,9 +207,7 @@ function activateOctaneConfigPage() {
                 self: "/rest/configuration/workspaces/"
             },
             columns: [
-                {id: "id", header: "Id"},
-                {id: "spaceId", header: "Space Id"},
-                {id: "spaceName", header: "Space Name"},
+                {id: "spaceName", header: "Space"},
                 {id: "workspaceId", header: "Workspace Id"},
                 {id: "workspaceName", header: "Workspace Name"},
                 {id: "octaneUdf", header: "Mapping Field"},

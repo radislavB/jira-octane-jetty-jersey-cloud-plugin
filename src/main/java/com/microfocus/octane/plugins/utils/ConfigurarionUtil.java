@@ -124,7 +124,13 @@ public class ConfigurarionUtil {
         return spaceConf;
     }
 
-    public static void validateSpaceUrlIsUnique(String clientKey, SpaceConfiguration spaceConfiguration) {
+    public static void doFullSpaceConfigurationValidation(String clientKey, SpaceConfiguration spaceConfiguration){
+        validateSpaceUrlIsUnique(clientKey,spaceConfiguration);
+        validateSpaceNameIsUnique(clientKey,spaceConfiguration);
+        validateSpaceConfigurationConnectivity(spaceConfiguration);
+    }
+
+    private static void validateSpaceUrlIsUnique(String clientKey, SpaceConfiguration spaceConfiguration) {
         Optional<SpaceConfiguration> opt = ConfigurationManager.getInstance().getSpaceConfigurations(clientKey).stream()
                 .filter((s -> !s.getId().equals(spaceConfiguration.getId()) //don't check the same configuration
                         && s.getLocationParts().getKey().equals(spaceConfiguration.getLocationParts().getKey())))
@@ -134,7 +140,18 @@ public class ConfigurarionUtil {
             String msg = String.format("Space is already defined in space configuration '%s'", opt.get().getName());
             throw new IllegalArgumentException(msg);
         }
+    }
 
+    private static void validateSpaceNameIsUnique(String clientKey, SpaceConfiguration spaceConfiguration) {
+        Optional<SpaceConfiguration> opt = ConfigurationManager.getInstance().getSpaceConfigurations(clientKey).stream()
+                .filter((s -> !s.getName().equals(spaceConfiguration.getName()) //don't check the same configuration
+                        && s.getLocationParts().getKey().equals(spaceConfiguration.getLocationParts().getKey())))
+                .findFirst();
+
+        if (opt.isPresent()) {
+            String msg = String.format("Space name '%s' is already used", opt.get().getName());
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     public static void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {

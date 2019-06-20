@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WorkspaceConfiguration {
+public class WorkspaceConfigurationOutgoing {
 
     private String id;
     private long workspaceId;
@@ -29,6 +29,7 @@ public class WorkspaceConfiguration {
     private List<String> octaneEntityTypes;
     private List<KeyValueItem> jiraIssueTypes;
     private List<String> jiraProjects;
+    private KeyValueItem spaceConfiguration;
 
     public long getWorkspaceId() {
         return workspaceId;
@@ -84,5 +85,13 @@ public class WorkspaceConfiguration {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public KeyValueItem getSpaceConfiguration() {
+        return spaceConfiguration;
+    }
+
+    public void setSpaceConfiguration(KeyValueItem spaceConfiguration) {
+        this.spaceConfiguration = spaceConfiguration;
     }
 }

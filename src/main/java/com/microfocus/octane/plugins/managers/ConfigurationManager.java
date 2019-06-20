@@ -28,17 +28,16 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
     }
 
     public SpaceConfiguration updateSpaceConfiguration(String clientKey, SpaceConfiguration spaceConfiguration) throws IOException {
-        Optional<SpaceConfiguration> opt = getSpaceConfigurationById(clientKey,spaceConfiguration.getId());
-        if(opt.isPresent()){
-            opt.get().setName(spaceConfiguration.getName());
-            opt.get().setLocation(spaceConfiguration.getLocation());
-            opt.get().setLocationParts(spaceConfiguration.getLocationParts());
-            opt.get().setClientId(spaceConfiguration.getClientId());
-            opt.get().setClientSecret(spaceConfiguration.getClientSecret());
-            save(clientKey, getItemOrCreateNew(clientKey));
-            return spaceConfiguration;
-        }
-        return null;
+        SpaceConfiguration conf = getSpaceConfigurationByIdOrThrowException(clientKey, spaceConfiguration.getId());
+
+        conf.setName(spaceConfiguration.getName());
+        conf.setLocation(spaceConfiguration.getLocation());
+        conf.setLocationParts(spaceConfiguration.getLocationParts());
+        conf.setClientId(spaceConfiguration.getClientId());
+        conf.setClientSecret(spaceConfiguration.getClientSecret());
+        save(clientKey, getItemOrCreateNew(clientKey));
+        return conf;
+
     }
 
     public boolean removeSpaceConfiguration(String clientKey, String spaceConfigurationId) throws IOException {
@@ -63,6 +62,18 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
             throw new IllegalArgumentException("Space configuration id should not be empty");
         }
         return getItemOrCreateNew(clientKey).getSpaces().stream().filter(c -> spaceConfigurationId.equals(c.getId())).findFirst();
+    }
+
+    public SpaceConfiguration getSpaceConfigurationByIdOrThrowException(String clientKey, String spaceConfigurationId) {
+        if (StringUtils.isEmpty(spaceConfigurationId)) {
+            throw new IllegalArgumentException("Space configuration id should not be empty");
+        }
+        Optional<SpaceConfiguration> opt = getItemOrCreateNew(clientKey).getSpaces().stream().filter(c -> spaceConfigurationId.equals(c.getId())).findFirst();
+        if (opt.isPresent()) {
+            return opt.get();
+        } else {
+            throw new RuntimeException(String.format("Space configuration '%s' not found", spaceConfigurationId));
+        }
     }
 
     @Override

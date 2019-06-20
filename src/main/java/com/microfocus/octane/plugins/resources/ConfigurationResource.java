@@ -44,8 +44,7 @@ public class ConfigurationResource {
     public Response addSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
             SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, true);
-            ConfigurarionUtil.validateSpaceUrlIsUnique(getTenantId(), spaceConfig);
-            ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
+            ConfigurarionUtil.doFullSpaceConfigurationValidation(getTenantId(), spaceConfig);
             ConfigurationManager.getInstance().addSpaceConfiguration(getTenantId(), spaceConfig);
             return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
         } catch (Exception e) {
@@ -63,8 +62,7 @@ public class ConfigurationResource {
             if (!spaceConfig.getId().equals(spaceConfig.getId())) {
                 return Response.status(Response.Status.CONFLICT).entity("Space id in entity should be equal to id in path parameter").build();
             }
-            ConfigurarionUtil.validateSpaceUrlIsUnique(getTenantId(), spaceConfig);
-            ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
+            ConfigurarionUtil.doFullSpaceConfigurationValidation(getTenantId(), spaceConfig);
             ConfigurationManager.getInstance().updateSpaceConfiguration(getTenantId(), spaceConfig);
             return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
         } catch (Exception e) {
