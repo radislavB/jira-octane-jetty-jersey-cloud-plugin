@@ -6,15 +6,9 @@ function activateOctaneConfigPage() {
 
     function initConfigurationPage() {
         configureCreateSpaceButton();
+        configureCreateWorkspaceButton();
         initSpaceTable();
         initWorkspaceTable();
-
-        //initWorkspaceTables();
-        //loadSpaceConfiguration();
-
-        //configureSpaceButtons();
-        //configureWorkspaceButtons();
-
     }
 
     function configureCreateSpaceButton() {
@@ -23,8 +17,13 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function showSpaceConfigurationDialog(rowForEdit) {
+    function configureCreateWorkspaceButton() {
+        AJS.$("#create-workspace-configuration").click(function () {
+            showWorkspaceConfigurationDialog();
+        });
+    }
 
+    function showSpaceConfigurationDialog(rowForEdit) {
         var editMode = !!rowForEdit;
         var editEntity = editMode ? rowForEdit.model.attributes : null;
         var header = editMode ? "Edit space configuration" : "Create space configuration";
@@ -220,8 +219,35 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function showWorkspaceConfigurationDialog() {
+    function showWorkspaceConfigurationDialog(rowForEdit) {
+        var editMode = !!rowForEdit;
+        var editEntity = editMode ? rowForEdit.model.attributes : null;
+        var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
 
+        function onCloseCallback(result) {
+            if (result && result.entity) {
+                console.log(result.entity);
+                /*if (editMode) {
+                    var rowModel = rowForEdit.model.attributes;
+                    rowModel.location = result.entity.location;
+                    rowModel.name = result.entity.name;
+                    rowModel.clientId = result.entity.clientId;
+                    rowModel.clientSecret = result.entity.clientSecret;
+                    rowForEdit.render();
+                } else {
+                    spaceTable.addRow(result.entity);
+                }*/
+
+            }
+        }
+
+        AP.dialog.create({
+            key: 'workspace-dialog-key',
+            width: '650px',
+            height: '540px',
+            chrome: false,
+            customData: {editMode: editMode, entity: editEntity, header: header},
+        }).on("close", onCloseCallback);
     }
 
     function removeWorkspaceConfiguration(row) {
@@ -235,41 +261,22 @@ function activateOctaneConfigPage() {
             });
     }
 
-
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
     function reloadTable(table) {
         console.log("reloadTable");
         table.$tbody.empty();
         table.fetchInitialResources();
     }
 
-    function loadSpaceConfiguration() {
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 
-        AP.context.getToken(function (token) {
-            $.ajax({
-                url: "/resources/configuration",
-                type: "GET",
-                //data: { testdata: "1234" },
-                dataType: "json",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "JWT " + token);
-                },
-                success: function (result) {
-                    console.log("success : " + result);
-                },
-                error: function (xhr) { // if error occurred
-                    console.log("error : " + xhr);
-                }
-            });
-        });
-    }
+
 
     function configureWorkspaceButtons() {
         AJS.$("#reload-workspaces").click(function () {
