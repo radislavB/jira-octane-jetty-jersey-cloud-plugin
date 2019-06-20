@@ -156,7 +156,7 @@ public class ConfigurarionUtil {
 
                 OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
                 if (workspaces.getData().isEmpty()) {
-                    throw new IllegalArgumentException("Incorrect shared space ID.");
+                    throw new IllegalArgumentException("Incorrect space ID.");
                 }
             }
         } catch (Exception exc) {
@@ -164,7 +164,7 @@ public class ConfigurarionUtil {
             if (exc.getMessage().contains("platform.not_authorized")) {
                 myErrorMessage = "Ensure your credentials are correct.";
             } else if (exc.getMessage().contains("SharedSpaceNotFoundException")) {
-                myErrorMessage = "Shared space '" + spaceConfig.getLocationParts().getSpaceId() + "' does not exist.";
+                myErrorMessage = "Space '" + spaceConfig.getLocationParts().getSpaceId() + "' does not exist.";
             } else if (exc.getCause() != null && exc.getCause() instanceof SSLHandshakeException && exc.getCause().getMessage().contains("Received fatal alert")) {
                 myErrorMessage = "Network exception, proxy settings may be missing.";
             } else if (exc.getMessage().startsWith("Connection timed out")) {
