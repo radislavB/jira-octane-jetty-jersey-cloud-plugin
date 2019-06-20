@@ -25,6 +25,7 @@ function activateOctaneConfigPage() {
 
         var editMode = !!rowForEdit;
         var editEntity = editMode ? rowForEdit.model.attributes : null;
+        var header = editMode ? "Edit space configuration" : "Create space configuration";
 
         function onCloseCallback(result) {
             if (result && result.entity) {
@@ -48,7 +49,7 @@ function activateOctaneConfigPage() {
             height: '340px',
             chrome: true,
             customData: {editMode: editMode, entity: editEntity},
-            header: 'Create space configuration',
+            header: header,
             submitText: 'Save',
             buttons: [
                 {
@@ -165,28 +166,21 @@ function activateOctaneConfigPage() {
     function testConnection(row) {
 
         var statusEl = row.$el.children().eq(4);
-        var firstChild = statusEl.children().first();
-        if (!firstChild.hasClass("aui-icon")) {
-            firstChild.remove();
-            statusEl.append("<span class=\"aui-icon aui-icon-small space-save-status\"></span>");
-            firstChild = statusEl.children().first();
-        }
-        console.log("testConnection", statusEl);
-        console.log("firstChild", firstChild);
+        var throbber = statusEl.children().first();
+        throbber.addClass("test-connection-status");
+        throbber.removeClass("test-connection-status-successful");
+        throbber.removeClass("test-connection-status-failed");
+        throbber.attr("title", "Testing connection ...");
 
         hostAjaxPost("/rest/configuration/spaces/test-connection", JSON.stringify(row.model.attributes))
             .then(function () {
-                console.log("test connection is successful");
-                firstChild.addClass("aui-iconfont-successful-build");
+                throbber.addClass("test-connection-status-successful");
+                throbber.attr("title", "Test connection is successful");
             }).catch(function (error) {
-            console.log("test connection failed ", error.message);
+            throbber.addClass("test-connection-status-failed");
+            throbber.attr("title", "Test connection is failed : " + error.message);
         });
     }
-
-    function setRowStatus() {
-
-    }
-
 
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

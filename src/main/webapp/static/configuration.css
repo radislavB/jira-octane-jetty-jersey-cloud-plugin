@@ -14,6 +14,19 @@ h3 {
     padding: 20px;
 }
 
+span.aui-restfultable-throbber.test-connection-status{
+    margin-top: 7px;
+    visibility: visible;
+    background-image: url(/static/wait.gif);
+}
+span.aui-restfultable-throbber.test-connection-status.test-connection-status-successful{
+    background-image: url(/static/icon-success.png);
+}
+
+span.aui-restfultable-throbber.test-connection-status.test-connection-status-failed{
+    background-image: url(/static/icon-error.png);
+}
+
 
 
 
