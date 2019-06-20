@@ -55,6 +55,14 @@
           }
         }
       },{
+        "url": "/static/workspaceDialog.html",
+        "key": "workspace-dialog-key",
+        "options":{
+          "header":{
+            "value":"Workspace configuration"
+          }
+        }
+      }, {
         "url": "/static/confirmationDialog.html",
         "key": "confirmation-dialog-key",
         "cacheable": true,
