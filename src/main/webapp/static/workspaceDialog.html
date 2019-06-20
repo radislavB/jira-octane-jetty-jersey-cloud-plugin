@@ -1,0 +1,44 @@
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
+    <link rel="stylesheet" href="general.css" media="all">
+
+    <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
+    <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
+    <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+    <script src="workspaceDialog.js"></script>
+    <script src="general.js"></script>
+</head>
+<body style="background: none">
+
+<section class="aui-dialog2 aui-dialog2-medium aui-layer">
+    <header class="aui-dialog2-header">
+        <h2 class="aui-dialog2-header-main">Save</h2>
+    </header>
+    <div class="aui-dialog2-content">
+        <form id="octane-admin" class="aui">
+            <div class="field-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="text medium-long-field required">
+                <div class="error" id="nameError"></div>
+                <div class="description">Name for space configuration</div>
+            </div>
+
+        </form>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button id="confirm-button" class="aui-button aui-button-primary">Save</button>
+            <button id="cancel-button" class="aui-button aui-button-link">Cancel</button>
+        </div>
+    </footer>
+</section>
+</body>
+<script>
+
+
+</script>
+</html>
