@@ -27,7 +27,9 @@ span.aui-restfultable-throbber.test-connection-status.test-connection-status-fai
     background-image: url(/static/icon-error.png);
 }
 
-
+#workspace-section-header{
+    margin-top: 40px;
+}
 
 
 

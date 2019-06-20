@@ -57,6 +57,7 @@
       },{
         "url": "/static/confirmationDialog.html",
         "key": "confirmation-dialog-key",
+        "cacheable": true,
         "options":{
           "header":{
             "value":"Confirmation"
