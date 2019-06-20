@@ -1,11 +1,13 @@
 function activateOctaneConfigPage() {
 
     var spaceTable;
+    var workspaceTable;
     var workspacesRestfulTable;
 
     function initConfigurationPage() {
         configureCreateSpaceButton();
-        initSpaceTables();
+        initSpaceTable();
+        initWorkspaceTable();
 
         //initWorkspaceTables();
         //loadSpaceConfiguration();
@@ -60,28 +62,14 @@ function activateOctaneConfigPage() {
         }).on("close", onCloseCallback);
     }
 
-
-    //view that show list items in stacked format
-    var ListReadView = AJS.RestfulTable.CustomReadView.extend({
-        render: function (self) {
-            var output = _.reduce(self.value, function (memo, current) {
-                return memo + '<li>' + current + '</li>';
-            }, '<ul class="simple-list">');
-            output += '</ul>';
-            return output;
-        }
-    });
-
-
     function loadSpaces(callback) {
-        console.log("loadSpaces");
         hostAjaxGet("/rest/configuration/spaces")
             .then(function (data) {
                 callback(data);
             });
     }
 
-    function initSpaceTables() {
+    function initSpaceTable() {
 
         var MyRow = AJS.RestfulTable.Row.extend({
             renderOperations: function () {
@@ -96,7 +84,7 @@ function activateOctaneConfigPage() {
                 });
 
                 var deleteButtonEl = $('<button class=\"aui-button aui-button-link\">Delete</button>').click(function (e) {
-                    removeSpace(spaceTable, rowInstance);
+                    removeSpaceConfiguration(rowInstance);
                 });
 
                 var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl, testConnectionButtonEl);
@@ -128,7 +116,7 @@ function activateOctaneConfigPage() {
         });
     }
 
-    function removeSpace(table, row) {
+    function removeSpaceConfiguration(row) {
         console.log(row);
         var spaceName = row.model.attributes.name;
         var text = "Are you sure you want to delete space configuration '" + spaceName + "' ?";
@@ -136,7 +124,7 @@ function activateOctaneConfigPage() {
             if (isConfirmed) {
                 hostAjaxDelete(table.options.resources.self + row.model.id)
                     .then(function (data) {
-                        table.removeRow(row);
+                        spaceTable.removeRow(row);
                         showFlag("Space configuration '" + spaceName + "' was deleted successfully.");
                     }).catch(function (error) {
                     console.log(error);
@@ -182,6 +170,86 @@ function activateOctaneConfigPage() {
         });
     }
 
+    function initWorkspaceTable() {
+
+        //view that show list items in stacked format
+        var ListReadView = AJS.RestfulTable.CustomReadView.extend({
+            render: function (self) {
+                var output = _.reduce(self.value, function (memo, current) {
+                    return memo + '<li>' + current + '</li>';
+                }, '<ul class="simple-list">');
+                output += '</ul>';
+                return output;
+            }
+        });
+
+        var MyRow = AJS.RestfulTable.Row.extend({
+            renderOperations: function () {
+                var rowInstance = this;
+
+                var editButtonEl = $('<button class=\"aui-button aui-button-link\">Edit</button>').click(function (e) {
+                    showWorkspaceConfigurationDialog(rowInstance);
+                });
+
+                var deleteButtonEl = $('<button class=\"aui-button aui-button-link\">Delete</button>').click(function (e) {
+                    removeWorkspaceConfiguration(rowInstance);
+                });
+
+                var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl);
+                return parentEl;
+            }
+        });
+
+        workspaceTable = new AJS.RestfulTable({
+            el: jQuery("#workspace-table"),
+            resources: {
+                all: loadWorkspaces,
+                self: "/rest/configuration/workspaces/"
+            },
+            columns: [
+                {id: "id", header: "Id"},
+                {id: "spaceId", header: "Space Id"},
+                {id: "spaceName", header: "Space Name"},
+                {id: "workspaceId", header: "Workspace Id"},
+                {id: "workspaceName", header: "Workspace Name"},
+                {id: "octaneUdf", header: "Mapping Field"},
+                {id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
+                {id: "jiraIssueTypes", header: "Jira Issue Types", readView: ListReadView},
+                {id: "jiraProjects", header: "Jira Project", readView: ListReadView}
+            ],
+            autoFocus: false,
+            allowEdit: false,
+            allowReorder: false,
+            allowCreate: false,
+            allowDelete: false,
+            noEntriesMsg: "No workspace configuration is defined.",
+            loadingMsg: "Loading ...",
+            views: {
+                row: MyRow
+            }
+        });
+    }
+
+    function showWorkspaceConfigurationDialog() {
+
+    }
+
+    function removeWorkspaceConfiguration(row){
+
+    }
+
+    function loadWorkspaces(callback) {
+        hostAjaxGet("/rest/configuration/workspaces")
+            .then(function (data) {
+                callback(data);
+            });
+    }
+
+
+
+
+
+
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
@@ -194,30 +262,6 @@ function activateOctaneConfigPage() {
         console.log("reloadTable");
         table.$tbody.empty();
         table.fetchInitialResources();
-    }
-
-    function loadWorkspaces(callback) {
-
-        AP.context.getToken(function (token) {
-            $.ajax({
-                url: "/resources/configuration/workspaces",
-                type: "GET",
-                dataType: "json",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "JWT " + token);
-                },
-                success: function (result) {
-                    console.log("loadWorkspaces success : " + result);
-                    if (callback && $.isFunction(callback)) {
-                        callback(result);
-                    }
-
-                },
-                error: function (xhr) { // if error occurred
-                    console.log("error : " + xhr);
-                }
-            });
-        });
     }
 
     function loadSpaceConfiguration() {

@@ -31,6 +31,18 @@ span.aui-restfultable-throbber.test-connection-status.test-connection-status-fai
     margin-top: 40px;
 }
 
+.simple-list {
+    list-style: none;
+    padding: 0;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -39,10 +51,6 @@ span.aui-restfultable-throbber.test-connection-status.test-connection-status-fai
     padding-bottom: 5px;
 }
 
-.simple-list {
-    list-style: none;
-    padding: 0;
-}
 
 #configuration-rest-table .aui-restfultable-operations {
     width: 10px;
