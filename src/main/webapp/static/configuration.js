@@ -47,18 +47,10 @@ function activateOctaneConfigPage() {
 
         AP.dialog.create({
             key: 'space-dialog-key',
-            width: '640px',
-            height: '340px',
-            chrome: true,
-            customData: {editMode: editMode, entity: editEntity},
-            header: header,
-            submitText: 'Save',
-            buttons: [
-                {
-                    text: 'Test connection',
-                    identifier: 'test_connection'
-                }
-            ]
+            width: '650px',
+            height: '540px',
+            chrome: false,
+            customData: {editMode: editMode, entity: editEntity, header: header},
         }).on("close", onCloseCallback);
     }
 
@@ -213,7 +205,7 @@ function activateOctaneConfigPage() {
                 {id: "octaneUdf", header: "Mapping Field"},
                 {id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
                 {id: "jiraIssueTypes", header: "Jira Issue Types", readView: ListReadView},
-                {id: "jiraProjects", header: "Jira Project", readView: ListReadView}
+                {id: "jiraProjects", header: "Jira Projects", readView: ListReadView}
             ],
             autoFocus: false,
             allowEdit: false,
@@ -232,7 +224,7 @@ function activateOctaneConfigPage() {
 
     }
 
-    function removeWorkspaceConfiguration(row){
+    function removeWorkspaceConfiguration(row) {
 
     }
 
@@ -242,10 +234,6 @@ function activateOctaneConfigPage() {
                 callback(data);
             });
     }
-
-
-
-
 
 
     ////////////////////////////////////////////////////////////////////

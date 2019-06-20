@@ -3,20 +3,30 @@ var customData;
 AP.dialog.disableCloseOnSubmit();
 AP.dialog.getCustomData(function (data) {
     customData = data;
+    //set header
+    $(".aui-dialog2-header-main").text(customData.header);
+
+    //assign buttons
+    $("#confirm-button").click(function (e) {
+        e.preventDefault();
+        submit();
+    });
+    $("#cancel-button").click(function (e) {
+        e.preventDefault();
+        AP.dialog.close();
+    });
+
+    $("#test-connection-button").click(function (e) {
+        e.preventDefault();
+        testConnection();
+    });
+
+    //set fields
     if (isEditMode()) {
         $("#name").val(customData.entity.name);
         $("#location").val(customData.entity.location);
         $("#clientId").val(customData.entity.clientId);
         $("#clientSecret").val(customData.entity.clientSecret);
-    }
-});
-
-AP.events.on('dialog.button.click', function (data) {
-    console.log("SpaceDialog dialog.button.click", data.button);
-    if (data.button.name === 'submit') {
-        submit();
-    } else if (data.button.name === 'test_connection') {
-        testConnection();
     }
 });
 
@@ -34,7 +44,7 @@ function getProperties() {
 }
 
 function isEditMode() {
-    return customData && customData.editMode && customData.entity;
+    return customData.editMode && customData.entity;
 }
 
 function validateRequiredFieldsFilled() {

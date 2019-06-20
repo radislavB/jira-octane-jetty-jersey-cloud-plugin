@@ -144,12 +144,12 @@ public class ConfigurarionUtil {
 
     private static void validateSpaceNameIsUnique(String clientKey, SpaceConfiguration spaceConfiguration) {
         Optional<SpaceConfiguration> opt = ConfigurationManager.getInstance().getSpaceConfigurations(clientKey).stream()
-                .filter((s -> !s.getName().equals(spaceConfiguration.getName()) //don't check the same configuration
-                        && s.getLocationParts().getKey().equals(spaceConfiguration.getLocationParts().getKey())))
+                .filter((s -> !s.getId().equals(spaceConfiguration.getId()) //don't check the same configuration
+                        && s.getName().equals(spaceConfiguration.getName())))
                 .findFirst();
 
         if (opt.isPresent()) {
-            String msg = String.format("Space name '%s' is already used", opt.get().getName());
+            String msg = String.format("Name '%s' is already in use by another space configuration.", spaceConfiguration.getName());
             throw new IllegalArgumentException(msg);
         }
     }
