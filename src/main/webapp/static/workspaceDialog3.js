@@ -31,11 +31,36 @@ AP.dialog.getCustomData(function (data) {
         {id:"sp2a", text :"sp2 text"}
     ];
 
-    console.log("init #spaceSelector");
+    var noData = [
+    ];
+
     AJS.$("#spaceSelector").auiSelect2({
         multiple: false,
-        data: spaces
+        data: noData
     });
+
+
+
+    AJS.$("#workspaceSelector").auiSelect2({
+        multiple: false,
+        data: noData
+    });
+
+    hostAjaxGet("/rest/configuration/spaces")
+        .then(function (result) {
+            console.log(result);
+
+
+            var newArr =_.map(result, function (item) {return {id:item.id,text:item.name};});
+
+            console.log(newArr);
+            AJS.$("#spaceSelector").auiSelect2({
+                multiple: false,
+                data: newArr
+            });
+        });
+
+
 
 
 });
