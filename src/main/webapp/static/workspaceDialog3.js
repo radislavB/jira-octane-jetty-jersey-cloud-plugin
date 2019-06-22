@@ -19,11 +19,25 @@ AP.dialog.getCustomData(function (data) {
 
     //set fields
     if (isEditMode()) {
+        console.log("edit mode");
         //$("#name").val(customData.entity.name);
         //$("#location").val(customData.entity.location);
         //$("#clientId").val(customData.entity.clientId);
         //$("#clientSecret").val(customData.entity.clientSecret);
     }
+
+    var spaces = [
+        {id:"sp1a", text :"sp1 text"},
+        {id:"sp2a", text :"sp2 text"}
+    ];
+
+    console.log("init #spaceSelector");
+    AJS.$("#spaceSelector").auiSelect2({
+        multiple: false,
+        data: spaces
+    });
+
+
 });
 
 function getProperties() {

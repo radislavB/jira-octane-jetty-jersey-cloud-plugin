@@ -2,6 +2,9 @@
 <head>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <!--script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script-->
+    <script src="//aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/6.0.9/js/aui-experimental.js"></script>
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
     <link rel="stylesheet" href="general.css" media="all">
@@ -9,8 +12,13 @@
     <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
     <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
-    <script src="workspaceDialog.js"></script>
+    <script src="workspaceDialog3.js"></script>
     <script src="general.js"></script>
+    <style>
+        #form-content .field-group .select2-container a.select2-choice{
+            background-color: white;
+        }
+    </style>
 </head>
 <body style="background: none">
 
@@ -19,13 +27,20 @@
         <h2 class="aui-dialog2-header-main">Save</h2>
     </header>
     <div class="aui-dialog2-content">
-        <form id="octane-admin" class="aui">
-            <div class="field-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="text medium-long-field required">
-                <div class="error" id="nameError"></div>
-                <div class="description">Name for space configuration</div>
+        <form class="aui" id="form-content">
+            <div class="field-group" id="space-field-group">
+                <label for="spaceSelector">Space<span class="aui-icon"></span></label>
+                <input type='hidden' name='spaceSelector' id='spaceSelector' class="text medium-long-field"/>
+                <div class="error" id="spaceSelectorError"></div>
+                <div class="description">Space name</div>
             </div>
+            <div class="field-group" id="workspace-field-group">
+                <label for="workspaceSelector">Workspace<span class="aui-icon"></span></label>
+                <input type='hidden' name='workspaceSelector' id='workspaceSelector' class="text medium-long-field"/>
+                <div class="error" id="workspaceSelectorError"></div>
+                <div class="description">Workspace name</div>
+            </div>
+
 
         </form>
     </div>

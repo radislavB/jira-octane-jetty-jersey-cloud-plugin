@@ -1,7 +1,7 @@
 {
   "key": "com.mf.example.myapp",
-  "baseUrl": "https://ea648dab.ngrok.io",
-  "version":"1.0.2",
+  "baseUrl": "https://afd3afa8.ngrok.io",
+  "version":"1.0.3",
   "name": "ALM Octane Quality Plugin for Jira Cloud",
 
   "vendor": {
@@ -9,7 +9,7 @@
     "url": "http://wwww.microfocus.com"
   },
   "links": {
-    "self": "https://ea648dab.ngrok.io/static/atlassian-connect.json"
+    "self": "https://afd3afa8.ngrok.io/static/atlassian-connect.json"
   },
   "authentication": {
     "type": "jwt"
@@ -55,7 +55,7 @@
           }
         }
       },{
-        "url": "/static/workspaceDialog.html",
+        "url": "/static/workspaceDialog.html?v=v1",
         "key": "workspace-dialog-key",
         "options":{
           "header":{
@@ -65,7 +65,6 @@
       }, {
         "url": "/static/confirmationDialog.html",
         "key": "confirmation-dialog-key",
-        "cacheable": true,
         "options":{
           "header":{
             "value":"Confirmation"
