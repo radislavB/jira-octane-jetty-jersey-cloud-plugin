@@ -27,6 +27,8 @@ import com.microfocus.octane.plugins.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLHandshakeException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,11 +38,56 @@ public class OctaneRestService {
     private static final Logger log = LoggerFactory.getLogger(OctaneRestService.class);
     public static int SPACE_CONTEXT = -1;
 
-    private RestConnector getRestConnector(SpaceConfiguration spaceConfiguration) {
-        return ConfigurarionUtil.prepareConnection(spaceConfiguration);
+
+    public static RestConnector getRestConnector(SpaceConfiguration spaceConfig) {
+        try {
+            RestConnector restConnector = new RestConnector();
+            restConnector.setBaseUrl(spaceConfig.getLocationParts().getBaseUrl());
+            restConnector.setCredentials(spaceConfig.getClientId(), spaceConfig.getClientSecret());
+            boolean isConnected = restConnector.login();
+            if (!isConnected) {
+                throw new IllegalArgumentException("Failed to authenticate.");
+            } else {
+                return restConnector;
+            }
+        } catch (Exception exc) {
+            String myErrorMessage = null;
+            if (exc.getMessage().contains("platform.not_authorized")) {
+                myErrorMessage = "Ensure your credentials are correct.";
+            } else if (exc.getMessage().contains("SharedSpaceNotFoundException")) {
+                myErrorMessage = "Space '" + spaceConfig.getLocationParts().getSpaceId() + "' does not exist.";
+            } else if (exc.getCause() != null && exc.getCause() instanceof SSLHandshakeException && exc.getCause().getMessage().contains("Received fatal alert")) {
+                myErrorMessage = "Network exception, proxy settings may be missing.";
+            } else if (exc.getMessage().startsWith("Connection timed out")) {
+                myErrorMessage = "Timed out exception, proxy settings may be misconfigured.";
+            } else if (exc.getCause() != null && exc.getCause() instanceof UnknownHostException) {
+                myErrorMessage = "Location is not available.";
+            } else {
+                myErrorMessage = exc.getMessage();
+                //errorMsg = "Exception " + exc.getClass().getName() + " : " + exc.getMessage();
+                        /*if (exc.getCause() != null) {
+                            errorMsg += " . Cause : " + exc.getCause();//"Validate that location is correct.";
+                        }*/
+            }
+            throw new IllegalArgumentException(myErrorMessage);
+        }
     }
 
-    public GroupEntityCollection getCoverage(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
+    public static OctaneEntityCollection getWorkspaces(SpaceConfiguration spaceConfiguration) {
+        String getWorspacesUrl = String.format(UrlConstants.PUBLIC_API_SHAREDSPACE_LEVEL_ENTITIES, spaceConfiguration.getLocationParts().getSpaceId(), "workspaces");
+        String queryString = OctaneQueryBuilder.create().addSelectedFields("id", "name").build();
+        Map<String, String> headers = new HashMap<>();
+        headers.put(RestConnector.HEADER_ACCEPT, RestConnector.HEADER_APPLICATION_JSON);
+        String entitiesCollectionStr = getRestConnector(spaceConfiguration).httpGet(getWorspacesUrl, Arrays.asList(queryString), headers).getResponseData();
+
+        OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
+        if (workspaces.getData().isEmpty()) {
+            throw new IllegalArgumentException("Incorrect space ID.");
+        }
+        return workspaces;
+    }
+
+    public static GroupEntityCollection getCoverage(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
         //http://localhost:8080/api/shared_spaces/1001/workspaces/1002/runs/groups?query="test_of_last_run={product_areas={(id IN '2001')}}"&group_by=status
 
         String url = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceConfiguration.getLocationParts().getSpaceId(), workspaceId, "runs/groups");
@@ -59,8 +106,7 @@ public class OctaneRestService {
         return col;
     }
 
-
-    public GroupEntityCollection getNativeStatusCoverageForRunsWithoutStatus(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
+    public static GroupEntityCollection getNativeStatusCoverageForRunsWithoutStatus(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
         //https://localhost:8080/api/shared_spaces/1001/workspaces/1002/runs/groups?&query=%22test_of_last_run={covered_requirement={path=%270000000001OT0002K9*%27}};!test_of_last_run={null};status={null}%22&group_by=native_status
 
         String url = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceConfiguration.getLocationParts().getSpaceId(), workspaceId, "runs/groups");
@@ -80,7 +126,7 @@ public class OctaneRestService {
         return col;
     }
 
-    public int getTotalTestsCount(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
+    public static int getTotalTestsCount(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
         //http://localhost:8080/api/shared_spaces/1001/workspaces/1002/tests?fields=id&limit=1&query="((covered_content={(path='0000000000XC*')});((!(subtype='test_suite'))))"
 
         String url = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceConfiguration.getLocationParts().getSpaceId(), workspaceId, "tests");
@@ -99,12 +145,12 @@ public class OctaneRestService {
         return col.getTotalCount();
     }
 
-    private QueryPhrase createGetEntityCondition(OctaneEntity octaneEntity) {
+    private static QueryPhrase createGetEntityCondition(OctaneEntity octaneEntity) {
         String path = octaneEntity.getString("path");
         return new LogicalQueryPhrase("path", path + "*");
     }
 
-    public OctaneEntityCollection getEntitiesByCondition(SpaceConfiguration spaceConfiguration, long workspaceId, String collectionName, Collection<QueryPhrase> conditions, Collection<String> fields) {
+    public static OctaneEntityCollection getEntitiesByCondition(SpaceConfiguration spaceConfiguration, long workspaceId, String collectionName, Collection<QueryPhrase> conditions, Collection<String> fields) {
 
         String queryCondition = OctaneQueryBuilder.create().addQueryConditions(conditions).addSelectedFields(fields).build();
         String url;
@@ -124,7 +170,7 @@ public class OctaneRestService {
         return col;
     }
 
-    public List<String> getSupportedOctaneTypes(SpaceConfiguration spaceConfiguration, long workspaceId, String udfName) {
+    public static List<String> getSupportedOctaneTypes(SpaceConfiguration spaceConfiguration, long workspaceId, String udfName) {
         long spaceId = spaceConfiguration.getLocationParts().getSpaceId();
         String entityCollectionUrl = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceId, workspaceId, "metadata/fields");
         Map<String, String> headers = createHeaderMapWithOctaneClientType();
@@ -141,13 +187,13 @@ public class OctaneRestService {
         return foundTypes;
     }
 
-    private Map<String, String> createHeaderMapWithOctaneClientType() {
+    private static  Map<String, String> createHeaderMapWithOctaneClientType() {
         Map<String, String> headers = new HashMap<>();
         headers.put("HPECLIENTTYPE", "HPE_CI_CLIENT");
         return headers;
     }
 
-    public Set<String> getPossibleJiraFields(SpaceConfiguration spaceConfiguration, long workspaceId) {
+    public static Set<String> getPossibleJiraFields(SpaceConfiguration spaceConfiguration, long workspaceId) {
         //https://mqalb011sngx.saas.hpe.com/api/shared_spaces/3004/workspaces/2002/metadata/fields?&query=%22field_type=%27string%27;is_user_defined=true;(entity_name+IN+%27feature%27,%27application_module%27,%27requirement_document%27,%27story%27)%22
         long spaceId = spaceConfiguration.getLocationParts().getSpaceId();
         String entityCollectionUrl = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceId, workspaceId, "metadata/fields");

@@ -4,6 +4,7 @@ import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.LocationParts;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
+import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
 import com.microfocus.octane.plugins.octane.rest.RestConnector;
 import com.microfocus.octane.plugins.octane.rest.UrlConstants;
 import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
@@ -155,57 +156,7 @@ public class ConfigurarionUtil {
     }
 
     public static void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {
-        getWorkspacesBySpaceConfiguration(spaceConfig);
+        OctaneRestService.getWorkspaces(spaceConfig);
     }
 
-    public static OctaneEntityCollection getWorkspacesBySpaceConfiguration(SpaceConfiguration spaceConfig) {
-
-        RestConnector restConnector = prepareConnection(spaceConfig);
-        String getWorspacesUrl = String.format(UrlConstants.PUBLIC_API_SHAREDSPACE_LEVEL_ENTITIES, spaceConfig.getLocationParts().getSpaceId(), "workspaces");
-        String queryString = OctaneQueryBuilder.create().addSelectedFields("id", "name").build();
-        Map<String, String> headers = new HashMap<>();
-        headers.put(RestConnector.HEADER_ACCEPT, RestConnector.HEADER_APPLICATION_JSON);
-        String entitiesCollectionStr = restConnector.httpGet(getWorspacesUrl, Arrays.asList(queryString), headers).getResponseData();
-
-        OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
-        if (workspaces.getData().isEmpty()) {
-            throw new IllegalArgumentException("Incorrect space ID.");
-        }
-        return workspaces;
-    }
-
-
-    public static RestConnector prepareConnection(SpaceConfiguration spaceConfig) {
-        try {
-            RestConnector restConnector = new RestConnector();
-            restConnector.setBaseUrl(spaceConfig.getLocationParts().getBaseUrl());
-            restConnector.setCredentials(spaceConfig.getClientId(), spaceConfig.getClientSecret());
-            boolean isConnected = restConnector.login();
-            if (!isConnected) {
-                throw new IllegalArgumentException("Failed to authenticate.");
-            } else {
-                return restConnector;
-            }
-        } catch (Exception exc) {
-            String myErrorMessage = null;
-            if (exc.getMessage().contains("platform.not_authorized")) {
-                myErrorMessage = "Ensure your credentials are correct.";
-            } else if (exc.getMessage().contains("SharedSpaceNotFoundException")) {
-                myErrorMessage = "Space '" + spaceConfig.getLocationParts().getSpaceId() + "' does not exist.";
-            } else if (exc.getCause() != null && exc.getCause() instanceof SSLHandshakeException && exc.getCause().getMessage().contains("Received fatal alert")) {
-                myErrorMessage = "Network exception, proxy settings may be missing.";
-            } else if (exc.getMessage().startsWith("Connection timed out")) {
-                myErrorMessage = "Timed out exception, proxy settings may be misconfigured.";
-            } else if (exc.getCause() != null && exc.getCause() instanceof UnknownHostException) {
-                myErrorMessage = "Location is not available.";
-            } else {
-                myErrorMessage = exc.getMessage();
-                //errorMsg = "Exception " + exc.getClass().getName() + " : " + exc.getMessage();
-                        /*if (exc.getCause() != null) {
-                            errorMsg += " . Cause : " + exc.getCause();//"Validate that location is correct.";
-                        }*/
-            }
-            throw new IllegalArgumentException(myErrorMessage);
-        }
-    }
 }

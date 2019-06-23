@@ -4,6 +4,7 @@ package com.microfocus.octane.plugins.resources;
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
+import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
 import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
 import com.microfocus.octane.plugins.resources.pojo.Select2Item;
 import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
@@ -44,7 +45,7 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Select2Item> getWorkspaceDataOfSpace(@PathParam("spaceId") String spaceId) {
         SpaceConfiguration spaceConfig = ConfigurationManager.getInstance().getSpaceConfigurationByIdOrThrowException(getTenantId(), spaceId);
-        OctaneEntityCollection workspaces = ConfigurarionUtil.getWorkspacesBySpaceConfiguration(spaceConfig);
+        OctaneEntityCollection workspaces = OctaneRestService.getWorkspaces(spaceConfig);
         List<Select2Item> items = workspaces.getData().stream().map(w -> new Select2Item(w.getId(), w.getName())).collect(Collectors.toList());
         return items;
     }
