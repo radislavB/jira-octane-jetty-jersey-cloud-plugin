@@ -27,38 +27,51 @@ AP.dialog.getCustomData(function (data) {
 
     var noData = [];
 
-    AJS.$("#spaceSelector").auiSelect2({
-        multiple: false,
-        data: customData.spaces
-    });
-
-
-    initSelect2("#workspaceSelector");
+    setComboData("#spaceSelector",false,customData.spaces);
+    setComboNoData("#workspaceSelector");
 
 
     $("#spaceSelector").change(function () {
-        initSelect2("#workspaceSelector");//clear workspaces
-
+        setComboNoData("#workspaceSelector");
+        setProcessing("#workspaceSelector");
         var space = $("#spaceSelector").select2('data');
         var url = "/rest/configuration/spaces/" + space.id + "/data/workspaces";
+
         hostAjaxGet(url).then(function (result) {
-            AJS.$("#workspaceSelector").auiSelect2({
-                multiple: false,
-                data: result
-            });
+            setComboData("#workspaceSelector",false,result);
         }).catch(function (error) {
             showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
+        }).finally(function (){
+            removeProcessing("#workspaceSelector");
         });
     });
 
 });
 
-function initSelect2(selector, multiple){
+function setComboNoData(selector){
     AJS.$(selector).auiSelect2({
-        multiple: multiple,
+        multiple: false,
         data: []
     });
+    $(selector).prop('disabled', true); //disable selector
 }
+
+function setComboData(selector, multiple, data){
+    AJS.$(selector).auiSelect2({
+        multiple: multiple,
+        data: data
+    });
+    $(selector).prop('disabled', false); //disable selector
+}
+
+function setProcessing(selector) {
+    $(selector + " .loading").addClass("loading-active");
+}
+
+function removeProcessing(selector){
+    $(selector +" .loading").removeClass("loading-active");
+}
+
 function getProperties() {
     var data = {
         name: $("#name").attr("value"),
