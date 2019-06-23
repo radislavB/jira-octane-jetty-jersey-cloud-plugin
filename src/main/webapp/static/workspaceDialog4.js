@@ -65,11 +65,11 @@ function setComboData(selector, multiple, data) {
 }
 
 function setProcessing(selector) {
-    $(selector + "+.loadingStatus").addClass("loading");
+    $(selector + "+.status").addClass("statusLoading");
 }
 
 function removeProcessing(selector) {
-    $(selector + "+.loadingStatus").removeClass("loading");
+    $(selector + "+.status").removeClass("statusLoading");
 }
 
 function getProperties() {

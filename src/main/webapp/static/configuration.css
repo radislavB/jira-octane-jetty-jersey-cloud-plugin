@@ -17,14 +17,14 @@ h3 {
 span.aui-restfultable-throbber.test-connection-status{
     margin-top: 7px;
     visibility: visible;
-    background-image: url(/static/wait.gif);
+    background-image: url(/static/icons/wait.gif);
 }
 span.aui-restfultable-throbber.test-connection-status.test-connection-status-successful{
-    background-image: url(/static/icon-success.png);
+    background-image: url(/static/icons/icon-success.png);
 }
 
 span.aui-restfultable-throbber.test-connection-status.test-connection-status-failed{
-    background-image: url(/static/icon-error.png);
+    background-image: url(/static/icons/icon-error.png);
 }
 
 #workspace-section-header{

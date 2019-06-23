@@ -22,8 +22,7 @@
             background-color: #f5f5f5;
         }
 
-        .loading{
-            background-image: url("/static/wait.gif");
+        .status{
             width: 16px;
             height: 16px;
             display: inline-block;
@@ -31,6 +30,12 @@
             top: 10px;
             position: absolute;
             visibility: visible;
+        }
+        .statusLoading{
+            background-image: url("/static/wait.gif");
+        }
+        .statusInfo{
+            background-image: url("/static/icon-info.png");
         }
 
     </style>
@@ -52,11 +57,20 @@
             <div class="field-group" id="workspace-field-group">
                 <label for="workspaceSelector">Workspace<span class="aui-icon"></span></label>
                 <input type='hidden' name='workspaceSelector' id='workspaceSelector' class="text medium-long-field"/>
-                <span class="loadingStatus"></span>
-
+                <span class="status"></span>
                 <div class="error" id="workspaceSelectorError"></div>
                 <div class="description">Workspace name</div>
             </div>
+            <div class="field-group">
+                <label for="octaneUdf">Mapping field</label>
+                <input type="text" id="octaneUdf" name="clientId" class="text medium-long-field"
+                       autocomplete="off">
+                <span class="status"></span>
+                <div class="error" id="octaneUdfError"></div>
+                <div class="description">ALM Octane user-defined field for mapping Jira issues.</div>
+            </div>
+
+
 
 
         </form>
