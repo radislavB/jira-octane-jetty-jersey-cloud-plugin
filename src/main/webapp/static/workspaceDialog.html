@@ -15,19 +15,22 @@
     <script src="workspaceDialog4.js"></script>
     <script src="general.js"></script>
     <style>
-        #form-content .field-group .select2-container a.select2-choice{
+        #form-content .select2-container a.select2-choice{
             background-color: white;
         }
+        #form-content .select2-container-disabled a.select2-choice{
+            background-color: #f5f5f5;
+        }
+
         .loading{
             background-image: url("/static/wait.gif");
             width: 16px;
             height: 16px;
             display: inline-block;
-            left: 150px;
+            left: 505px;
             top: 10px;
-        }
-        .loading-active{
             position: absolute;
+            visibility: visible;
         }
 
     </style>
@@ -49,7 +52,7 @@
             <div class="field-group" id="workspace-field-group">
                 <label for="workspaceSelector">Workspace<span class="aui-icon"></span></label>
                 <input type='hidden' name='workspaceSelector' id='workspaceSelector' class="text medium-long-field"/>
-                <span class="loading"></span>
+                <span class="loadingStatus"></span>
 
                 <div class="error" id="workspaceSelectorError"></div>
                 <div class="description">Workspace name</div>

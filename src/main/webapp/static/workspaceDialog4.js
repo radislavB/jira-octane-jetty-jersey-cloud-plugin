@@ -27,7 +27,7 @@ AP.dialog.getCustomData(function (data) {
 
     var noData = [];
 
-    setComboData("#spaceSelector",false,customData.spaces);
+    setComboData("#spaceSelector", false, customData.spaces);
     setComboNoData("#workspaceSelector");
 
 
@@ -38,17 +38,17 @@ AP.dialog.getCustomData(function (data) {
         var url = "/rest/configuration/spaces/" + space.id + "/data/workspaces";
 
         hostAjaxGet(url).then(function (result) {
-            setComboData("#workspaceSelector",false,result);
+            setComboData("#workspaceSelector", false, result);
         }).catch(function (error) {
             showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
-        }).finally(function (){
+        }).finally(function () {
             removeProcessing("#workspaceSelector");
         });
     });
 
 });
 
-function setComboNoData(selector){
+function setComboNoData(selector) {
     AJS.$(selector).auiSelect2({
         multiple: false,
         data: []
@@ -56,7 +56,7 @@ function setComboNoData(selector){
     $(selector).prop('disabled', true); //disable selector
 }
 
-function setComboData(selector, multiple, data){
+function setComboData(selector, multiple, data) {
     AJS.$(selector).auiSelect2({
         multiple: multiple,
         data: data
@@ -65,11 +65,11 @@ function setComboData(selector, multiple, data){
 }
 
 function setProcessing(selector) {
-    $(selector + " .loading").addClass("loading-active");
+    $(selector + "+.loadingStatus").addClass("loading");
 }
 
-function removeProcessing(selector){
-    $(selector +" .loading").removeClass("loading-active");
+function removeProcessing(selector) {
+    $(selector + "+.loadingStatus").removeClass("loading");
 }
 
 function getProperties() {
