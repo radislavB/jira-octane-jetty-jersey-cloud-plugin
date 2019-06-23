@@ -33,17 +33,35 @@ AP.dialog.getCustomData(function (data) {
 
     $("#spaceSelector").change(function () {
         setComboNoData("#workspaceSelector");
-        setProcessing("#workspaceSelector");
+        setStatusLoading("#workspaceSelector");
         var space = $("#spaceSelector").select2('data');
-        var url = "/rest/configuration/spaces/" + space.id + "/data/workspaces";
+        var url = "/rest/octane/workspaces?space-configuration-id=" + space.id;
 
         hostAjaxGet(url).then(function (result) {
             setComboData("#workspaceSelector", false, result);
         }).catch(function (error) {
             showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
         }).finally(function () {
-            removeProcessing("#workspaceSelector");
+            removeStatusLoading("#workspaceSelector");
         });
+    });
+
+    $("#workspaceSelector").change(function () {
+
+        var workspaceId = $("#workspaceSelector").val();
+        if (workspaceId) {
+            var space = $("#spaceSelector").select2('data');
+            var url = "/rest/octane/possible-jira-fields?space-configuration-id=" + space.id + "&workspace-id=" + workspaceId;
+            setStatusLoading("#octaneUdf");
+            hostAjaxGet(url).then(function (result) {
+                console.log("possible-jira-fields : " + result);
+                setStatusInfo("#octaneUdf","possible-jira-fields : " + result);
+            }).catch(function (error) {
+                console.log("failed to fetch possible-jira-fields  : " + error.message);
+                setStatusInfo("#octaneUdf","failed to fetch possible-jira-fields  : " + error.message);
+            });
+        }
+
     });
 
 });
@@ -64,12 +82,28 @@ function setComboData(selector, multiple, data) {
     $(selector).prop('disabled', false); //disable selector
 }
 
-function setProcessing(selector) {
-    $(selector + "+.status").addClass("statusLoading");
+function setStatusLoading(selector, title) {
+    setStatus(selector, "statusLoading", title);
 }
 
-function removeProcessing(selector) {
+function setStatusInfo(selector, title) {
+    setStatus(selector, "statusInfo", title);
+}
+
+function setStatus(selector, statusClass, title) {
+    var statusEl = $(selector + "+.status");
+    statusEl.removeClass("statusInfo statusLoading");
+    statusEl.addClass(statusClass);
+    if (title) {
+        statusEl.attr("title", title);
+    } else {
+        statusEl.attr("title", "");
+    }
+}
+
+function removeStatusLoading(selector) {
     $(selector + "+.status").removeClass("statusLoading");
+    $(selector + "+.status").attr("title", "");
 }
 
 function getProperties() {

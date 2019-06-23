@@ -4,9 +4,6 @@ package com.microfocus.octane.plugins.resources;
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
-import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
-import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
-import com.microfocus.octane.plugins.resources.pojo.Select2Item;
 import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -33,22 +30,13 @@ public class ConfigurationResource {
     @GET
     @Path("spaces")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<SpaceConfigurationOutgoing> getAllSpaces() {
+    public List<SpaceConfigurationOutgoing> getAllSpaceConfigurations() {
         List<SpaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId())
                 .stream().map(c -> ConfigurarionUtil.convert(c)).collect(Collectors.toList());
 
         return spaces;
     }
 
-    @GET
-    @Path("spaces/{spaceId}/data/workspaces")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Select2Item> getWorkspaceDataOfSpace(@PathParam("spaceId") String spaceId) {
-        SpaceConfiguration spaceConfig = ConfigurationManager.getInstance().getSpaceConfigurationByIdOrThrowException(getTenantId(), spaceId);
-        OctaneEntityCollection workspaces = OctaneRestService.getWorkspaces(spaceConfig);
-        List<Select2Item> items = workspaces.getData().stream().map(w -> new Select2Item(w.getId(), w.getName())).collect(Collectors.toList());
-        return items;
-    }
 
     @POST
     @Path("spaces")
@@ -96,7 +84,7 @@ public class ConfigurationResource {
     @Path("spaces/test-connection")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response testConnection(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
+    public Response testSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
             boolean isNewConfig = StringUtils.isEmpty(spaceConfigurationOutgoing.getId());
             SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, isNewConfig);
@@ -110,7 +98,7 @@ public class ConfigurationResource {
     @GET
     @Path("workspaces")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Map<String, String>> getAllWorkspaces() {
+    public List<Map<String, String>> getAllWorkspaceConfigurations() {
 
         List list = new ArrayList();
 

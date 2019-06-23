@@ -12,7 +12,7 @@
     <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
     <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
-    <script src="workspaceDialog4.js"></script>
+    <script src="workspaceDialog6.js"></script>
     <script src="general.js"></script>
     <style>
         #form-content .select2-container a.select2-choice{
@@ -32,10 +32,10 @@
             visibility: visible;
         }
         .statusLoading{
-            background-image: url("/static/wait.gif");
+            background-image: url("/static/icons/wait.gif");
         }
         .statusInfo{
-            background-image: url("/static/icon-info.png");
+            background-image: url("/static/icons/icon-info.png");
         }
 
     </style>
@@ -65,7 +65,7 @@
                 <label for="octaneUdf">Mapping field</label>
                 <input type="text" id="octaneUdf" name="clientId" class="text medium-long-field"
                        autocomplete="off">
-                <span class="status"></span>
+                <span class="status statusInfo" title="Select workspace"></span>
                 <div class="error" id="octaneUdfError"></div>
                 <div class="description">ALM Octane user-defined field for mapping Jira issues.</div>
             </div>
