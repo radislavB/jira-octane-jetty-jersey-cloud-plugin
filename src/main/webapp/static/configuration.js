@@ -53,7 +53,7 @@ function activateOctaneConfigPage() {
         }).on("close", onCloseCallback);
     }
 
-    function loadSpaces(callback) {
+    function loadSpaceConfigurations(callback) {
         hostAjaxGet("/rest/configuration/spaces")
             .then(function (data) {
                 callback(data);
@@ -86,7 +86,7 @@ function activateOctaneConfigPage() {
         spaceTable = new AJS.RestfulTable({
             el: jQuery("#space-table"),
             resources: {
-                all: loadSpaces,
+                all: loadSpaceConfigurations,
                 self: "/rest/configuration/spaces/"
             },
             columns: [
@@ -118,7 +118,6 @@ function activateOctaneConfigPage() {
                         spaceTable.removeRow(row);
                         showFlag("Space configuration '" + spaceName + "' was deleted successfully.");
                     }).catch(function (error) {
-                    console.log(error);
                     showFlag("Failed to delete space  configuration '" + spaceName + "' : " + error.message, "error");
                 });
             }
@@ -194,7 +193,7 @@ function activateOctaneConfigPage() {
         workspaceTable = new AJS.RestfulTable({
             el: jQuery("#workspace-table"),
             resources: {
-                all: loadWorkspaces,
+                all: loadWorkspaceConfigurations,
                 self: "/rest/configuration/workspaces/"
             },
             columns: [
@@ -220,6 +219,10 @@ function activateOctaneConfigPage() {
     }
 
     function showWorkspaceConfigurationDialog(rowForEdit) {
+        var spaces = _.map(spaceTable.getModels().models, function (item) {
+                return {id:item.attributes.id,text:item.attributes.name};
+        });
+
         var editMode = !!rowForEdit;
         var editEntity = editMode ? rowForEdit.model.attributes : null;
         var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
@@ -246,7 +249,7 @@ function activateOctaneConfigPage() {
             width: '660px',
             height: '480px',
             chrome: false,
-            customData: {editMode: editMode, entity: editEntity, header: header},
+            customData: {editMode: editMode, entity: editEntity, header: header, spaces:spaces},
         }).on("close", onCloseCallback);
     }
 
@@ -254,7 +257,7 @@ function activateOctaneConfigPage() {
 
     }
 
-    function loadWorkspaces(callback) {
+    function loadWorkspaceConfigurations(callback) {
         hostAjaxGet("/rest/configuration/workspaces")
             .then(function (data) {
                 callback(data);

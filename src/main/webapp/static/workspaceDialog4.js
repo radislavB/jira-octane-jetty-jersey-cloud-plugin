@@ -16,7 +16,6 @@ AP.dialog.getCustomData(function (data) {
         AP.dialog.close();
     });
 
-
     //set fields
     if (isEditMode()) {
         console.log("edit mode");
@@ -26,45 +25,40 @@ AP.dialog.getCustomData(function (data) {
         //$("#clientSecret").val(customData.entity.clientSecret);
     }
 
-    var spaces = [
-        {id:"sp1a", text :"sp1 text"},
-        {id:"sp2a", text :"sp2 text"}
-    ];
-
-    var noData = [
-    ];
+    var noData = [];
 
     AJS.$("#spaceSelector").auiSelect2({
         multiple: false,
-        data: noData
+        data: customData.spaces
     });
 
 
-
-    AJS.$("#workspaceSelector").auiSelect2({
-        multiple: false,
-        data: noData
-    });
-
-    hostAjaxGet("/rest/configuration/spaces")
-        .then(function (result) {
-            console.log(result);
+    initSelect2("#workspaceSelector");
 
 
-            var newArr =_.map(result, function (item) {return {id:item.id,text:item.name};});
+    $("#spaceSelector").change(function () {
+        initSelect2("#workspaceSelector");//clear workspaces
 
-            console.log(newArr);
-            AJS.$("#spaceSelector").auiSelect2({
+        var space = $("#spaceSelector").select2('data');
+        var url = "/rest/configuration/spaces/" + space.id + "/data/workspaces";
+        hostAjaxGet(url).then(function (result) {
+            AJS.$("#workspaceSelector").auiSelect2({
                 multiple: false,
-                data: newArr
+                data: result
             });
+        }).catch(function (error) {
+            showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
         });
-
-
-
+    });
 
 });
 
+function initSelect2(selector, multiple){
+    AJS.$(selector).auiSelect2({
+        multiple: multiple,
+        data: []
+    });
+}
 function getProperties() {
     var data = {
         name: $("#name").attr("value"),

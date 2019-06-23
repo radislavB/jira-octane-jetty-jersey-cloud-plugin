@@ -124,9 +124,9 @@ public class ConfigurarionUtil {
         return spaceConf;
     }
 
-    public static void doFullSpaceConfigurationValidation(String clientKey, SpaceConfiguration spaceConfiguration){
-        validateSpaceUrlIsUnique(clientKey,spaceConfiguration);
-        validateSpaceNameIsUnique(clientKey,spaceConfiguration);
+    public static void doFullSpaceConfigurationValidation(String clientKey, SpaceConfiguration spaceConfiguration) {
+        validateSpaceUrlIsUnique(clientKey, spaceConfiguration);
+        validateSpaceNameIsUnique(clientKey, spaceConfiguration);
         validateSpaceConfigurationConnectivity(spaceConfiguration);
     }
 
@@ -155,6 +155,27 @@ public class ConfigurarionUtil {
     }
 
     public static void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {
+        getWorkspacesBySpaceConfiguration(spaceConfig);
+    }
+
+    public static OctaneEntityCollection getWorkspacesBySpaceConfiguration(SpaceConfiguration spaceConfig) {
+
+        RestConnector restConnector = prepareConnection(spaceConfig);
+        String getWorspacesUrl = String.format(UrlConstants.PUBLIC_API_SHAREDSPACE_LEVEL_ENTITIES, spaceConfig.getLocationParts().getSpaceId(), "workspaces");
+        String queryString = OctaneQueryBuilder.create().addSelectedFields("id", "name").build();
+        Map<String, String> headers = new HashMap<>();
+        headers.put(RestConnector.HEADER_ACCEPT, RestConnector.HEADER_APPLICATION_JSON);
+        String entitiesCollectionStr = restConnector.httpGet(getWorspacesUrl, Arrays.asList(queryString), headers).getResponseData();
+
+        OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
+        if (workspaces.getData().isEmpty()) {
+            throw new IllegalArgumentException("Incorrect space ID.");
+        }
+        return workspaces;
+    }
+
+
+    public static RestConnector prepareConnection(SpaceConfiguration spaceConfig) {
         try {
             RestConnector restConnector = new RestConnector();
             restConnector.setBaseUrl(spaceConfig.getLocationParts().getBaseUrl());
@@ -163,18 +184,7 @@ public class ConfigurarionUtil {
             if (!isConnected) {
                 throw new IllegalArgumentException("Failed to authenticate.");
             } else {
-                String getWorspacesUrl = String.format(UrlConstants.PUBLIC_API_SHAREDSPACE_LEVEL_ENTITIES, spaceConfig.getLocationParts().getSpaceId(), "workspaces");
-                String queryString = OctaneQueryBuilder.create().addSelectedFields("id").addPageSize(1).build();
-                Map<String, String> headers = new HashMap<>();
-                headers.put(RestConnector.HEADER_ACCEPT, RestConnector.HEADER_APPLICATION_JSON);
-
-
-                String entitiesCollectionStr = restConnector.httpGet(getWorspacesUrl, Arrays.asList(queryString), headers).getResponseData();
-
-                OctaneEntityCollection workspaces = JsonUtils.parse(entitiesCollectionStr, OctaneEntityCollection.class);
-                if (workspaces.getData().isEmpty()) {
-                    throw new IllegalArgumentException("Incorrect space ID.");
-                }
+                return restConnector;
             }
         } catch (Exception exc) {
             String myErrorMessage = null;

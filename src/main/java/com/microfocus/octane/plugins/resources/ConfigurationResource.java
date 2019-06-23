@@ -4,6 +4,8 @@ package com.microfocus.octane.plugins.resources;
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
+import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
+import com.microfocus.octane.plugins.resources.pojo.Select2Item;
 import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +39,16 @@ public class ConfigurationResource {
         return spaces;
     }
 
+    @GET
+    @Path("spaces/{spaceId}/data/workspaces")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Select2Item> getWorkspaceDataOfSpace(@PathParam("spaceId") String spaceId) {
+        SpaceConfiguration spaceConfig = ConfigurationManager.getInstance().getSpaceConfigurationByIdOrThrowException(getTenantId(), spaceId);
+        OctaneEntityCollection workspaces = ConfigurarionUtil.getWorkspacesBySpaceConfiguration(spaceConfig);
+        List<Select2Item> items = workspaces.getData().stream().map(w -> new Select2Item(w.getId(), w.getName())).collect(Collectors.toList());
+        return items;
+    }
+
     @POST
     @Path("spaces")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -53,13 +65,13 @@ public class ConfigurationResource {
     }
 
     @PUT
-    @Path("spaces/{id}")
+    @Path("spaces/{spaceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateSpaceConfiguration(@PathParam("id") String id, SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
+    public Response updateSpaceConfiguration(@PathParam("spaceId") String spaceId, SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
             SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, false);
-            if (!spaceConfig.getId().equals(spaceConfig.getId())) {
+            if (!spaceConfig.getId().equals(spaceId)) {
                 return Response.status(Response.Status.CONFLICT).entity("Space id in entity should be equal to id in path parameter").build();
             }
             ConfigurarionUtil.doFullSpaceConfigurationValidation(getTenantId(), spaceConfig);
