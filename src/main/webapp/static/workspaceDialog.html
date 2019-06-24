@@ -60,13 +60,13 @@
     <div class="aui-dialog2-content">
         <form class="aui" id="form-content">
             <div class="field-group" id="space-field-group">
-                <label for="spaceSelector">Space<span class="aui-icon"></span></label>
+                <label for="spaceSelector">Space</span></label>
                 <input type='hidden' name='spaceSelector' id='spaceSelector' class="text medium-long-field"/>
                 <div class="error" id="spaceSelectorError"></div>
                 <div class="description"></div>
             </div>
             <div class="field-group" id="workspace-field-group">
-                <label for="workspaceSelector">Workspace<span class="aui-icon"></span></label>
+                <label for="workspaceSelector">Workspace</span></label>
                 <input type='hidden' name='workspaceSelector' id='workspaceSelector' class="text medium-long-field"/>
                 <span class="loading"></span>
                 <div class="error" id="workspaceSelectorError"></div>
@@ -80,6 +80,14 @@
                       title="Select a workspace to show the list of suggested mapping fields that include 'jira' in their name."></span>
                 <div class="error" id="octaneUdfError"></div>
                 <div class="description">ALM Octane user-defined field for mapping Jira issues.</div>
+            </div>
+            <div class="field-group">
+                <label for="octaneEntityTypes">Entity types</label>
+                <input type="text" id="octaneEntityTypes" name="octaneEntityTypes" class="text medium-long-field">
+                <span class="loading"></span>
+                <button id="refreshOctaneEntityTypesButton" class="aui-button aui-button-subtle"><span class="aui-icon aui-icon-small aui-iconfont-refresh"></span></button>
+                <div class="error"  id="octaneEntityTypesError"></div>
+                <div class="description">ALM Octane entity types that have the 'Mapping field' defined.</div>
             </div>
 
 
