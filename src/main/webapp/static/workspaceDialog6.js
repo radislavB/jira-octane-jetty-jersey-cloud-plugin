@@ -25,6 +25,7 @@ AP.dialog.getCustomData(function (data) {
         //$("#clientSecret").val(customData.entity.clientSecret);
     }
 
+    var suggestedUdf;
     var noData = [];
 
     setComboData("#spaceSelector", false, customData.spaces);
@@ -33,7 +34,7 @@ AP.dialog.getCustomData(function (data) {
 
     $("#spaceSelector").change(function () {
         setComboNoData("#workspaceSelector");
-        setStatusLoading("#workspaceSelector");
+        showLoadingIcon("#workspaceSelector");
         var space = $("#spaceSelector").select2('data');
         var url = "/rest/octane/workspaces?space-configuration-id=" + space.id;
 
@@ -42,26 +43,40 @@ AP.dialog.getCustomData(function (data) {
         }).catch(function (error) {
             showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
         }).finally(function () {
-            removeStatusLoading("#workspaceSelector");
+            hideLoadingIcon("#workspaceSelector");
         });
     });
 
     $("#workspaceSelector").change(function () {
 
+        suggestedUdf = null;
         var workspaceId = $("#workspaceSelector").val();
         if (workspaceId) {
             var space = $("#spaceSelector").select2('data');
             var url = "/rest/octane/possible-jira-fields?space-configuration-id=" + space.id + "&workspace-id=" + workspaceId;
-            setStatusLoading("#octaneUdf");
-            hostAjaxGet(url).then(function (result) {
-                console.log("possible-jira-fields : " + result);
-                setStatusInfo("#octaneUdf","possible-jira-fields : " + result);
+            showLoadingIcon("#octaneUdf");
+            setTitle("#octaneUdfInfo", "Searching...")
+            hostAjaxGet(url).then(function (data) {
+                if (data && data.length) {
+                    var msg = "Suggested ALM Octane fields: " + data.join(",  ") + ". Double-click to set '" + data[0] + "' as value.";
+                    suggestedUdf = data[0];
+                    setTitle("#octaneUdfInfo", msg, true);
+                } else {
+                    setTitle("#octaneUdfInfo", "No suggested fields are found.");
+                }
             }).catch(function (error) {
-                console.log("failed to fetch possible-jira-fields  : " + error.message);
-                setStatusInfo("#octaneUdf","failed to fetch possible-jira-fields  : " + error.message);
+                setTitle("#octaneUdfInfo", "Failed to fetch possible-jira-fields  : " + error.message);
+                console.log("Failed to fetch possible-jira-fields  : " + error.message);
+            }).finally(function () {
+                hideLoadingIcon("#octaneUdf");
             });
         }
+    });
 
+    $( "#octaneUdfInfo" ).dblclick(function() {
+        if(suggestedUdf){
+            $("#octaneUdf").val(suggestedUdf);
+        }
     });
 
 });
@@ -82,28 +97,17 @@ function setComboData(selector, multiple, data) {
     $(selector).prop('disabled', false); //disable selector
 }
 
-function setStatusLoading(selector, title) {
-    setStatus(selector, "statusLoading", title);
+function showLoadingIcon(selector) {
+    $(selector + "+.loading").addClass("loadingActive");
 }
 
-function setStatusInfo(selector, title) {
-    setStatus(selector, "statusInfo", title);
+function hideLoadingIcon(selector) {
+    $(selector + "+.loading").removeClass("loadingActive");
 }
 
-function setStatus(selector, statusClass, title) {
-    var statusEl = $(selector + "+.status");
-    statusEl.removeClass("statusInfo statusLoading");
-    statusEl.addClass(statusClass);
-    if (title) {
-        statusEl.attr("title", title);
-    } else {
-        statusEl.attr("title", "");
-    }
-}
-
-function removeStatusLoading(selector) {
-    $(selector + "+.status").removeClass("statusLoading");
-    $(selector + "+.status").attr("title", "");
+function setTitle(selector, title, filled) {
+    $(selector).attr("title", title);
+    $(selector).toggleClass("infoFilled", !!filled);
 }
 
 function getProperties() {

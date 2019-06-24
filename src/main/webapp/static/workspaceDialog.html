@@ -15,14 +15,26 @@
     <script src="workspaceDialog6.js"></script>
     <script src="general.js"></script>
     <style>
-        #form-content .select2-container a.select2-choice{
+        #form-content .select2-container a.select2-choice {
             background-color: white;
         }
-        #form-content .select2-container-disabled a.select2-choice{
+
+        #form-content .select2-container-disabled a.select2-choice {
             background-color: #f5f5f5;
         }
 
-        .status{
+        .field-group .loadingActive {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            left: 305px;
+            top: 10px;
+            position: absolute;
+            visibility: visible;
+            background-image: url("/static/icons/wait.gif");
+        }
+
+        #octaneUdfInfo {
             width: 16px;
             height: 16px;
             display: inline-block;
@@ -30,13 +42,12 @@
             top: 10px;
             position: absolute;
             visibility: visible;
-        }
-        .statusLoading{
-            background-image: url("/static/icons/wait.gif");
-        }
-        .statusInfo{
             background-image: url("/static/icons/icon-info.png");
         }
+        #octaneUdfInfo.infoFilled{
+            background-image: url("/static/icons/icon-info-filled.png");
+        }
+
 
     </style>
 </head>
@@ -52,25 +63,24 @@
                 <label for="spaceSelector">Space<span class="aui-icon"></span></label>
                 <input type='hidden' name='spaceSelector' id='spaceSelector' class="text medium-long-field"/>
                 <div class="error" id="spaceSelectorError"></div>
-                <div class="description">Space name</div>
+                <div class="description"></div>
             </div>
             <div class="field-group" id="workspace-field-group">
                 <label for="workspaceSelector">Workspace<span class="aui-icon"></span></label>
                 <input type='hidden' name='workspaceSelector' id='workspaceSelector' class="text medium-long-field"/>
-                <span class="status"></span>
+                <span class="loading"></span>
                 <div class="error" id="workspaceSelectorError"></div>
-                <div class="description">Workspace name</div>
+                <div class="description"></div>
             </div>
             <div class="field-group">
                 <label for="octaneUdf">Mapping field</label>
-                <input type="text" id="octaneUdf" name="clientId" class="text medium-long-field"
-                       autocomplete="off">
-                <span class="status statusInfo" title="Select workspace"></span>
+                <input type="text" id="octaneUdf" name="clientId" class="text medium-long-field" autocomplete="off">
+                <span class="loading"></span>
+                <span id="octaneUdfInfo"
+                      title="Select a workspace to show the list of suggested mapping fields that include 'jira' in their name."></span>
                 <div class="error" id="octaneUdfError"></div>
                 <div class="description">ALM Octane user-defined field for mapping Jira issues.</div>
             </div>
-
-
 
 
         </form>
