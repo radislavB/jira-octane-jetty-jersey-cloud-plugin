@@ -30,6 +30,8 @@ AP.dialog.getCustomData(function (data) {
 
     setComboData("#spaceSelector", false, customData.spaces);
     setComboNoData("#workspaceSelector");
+    setComboNoData("#jiraProjectsSelector");
+    setComboNoData("#jiraIssueTypesSelector");
 
 
     $("#spaceSelector").change(function () {
@@ -99,7 +101,7 @@ function setComboData(selector, multiple, data) {
         multiple: multiple,
         data: data
     });
-    $(selector).prop('disabled', false); //disable selector
+    $(selector).prop('disabled', false); //enable selector
 }
 
 function showLoadingIcon(selector) {
