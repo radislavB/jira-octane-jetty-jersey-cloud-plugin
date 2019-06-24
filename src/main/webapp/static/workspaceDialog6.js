@@ -31,7 +31,7 @@ AP.dialog.getCustomData(function (data) {
     setComboData("#spaceSelector", false, customData.spaces);
     setComboNoData("#workspaceSelector");
     setComboNoData("#jiraProjectsSelector");
-    setComboNoData("#jiraIssueTypesSelector");
+    setComboNoData("#jiraIssueTypesSelector", true);
 
 
     $("#spaceSelector").change(function () {
@@ -86,11 +86,31 @@ AP.dialog.getCustomData(function (data) {
         refreshOctaneEntityTypes();
     });
 
+    console.log("Get jira projects");
+    showLoadingIcon("#jiraProjectsSelector");
+    AP.require('request', function (request) {
+        request({
+            url: '/rest/api/latest/project',///rest/api/3/issuetype
+            success: function (response) {
+                var projectArr = JSON.parse(response);
+                var projects2Combo = _.map(projectArr, function (item) {
+                    return {id: item.id, text: item.name};
+                });
+                setComboData("#jiraProjectsSelector", true, projects2Combo);
+                hideLoadingIcon("#jiraProjectsSelector");
+            },
+            error: function (e) {
+                console.log(e);
+                hideLoadingIcon("#jiraProjectsSelector");
+            }
+        });
+    });
+
 });
 
-function setComboNoData(selector) {
+function setComboNoData(selector, multiple) {
     AJS.$(selector).auiSelect2({
-        multiple: false,
+        multiple: !!multiple,
         data: []
     });
     $(selector).prop('disabled', true); //disable selector

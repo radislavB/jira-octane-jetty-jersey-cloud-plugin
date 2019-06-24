@@ -247,7 +247,7 @@ function activateOctaneConfigPage() {
         AP.dialog.create({
             key: 'workspace-dialog-key',
             width: '660px',
-            height: '480px',
+            height: '550px',
             chrome: false,
             customData: {editMode: editMode, entity: editEntity, header: header, spaces:spaces},
         }).on("close", onCloseCallback);
