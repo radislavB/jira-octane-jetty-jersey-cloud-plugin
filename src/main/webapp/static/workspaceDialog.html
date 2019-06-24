@@ -21,6 +21,7 @@
 
         #form-content .select2-container-disabled a.select2-choice {
             background-color: #f5f5f5;
+            cursor: not-allowed;
         }
 
         .field-group .loadingActive {
@@ -38,7 +39,7 @@
             width: 16px;
             height: 16px;
             display: inline-block;
-            left: 508px;
+            left: 509px;
             top: 10px;
             position: absolute;
             visibility: visible;
@@ -83,7 +84,7 @@
             </div>
             <div class="field-group">
                 <label for="octaneEntityTypes">Entity types</label>
-                <input type="text" id="octaneEntityTypes" name="octaneEntityTypes" class="text medium-long-field">
+                <input type="text" id="octaneEntityTypes" name="octaneEntityTypes" class="text medium-long-field" disabled>
                 <span class="loading"></span>
                 <button id="refreshOctaneEntityTypesButton" class="aui-button aui-button-subtle" style="vertical-align: middle;"><img src="/static/icons/icon-refresh.png"></span></button>
                 <div class="error"  id="octaneEntityTypesError"></div>

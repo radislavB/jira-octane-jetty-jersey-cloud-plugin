@@ -3,6 +3,7 @@ package com.microfocus.octane.plugins.resources;
 
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
+import com.microfocus.octane.plugins.octane.descriptors.OctaneEntityTypeManager;
 import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
 import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
 import com.microfocus.octane.plugins.resources.pojo.Select2Item;
@@ -15,6 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,12 +43,23 @@ public class OctaneMetadataResource {
     @GET
     @Path("/possible-jira-fields")
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<String> getPossibleJiraFields(@QueryParam("space-configuration-id") String spaceConfigurationId, @QueryParam("workspace-id") long workspaceId) {
+    public Collection<String> getPossibleJiraFields(@QueryParam("space-configuration-id") String spaceConfigurationId, @QueryParam("workspace-id") long workspaceId) {
         SpaceConfiguration spaceConfig = ConfigurationManager.getInstance().getSpaceConfigurationByIdOrThrowException(getTenantId(), spaceConfigurationId);
-        Set<String> fieldName = OctaneRestService.getPossibleJiraFields(spaceConfig, workspaceId);
+        Collection<String> fieldName = OctaneRestService.getPossibleJiraFields(spaceConfig, workspaceId);
         return fieldName;
     }
 
+    @GET
+    @Path("/supported-types")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<String> getSupportedTypes(@QueryParam("space-configuration-id") String spaceConfigurationId,
+                                         @QueryParam("workspace-id") long workspaceId,
+                                         @QueryParam("udf-name") String udfName) {
+        SpaceConfiguration spaceConfig = ConfigurationManager.getInstance().getSpaceConfigurationByIdOrThrowException(getTenantId(), spaceConfigurationId);
+        Collection<String> types = OctaneRestService.getSupportedOctaneTypes(spaceConfig, workspaceId, udfName);
+        List<String> names = types.stream().map(t -> OctaneEntityTypeManager.getByTypeName(t).getLabel()).sorted().collect(Collectors.toList());
+        return names;
+    }
 
     private String getTenantId() {
         return (String) httpRequest.getAttribute(PluginConstants.TENANT_ID);

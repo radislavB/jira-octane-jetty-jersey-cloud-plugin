@@ -170,7 +170,7 @@ public class OctaneRestService {
         return col;
     }
 
-    public static List<String> getSupportedOctaneTypes(SpaceConfiguration spaceConfiguration, long workspaceId, String udfName) {
+    public static Collection<String> getSupportedOctaneTypes(SpaceConfiguration spaceConfiguration, long workspaceId, String udfName) {
         long spaceId = spaceConfiguration.getLocationParts().getSpaceId();
         String entityCollectionUrl = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceId, workspaceId, "metadata/fields");
         Map<String, String> headers = createHeaderMapWithOctaneClientType();
@@ -193,7 +193,7 @@ public class OctaneRestService {
         return headers;
     }
 
-    public static Set<String> getPossibleJiraFields(SpaceConfiguration spaceConfiguration, long workspaceId) {
+    public static Collection<String> getPossibleJiraFields(SpaceConfiguration spaceConfiguration, long workspaceId) {
         //https://mqalb011sngx.saas.hpe.com/api/shared_spaces/3004/workspaces/2002/metadata/fields?&query=%22field_type=%27string%27;is_user_defined=true;(entity_name+IN+%27feature%27,%27application_module%27,%27requirement_document%27,%27story%27)%22
         long spaceId = spaceConfiguration.getLocationParts().getSpaceId();
         String entityCollectionUrl = String.format(UrlConstants.PUBLIC_API_WORKSPACE_LEVEL_ENTITIES, spaceId, workspaceId, "metadata/fields");

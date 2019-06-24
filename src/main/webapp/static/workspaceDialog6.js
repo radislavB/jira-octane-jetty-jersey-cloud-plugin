@@ -73,10 +73,15 @@ AP.dialog.getCustomData(function (data) {
         }
     });
 
-    $( "#octaneUdfInfo" ).dblclick(function() {
-        if(suggestedUdf){
+    $("#octaneUdfInfo").dblclick(function (e) {
+        if (suggestedUdf) {
             $("#octaneUdf").val(suggestedUdf);
         }
+    });
+
+    $("#refreshOctaneEntityTypesButton").click(function (e) {
+        e.preventDefault();
+        refreshOctaneEntityTypes();
     });
 
 });
@@ -108,6 +113,23 @@ function hideLoadingIcon(selector) {
 function setTitle(selector, title, filled) {
     $(selector).attr("title", title);
     $(selector).toggleClass("infoFilled", !!filled);
+}
+
+function refreshOctaneEntityTypes() {
+    var space = $("#spaceSelector").select2('data');
+    var workspace = $("#workspaceSelector").select2('data');
+    var octaneUdf = $("#octaneUdf").attr("value");
+    if (space && workspace && octaneUdf) {
+        var url = "/rest/octane/supported-types?space-configuration-id=" + space.id + "&workspace-id=" + workspace.id + "&udf-name=" + octaneUdf;
+        showLoadingIcon("#octaneEntityTypes");
+        hostAjaxGet(url).then(function (data) {
+            $("#octaneEntityTypes").val(data);
+        }).catch(function (error) {
+            console.log("Failed to fetch supported octane types  : " + error.message);
+        }).finally(function () {
+            hideLoadingIcon("#octaneEntityTypes");
+        });
+    }
 }
 
 function getProperties() {
