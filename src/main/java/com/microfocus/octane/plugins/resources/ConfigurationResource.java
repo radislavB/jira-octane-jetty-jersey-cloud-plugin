@@ -4,6 +4,7 @@ package com.microfocus.octane.plugins.resources;
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
+import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
 import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -120,6 +121,21 @@ public class ConfigurationResource {
 
         //return Response.ok(map).build();
         return list;
+    }
+
+    @POST
+    @Path("spaces")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addWorkspaceConfiguration(WorkspaceConfiguration workspaceConfiguration) {
+        try {
+            ConfigurarionUtil.validateWorkspaceConfiguration(getTenantId(), workspaceConfiguration, true);
+
+            WorkspaceConfiguration myConfiguration = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), workspaceConfiguration);
+            return Response.ok(myConfiguration).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 
     private String getTenantId() {

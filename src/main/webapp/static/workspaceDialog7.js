@@ -57,7 +57,7 @@ AP.dialog.getCustomData(function (data) {
             var space = $("#spaceSelector").select2('data');
             var url = "/rest/octane/possible-jira-fields?space-configuration-id=" + space.id + "&workspace-id=" + workspaceId;
             showLoadingIcon("#octaneUdf");
-            setTitle("#octaneUdfInfo", "Searching for suggested fields ...")
+            setTitle("#octaneUdfInfo", "Searching for suggested fields ...");
             hostAjaxGet(url).then(function (data) {
                 if (data && data.length) {
                     var msg = "Suggested ALM Octane fields: " + data.join(",  ") + ". Double-click to set '" + data[0] + "' as value.";
@@ -79,6 +79,10 @@ AP.dialog.getCustomData(function (data) {
         if (suggestedUdf) {
             $("#octaneUdf").val(suggestedUdf);
         }
+    });
+
+    $(".affect-octane-entity-types").change(function () {
+        refreshOctaneEntityTypes();
     });
 
     $("#refreshOctaneEntityTypesButton").click(function (e) {

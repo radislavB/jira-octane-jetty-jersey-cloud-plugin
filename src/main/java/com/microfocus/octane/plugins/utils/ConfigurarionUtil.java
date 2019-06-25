@@ -4,18 +4,14 @@ import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.LocationParts;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
+import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
 import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
-import com.microfocus.octane.plugins.octane.rest.RestConnector;
 import com.microfocus.octane.plugins.octane.rest.UrlConstants;
-import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
-import com.microfocus.octane.plugins.octane.rest.query.OctaneQueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.UnknownHostException;
 import java.util.*;
 
 public class ConfigurarionUtil {
@@ -157,6 +153,31 @@ public class ConfigurarionUtil {
 
     public static void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {
         OctaneRestService.getWorkspaces(spaceConfig);
+    }
+
+    public static void validateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration, boolean isNew) {
+        if (StringUtils.isEmpty(workspaceConfiguration.getOctaneUdf())) {
+            throw new IllegalArgumentException("Octane UDF is required");
+        } else if (StringUtils.isEmpty(workspaceConfiguration.getSpaceConfigurationId())) {
+            throw new IllegalArgumentException("Space configuration ID is required");
+        } else if (workspaceConfiguration.getJiraIssueTypes() == null || workspaceConfiguration.getJiraIssueTypes().isEmpty()) {
+            throw new IllegalArgumentException("Jira issue types are required");
+        } else if (workspaceConfiguration.getJiraProjects() == null || workspaceConfiguration.getJiraProjects().isEmpty()) {
+            throw new IllegalArgumentException("Jira projects are required");
+        } else if (workspaceConfiguration.getWorkspaceId() == 0) {
+            throw new IllegalArgumentException("Workspace id is required");
+        }
+
+        if (isNew) {
+            if (StringUtils.isNotEmpty(workspaceConfiguration.getId())) {
+                throw new IllegalArgumentException("New workspace configuration cannot contain configuration id");
+            }
+            workspaceConfiguration.setId(UUID.randomUUID().toString());
+        } else {
+            if (StringUtils.isEmpty(workspaceConfiguration.getId())) {
+                throw new IllegalArgumentException("Configuration id is missing");
+            }
+        }
     }
 
 }
