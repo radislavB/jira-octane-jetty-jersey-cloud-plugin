@@ -30,7 +30,7 @@ AP.dialog.getCustomData(function (data) {
 
     setComboData("#spaceSelector", false, customData.spaces);
     setComboNoData("#workspaceSelector");
-    setComboNoData("#jiraProjectsSelector");
+    setComboNoData("#jiraProjectsSelector",true);
     setComboNoData("#jiraIssueTypesSelector", true);
 
 
@@ -90,7 +90,7 @@ AP.dialog.getCustomData(function (data) {
     showLoadingIcon("#jiraProjectsSelector");
     AP.require('request', function (request) {
         request({
-            url: '/rest/api/latest/project',///rest/api/3/issuetype
+            url: '/rest/api/latest/project',
             success: function (response) {
                 var projectArr = JSON.parse(response);
                 var projects2Combo = _.map(projectArr, function (item) {
@@ -106,6 +106,26 @@ AP.dialog.getCustomData(function (data) {
         });
     });
 
+    console.log("Get jira types");
+    showLoadingIcon("#jiraIssueTypesSelector");
+    AP.require('request', function (request) {
+        request({
+            url: '/rest/api/3/issuetype',
+            success: function (response) {
+                var typesArr = JSON.parse(response);
+                var type2Combo = _.map(typesArr, function (item) {
+                    return {id: item.id, text: item.name};
+                });
+                setComboData("#jiraIssueTypesSelector", true, type2Combo);
+                hideLoadingIcon("#jiraIssueTypesSelector");
+            },
+            error: function (e) {
+                console.log(e);
+                hideLoadingIcon("#jiraIssueTypesSelector");
+            }
+        });
+    });
+
 });
 
 function setComboNoData(selector, multiple) {
@@ -117,9 +137,10 @@ function setComboNoData(selector, multiple) {
 }
 
 function setComboData(selector, multiple, data) {
+    var mydata = _.sortBy(data, 'text');
     AJS.$(selector).auiSelect2({
-        multiple: multiple,
-        data: data
+        multiple: !!multiple,
+        data: mydata
     });
     $(selector).prop('disabled', false); //enable selector
 }
