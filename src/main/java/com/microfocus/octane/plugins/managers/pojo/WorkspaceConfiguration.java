@@ -23,20 +23,13 @@ import java.util.List;
 public class WorkspaceConfiguration {
 
     private String id;
+    private String spaceConfigurationId;
     private long workspaceId;
-    private String workspaceName;
     private String octaneUdf;
     private List<String> octaneEntityTypes;
     private List<KeyValueItem> jiraIssueTypes;
-    private List<String> jiraProjects;
+    private List<KeyValueItem> jiraProjects;
 
-    public long getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(long workspaceId) {
-        this.workspaceId = workspaceId;
-    }
 
     public String getOctaneUdf() {
         return octaneUdf;
@@ -62,20 +55,12 @@ public class WorkspaceConfiguration {
         this.jiraIssueTypes = jiraIssueTypes;
     }
 
-    public List<String> getJiraProjects() {
+    public List<KeyValueItem> getJiraProjects() {
         return jiraProjects;
     }
 
-    public void setJiraProjects(List<String> jiraProjects) {
+    public void setJiraProjects(List<KeyValueItem> jiraProjects) {
         this.jiraProjects = jiraProjects;
-    }
-
-    public String getWorkspaceName() {
-        return workspaceName;
-    }
-
-    public void setWorkspaceName(String workspaceName) {
-        this.workspaceName = workspaceName;
     }
 
     public String getId() {
@@ -84,5 +69,21 @@ public class WorkspaceConfiguration {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSpaceConfigurationId() {
+        return spaceConfigurationId;
+    }
+
+    public void setSpaceConfigurationId(String spaceConfigurationId) {
+        this.spaceConfigurationId = spaceConfigurationId;
+    }
+
+    public long getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(long workspaceId) {
+        this.workspaceId = workspaceId;
     }
 }

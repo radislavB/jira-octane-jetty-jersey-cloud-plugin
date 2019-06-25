@@ -2,6 +2,7 @@ package com.microfocus.octane.plugins.managers;
 
 import com.microfocus.octane.plugins.managers.pojo.ClientConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
+import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -76,6 +77,54 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         }
     }
 
+    public WorkspaceConfiguration addWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration) throws IOException {
+        ClientConfiguration conf = getItemOrCreateNew(clientKey);
+        conf.getWorkspaces().add(workspaceConfiguration);
+        save(clientKey, conf);
+        return workspaceConfiguration;
+    }
+
+    public WorkspaceConfiguration updateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration) throws IOException {
+        ClientConfiguration conf = getItemOrCreateNew(clientKey);
+        WorkspaceConfiguration workspaceConf = getWorkspaceConfigurationByIdOrThrowException(clientKey, workspaceConfiguration.getId());
+        conf.getWorkspaces().remove(conf);
+        conf.getWorkspaces().add(workspaceConfiguration);
+        save(clientKey, conf);
+
+        return workspaceConf;
+    }
+
+    public boolean removeWorkspaceConfiguration(String clientKey, String workspaceConfigurationId) throws IOException {
+        ClientConfiguration conf = getItemOrCreateNew(clientKey);
+        Optional<WorkspaceConfiguration> opt = getWorkspaceConfigurationById(clientKey, workspaceConfigurationId);
+        if (opt.isPresent()) {
+            conf.getSpaces().remove(opt.get());
+            save(clientKey, conf);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Optional<WorkspaceConfiguration> getWorkspaceConfigurationById(String clientKey, String workspaceConfigurationId) {
+        if (StringUtils.isEmpty(workspaceConfigurationId)) {
+            throw new IllegalArgumentException("Workspace configuration id should not be empty");
+        }
+        return getItemOrCreateNew(clientKey).getWorkspaces().stream().filter(c -> workspaceConfigurationId.equals(c.getId())).findFirst();
+    }
+
+    public WorkspaceConfiguration getWorkspaceConfigurationByIdOrThrowException(String clientKey, String workspaceConfigurationId) {
+        if (StringUtils.isEmpty(workspaceConfigurationId)) {
+            throw new IllegalArgumentException("Workspace configuration id should not be empty");
+        }
+        Optional<WorkspaceConfiguration> opt = getItemOrCreateNew(clientKey).getWorkspaces().stream().filter(c -> workspaceConfigurationId.equals(c.getId())).findFirst();
+        if (opt.isPresent()) {
+            return opt.get();
+        } else {
+            throw new RuntimeException(String.format("Workspace configuration '%s' not found", workspaceConfigurationId));
+        }
+    }
+
     @Override
     protected Class<ClientConfiguration> getTypeClass() {
         return ClientConfiguration.class;
@@ -85,5 +134,4 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
     protected String getItemFilePrefix() {
         return FILE_PREFIX;
     }
-
 }

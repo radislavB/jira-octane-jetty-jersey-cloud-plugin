@@ -29,7 +29,6 @@ public class SpaceConfiguration {
     private LocationParts locationParts;
     private String clientId;
     private String clientSecret;
-    private List<WorkspaceConfiguration> workspaces;
 
 
     public String getLocation() {
@@ -62,14 +61,6 @@ public class SpaceConfiguration {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<WorkspaceConfiguration> getWorkspaces() {
-        return workspaces;
-    }
-
-    public void setWorkspaces(List<WorkspaceConfiguration> workspaces) {
-        this.workspaces = workspaces;
     }
 
     public LocationParts getLocationParts() {

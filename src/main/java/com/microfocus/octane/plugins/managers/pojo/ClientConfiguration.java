@@ -21,6 +21,7 @@ import java.util.List;
 public class ClientConfiguration {
 
     private List<SpaceConfiguration> spaces = new ArrayList<>();
+    private List<WorkspaceConfiguration> workspaces = new ArrayList<>();
 
     public List<SpaceConfiguration> getSpaces() {
         return spaces;
@@ -30,4 +31,11 @@ public class ClientConfiguration {
         this.spaces = spaces;
     }
 
+    public List<WorkspaceConfiguration> getWorkspaces() {
+        return workspaces;
+    }
+
+    public void setWorkspaces(List<WorkspaceConfiguration> workspaces) {
+        this.workspaces = workspaces;
+    }
 }

@@ -1,6 +1,6 @@
 package com.microfocus.octane.plugins.resources;
 
-import com.microfocus.octane.plugins.resources.pojo.JiraTenantSecurityContext;
+import com.microfocus.octane.plugins.managers.pojo.JiraTenantSecurityContext;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import com.microfocus.octane.plugins.managers.SecurityContextManager;
 

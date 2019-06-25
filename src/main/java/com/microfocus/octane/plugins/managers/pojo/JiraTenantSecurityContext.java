@@ -1,4 +1,4 @@
-package com.microfocus.octane.plugins.resources.pojo;
+package com.microfocus.octane.plugins.managers.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
