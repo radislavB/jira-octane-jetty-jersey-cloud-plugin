@@ -2,7 +2,6 @@ function activateOctaneConfigPage() {
 
     var spaceTable;
     var workspaceTable;
-    var workspacesRestfulTable;
 
     function initConfigurationPage() {
         configureCreateSpaceButton();
@@ -37,10 +36,10 @@ function activateOctaneConfigPage() {
                     rowModel.clientId = result.entity.clientId;
                     rowModel.clientSecret = result.entity.clientSecret;
                     rowForEdit.render();
+                    reloadTable(workspaceTable);
                 } else {
                     spaceTable.addRow(result.entity);
                 }
-
             }
         }
 
@@ -116,6 +115,7 @@ function activateOctaneConfigPage() {
                     .then(function (data) {
                         spaceTable.removeRow(row);
                         showFlag("Space configuration '" + spaceName + "' was deleted successfully.");
+                        reloadTable(workspaceTable);
                     }).catch(function (error) {
                     showFlag("Failed to delete space  configuration '" + spaceName + "' : " + error.message, "error");
                 });
@@ -230,9 +230,10 @@ function activateOctaneConfigPage() {
         function onCloseCallback(result) {
             if (result && result.entity) {
                 if (editMode) {
-                    console.log("edit mode");
+                    console.log("update - edit mode");
                     var rowModel = rowForEdit.model.attributes;
                     var tableEntity = convertServerWorkspaceConfigurationToTableEntity(result.entity);
+                    console.log("update - set values", tableEntity);
                     rowModel.spaceName = tableEntity.spaceName;
                     rowModel.workspaceId = tableEntity.workspaceId;
                     rowModel.workspaceName = tableEntity.workspaceName;
@@ -242,6 +243,7 @@ function activateOctaneConfigPage() {
                     rowModel.jiraProjects = tableEntity.jiraProjects;
                     rowModel.original = result.entity;
 
+                    console.log("edit mode");
                     rowForEdit.render();
                 } else {
                     workspaceTable.addRow(convertServerWorkspaceConfigurationToTableEntity(result.entity));

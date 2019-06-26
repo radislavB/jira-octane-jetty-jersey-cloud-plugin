@@ -86,13 +86,13 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         return workspaceConfiguration;
     }
 
-    public WorkspaceConfiguration updateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration) throws IOException {
+    public WorkspaceConfiguration updateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration updatedWc) throws IOException {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
-        WorkspaceConfiguration workspaceConf = getWorkspaceConfigurationByIdOrThrowException(clientKey, workspaceConfiguration.getId());
-        conf.getWorkspaces().remove(workspaceConf);
-        conf.getWorkspaces().add(workspaceConfiguration);
+        WorkspaceConfiguration existingWc = getWorkspaceConfigurationByIdOrThrowException(clientKey, updatedWc.getId());
+        conf.getWorkspaces().remove(existingWc);
+        conf.getWorkspaces().add(updatedWc);
         save(clientKey, conf);
-        return workspaceConf;
+        return updatedWc;
     }
 
     public boolean removeWorkspaceConfiguration(String clientKey, String workspaceConfigurationId) throws IOException {

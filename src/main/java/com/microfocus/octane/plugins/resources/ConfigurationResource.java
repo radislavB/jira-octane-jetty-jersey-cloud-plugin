@@ -127,8 +127,8 @@ public class ConfigurationResource {
     public Response updateWorkspaceConfiguration(@PathParam("workspaceConfigurationId") String spaceId, WorkspaceConfigurationOutgoing wco) {
         try {
             WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, false);
-            wc = ConfigurationManager.getInstance().updateWorkspaceConfiguration(getTenantId(), wc);
-            WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(wc, getSpaceConfigurationId2Name());
+            WorkspaceConfiguration updatedWc = ConfigurationManager.getInstance().updateWorkspaceConfiguration(getTenantId(), wc);
+            WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(updatedWc, getSpaceConfigurationId2Name());
             return Response.ok(outputWco).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();

@@ -248,6 +248,7 @@ function submit() {
     hostAjaxSend(requestType, url, JSON.stringify(entityProperties))
         .then(function (result) {
             showFlag('Workspace configuration saved successfully.');
+            console.log("submitted entity", result)
             AP.dialog.close({entity: result});
         }).catch(function (error) {
         showFlag("Failed to save : " + error.message, "error");
