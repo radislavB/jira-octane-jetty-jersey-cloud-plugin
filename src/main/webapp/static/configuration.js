@@ -224,19 +224,25 @@ function activateOctaneConfigPage() {
         });
 
         var editMode = !!rowForEdit;
-        var editEntity = editMode ? rowForEdit.model.attributes : null;
+        var editEntity = editMode ? rowForEdit.model.attributes.original : null;
         var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
 
         function onCloseCallback(result) {
             if (result && result.entity) {
                 if (editMode) {
                     console.log("edit mode");
-                    //var rowModel = rowForEdit.model.attributes;
-                    //rowModel.location = result.entity.location;
-                    //rowModel.name = result.entity.name;
-                    //rowModel.clientId = result.entity.clientId;
-                    //rowModel.clientSecret = result.entity.clientSecret;
-                    //rowForEdit.render();
+                    var rowModel = rowForEdit.model.attributes;
+                    var tableEntity = convertServerWorkspaceConfigurationToTableEntity(result.entity);
+                    rowModel.spaceName = tableEntity.spaceName;
+                    rowModel.workspaceId = tableEntity.workspaceId;
+                    rowModel.workspaceName = tableEntity.workspaceName;
+                    rowModel.octaneUdf = tableEntity.octaneUdf;
+                    rowModel.octaneEntityTypes = tableEntity.octaneEntityTypes;
+                    rowModel.jiraIssueTypes = tableEntity.jiraIssueTypes;
+                    rowModel.jiraProjects = tableEntity.jiraProjects;
+                    rowModel.original = result.entity;
+
+                    rowForEdit.render();
                 } else {
                     workspaceTable.addRow(convertServerWorkspaceConfigurationToTableEntity(result.entity));
                 }
@@ -253,7 +259,7 @@ function activateOctaneConfigPage() {
     }
 
     function removeWorkspaceConfiguration(row) {
-        var workspaceText = row.model.attributes.spaceName + "(" + row.model.attributes.workspaceId + ")"
+        var workspaceText = row.model.attributes.spaceName + "(" + row.model.attributes.workspaceId + ")";
         var text = "Are you sure you want to delete workspace configuration '" + workspaceText + "' ?";
         confirmDelete(text).then(function (isConfirmed) {
             if (isConfirmed) {

@@ -17,37 +17,48 @@ AP.dialog.getCustomData(function (data) {
     });
 
     //set fields
+
     if (isEditMode()) {
-        console.log("edit mode");
-        //$("#name").val(customData.entity.name);
-        //$("#location").val(customData.entity.location);
-        //$("#clientId").val(customData.entity.clientId);
-        //$("#clientSecret").val(customData.entity.clientSecret);
+        console.log("edit mode ", customData.entity);
+        $('#spaceSelector').val([customData.entity.spaceConfiguration.id]);
+        $('#workspaceSelector').val([customData.entity.workspace.id]);
+        $('#octaneUdf').val([customData.entity.octaneUdf]);
+        $('#octaneEntityTypes').val([customData.entity.octaneEntityTypesLabels]);
+        $('#jiraIssueTypesSelector').val([customData.entity.jiraIssueTypes]);
+        $('#jiraProjectsSelector').val([customData.entity.jiraProjects]);
+
+        loadWorkspaces(customData.entity.spaceConfiguration.id);
+    }else{
+        setComboNoData("#workspaceSelector");
+        setComboNoData("#jiraProjectsSelector", true);
+        setComboNoData("#jiraIssueTypesSelector", true);
     }
+    setComboData("#spaceSelector", false, customData.spaces);
 
     var suggestedUdf;
-    var noData = [];
 
-    setComboData("#spaceSelector", false, customData.spaces);
-    setComboNoData("#workspaceSelector");
-    setComboNoData("#jiraProjectsSelector", true);
-    setComboNoData("#jiraIssueTypesSelector", true);
 
 
     $("#spaceSelector").change(function () {
+        var spaceId = $("#spaceSelector").select2('data').id;
+        loadWorkspaces(spaceId);
+    });
+
+    function loadWorkspaces(spaceId){
         setComboNoData("#workspaceSelector");
         showLoadingIcon("#workspaceSelector");
-        var space = $("#spaceSelector").select2('data');
-        var url = "/rest/octane/workspaces?space-configuration-id=" + space.id;
+
+        var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId;
 
         hostAjaxGet(url).then(function (result) {
+            console.log("setComboData",result);
             setComboData("#workspaceSelector", false, result);
         }).catch(function (error) {
             showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
         }).finally(function () {
             hideLoadingIcon("#workspaceSelector");
         });
-    });
+    }
 
     $("#workspaceSelector").change(function () {
 
@@ -130,7 +141,6 @@ AP.dialog.getCustomData(function (data) {
             }
         });
     });
-
 });
 
 function setComboNoData(selector, multiple) {
