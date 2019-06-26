@@ -30,7 +30,7 @@ AP.dialog.getCustomData(function (data) {
 
     setComboData("#spaceSelector", false, customData.spaces);
     setComboNoData("#workspaceSelector");
-    setComboNoData("#jiraProjectsSelector",true);
+    setComboNoData("#jiraProjectsSelector", true);
     setComboNoData("#jiraIssueTypesSelector", true);
 
 
@@ -78,6 +78,7 @@ AP.dialog.getCustomData(function (data) {
     $("#octaneUdfInfo").dblclick(function (e) {
         if (suggestedUdf) {
             $("#octaneUdf").val(suggestedUdf);
+            refreshOctaneEntityTypes();
         }
     });
 
@@ -181,14 +182,19 @@ function refreshOctaneEntityTypes() {
 
 function getProperties() {
     var data = {
-        name: $("#name").attr("value"),
-        location: $("#location").attr("value"),
-        clientId: $("#clientId").attr("value"),
-        clientSecret: $("#clientSecret").attr("value")
+        spaceConfigurationId: $("#spaceSelector").select2('data').id,
+        workspace: $("#workspaceSelector").select2('data'),
+        octaneUdf: $("#octaneUdf").attr("value"),
+        octaneEntityTypesLabels: ($("#octaneEntityTypes").val()) ? $("#octaneEntityTypes").attr("value").split(",") : [], //if empty value - send empty array
+        jiraIssueTypes: $("#jiraIssueTypesSelector").select2('data'),
+        jiraProjects: $("#jiraProjectsSelector").select2('data')
     };
+
     if (isEditMode()) {
         data.id = customData.entity.id;
     }
+
+    console.log("getProperties", data);
     return data;
 }
 
@@ -204,10 +210,13 @@ function validateRequiredFieldsFilled() {
         });
     }
 
-    var validationFailed = !validateMissingRequiredAndUpdateErrorField($("#location").val(), "#locationError");
-    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#name").val(), "#nameError") || validationFailed;
-    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientId").val(), "#clientIdError") || validationFailed;
-    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#clientSecret").val(), "#clientSecretError") || validationFailed;
+    var validationFailed = !validateMissingRequiredAndUpdateErrorField($("#spaceSelector").select2('data'), "#spaceSelectorError");
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#workspaceSelector").select2('data'), "#workspaceSelectorError") || validationFailed;
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#octaneUdf").attr("value"), "#octaneUdfError") || validationFailed;
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#octaneEntityTypes").val(), "#octaneEntityTypesError") || validationFailed;
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#jiraProjectsSelector").select2('data').length, "#jiraProjectsSelectorError") || validationFailed;
+    validationFailed = !validateMissingRequiredAndUpdateErrorField($("#jiraIssueTypesSelector").select2('data').length, "#jiraIssueTypesSelectorError") || validationFailed;
+
     return !validationFailed;
 }
 
@@ -216,16 +225,16 @@ function submit() {
     if (!validateRequiredFieldsFilled()) {
         return;
     }
-    setStatus("Saving ...");
+
     var entityProperties = getProperties();
     var requestType;
     var url;
     if (isEditMode()) {
         requestType = "PUT";
-        url = "/rest/configuration/spaces/" + entityProperties.id;
+        url = "/rest/configuration/workspaces/" + entityProperties.id;
     } else {
         requestType = "POST";
-        url = "/rest/configuration/spaces";
+        url = "/rest/configuration/workspaces";
     }
 
     hostAjaxSend(requestType, url, JSON.stringify(entityProperties))
@@ -233,6 +242,6 @@ function submit() {
             showFlag('Workspace configuration saved successfully.');
             AP.dialog.close({entity: result});
         }).catch(function (error) {
-        setStatus("Failed to save : " + error.message, "failed");
+        showFlag("Failed to save : " + error.message, "error");
     });
 }

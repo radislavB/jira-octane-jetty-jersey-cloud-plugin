@@ -18,7 +18,6 @@ package com.microfocus.octane.plugins.managers.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SpaceConfiguration {
@@ -35,47 +34,53 @@ public class SpaceConfiguration {
         return location;
     }
 
-    public void setLocation(String location) {
+    public SpaceConfiguration setLocation(String location) {
         this.location = location;
+        return this;
     }
 
     public String getClientSecret() {
         return clientSecret;
     }
 
-    public void setClientSecret(String clientSecret) {
+    public SpaceConfiguration setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+        return this;
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(String clientId) {
+    public SpaceConfiguration setClientId(String clientId) {
         this.clientId = clientId;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public SpaceConfiguration setId(String id) {
         this.id = id;
+        return this;
     }
 
     public LocationParts getLocationParts() {
         return locationParts;
     }
 
-    public void setLocationParts(LocationParts locationParts) {
+    public SpaceConfiguration setLocationParts(LocationParts locationParts) {
         this.locationParts = locationParts;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public SpaceConfiguration setName(String name) {
         this.name = name;
+        return this;
     }
 }

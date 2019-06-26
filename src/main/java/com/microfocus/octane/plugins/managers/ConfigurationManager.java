@@ -77,6 +77,10 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         }
     }
 
+    public List<WorkspaceConfiguration> getWorkspaceConfigurations(String clientKey) {
+        return getItemOrCreateNew(clientKey).getWorkspaces();
+    }
+
     public WorkspaceConfiguration addWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration) throws IOException {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         conf.getWorkspaces().add(workspaceConfiguration);

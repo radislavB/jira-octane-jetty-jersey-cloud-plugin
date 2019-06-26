@@ -5,6 +5,7 @@ import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
 import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
+import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfigurationOutgoing;
 import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,7 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<SpaceConfigurationOutgoing> getAllSpaceConfigurations() {
         List<SpaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId())
-                .stream().map(c -> ConfigurarionUtil.convert(c)).collect(Collectors.toList());
+                .stream().map(c -> ConfigurarionUtil.convertToOutgoing(c)).collect(Collectors.toList());
 
         return spaces;
     }
@@ -45,10 +46,10 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
-            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, true);
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvertToInternal(getTenantId(), spaceConfigurationOutgoing, true);
             ConfigurarionUtil.doFullSpaceConfigurationValidation(getTenantId(), spaceConfig);
             ConfigurationManager.getInstance().addSpaceConfiguration(getTenantId(), spaceConfig);
-            return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
+            return Response.ok(ConfigurarionUtil.convertToOutgoing(spaceConfig)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
@@ -60,13 +61,13 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateSpaceConfiguration(@PathParam("spaceId") String spaceId, SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
-            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, false);
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvertToInternal(getTenantId(), spaceConfigurationOutgoing, false);
             if (!spaceConfig.getId().equals(spaceId)) {
                 return Response.status(Response.Status.CONFLICT).entity("Space id in entity should be equal to id in path parameter").build();
             }
             ConfigurarionUtil.doFullSpaceConfigurationValidation(getTenantId(), spaceConfig);
             ConfigurationManager.getInstance().updateSpaceConfiguration(getTenantId(), spaceConfig);
-            return Response.ok(ConfigurarionUtil.convert(spaceConfig)).build();
+            return Response.ok(ConfigurarionUtil.convertToOutgoing(spaceConfig)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
@@ -88,7 +89,7 @@ public class ConfigurationResource {
     public Response testSpaceConfiguration(SpaceConfigurationOutgoing spaceConfigurationOutgoing) {
         try {
             boolean isNewConfig = StringUtils.isEmpty(spaceConfigurationOutgoing.getId());
-            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvert(getTenantId(), spaceConfigurationOutgoing, isNewConfig);
+            SpaceConfiguration spaceConfig = ConfigurarionUtil.validateAndConvertToInternal(getTenantId(), spaceConfigurationOutgoing, isNewConfig);
             ConfigurarionUtil.validateSpaceConfigurationConnectivity(spaceConfig);
             return Response.ok().build();
         } catch (Exception e) {
@@ -97,9 +98,9 @@ public class ConfigurationResource {
     }
 
     @GET
-    @Path("workspaces")
+    @Path("workspaces1")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Map<String, String>> getAllWorkspaceConfigurations() {
+    public List<Map<String, String>> getAllWorkspaceConfigurations1() {
 
         List list = new ArrayList();
 
@@ -123,15 +124,25 @@ public class ConfigurationResource {
         return list;
     }
 
+    @GET
+    @Path("workspaces")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<WorkspaceConfigurationOutgoing> getAllWorkspaceConfigurations() {
+
+        List<WorkspaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getWorkspaceConfigurations(getTenantId())
+                .stream().map(c -> ConfigurarionUtil.convertToOutgoing(c)).collect(Collectors.toList());
+
+        return spaces;
+    }
+
     @POST
-    @Path("spaces")
+    @Path("workspaces")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addWorkspaceConfiguration(WorkspaceConfiguration workspaceConfiguration) {
+    public Response addWorkspaceConfiguration(WorkspaceConfigurationOutgoing wco) {
         try {
-            ConfigurarionUtil.validateWorkspaceConfiguration(getTenantId(), workspaceConfiguration, true);
-
-            WorkspaceConfiguration myConfiguration = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), workspaceConfiguration);
+            WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, true);
+            WorkspaceConfiguration myConfiguration = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), wc);
             return Response.ok(myConfiguration).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();

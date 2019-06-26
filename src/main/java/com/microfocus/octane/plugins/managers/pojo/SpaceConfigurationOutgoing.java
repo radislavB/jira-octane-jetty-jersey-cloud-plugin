@@ -15,39 +15,44 @@ public class SpaceConfigurationOutgoing {
         return location;
     }
 
-    public void setLocation(String location) {
+    public SpaceConfigurationOutgoing setLocation(String location) {
         this.location = location;
+        return this;
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(String clientId) {
+    public SpaceConfigurationOutgoing setClientId(String clientId) {
         this.clientId = clientId;
+        return this;
     }
 
     public String getClientSecret() {
         return clientSecret;
     }
 
-    public void setClientSecret(String clientSecret) {
+    public SpaceConfigurationOutgoing setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public SpaceConfigurationOutgoing setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public SpaceConfigurationOutgoing setName(String name) {
         this.name = name;
+        return this;
     }
 }

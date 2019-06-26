@@ -1,10 +1,9 @@
 package com.microfocus.octane.plugins.utils;
 
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
-import com.microfocus.octane.plugins.managers.pojo.LocationParts;
-import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
-import com.microfocus.octane.plugins.managers.pojo.SpaceConfigurationOutgoing;
-import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
+import com.microfocus.octane.plugins.managers.pojo.*;
+import com.microfocus.octane.plugins.octane.descriptors.OctaneEntityTypeDescriptor;
+import com.microfocus.octane.plugins.octane.descriptors.OctaneEntityTypeManager;
 import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
 import com.microfocus.octane.plugins.octane.rest.UrlConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConfigurarionUtil {
 
@@ -71,54 +71,54 @@ public class ConfigurarionUtil {
         return query_pairs;
     }
 
-    public static SpaceConfiguration validateAndConvert(String clientKey, SpaceConfigurationOutgoing spaceConfigurationOutgoing, boolean isNew) {
-        if (StringUtils.isEmpty(spaceConfigurationOutgoing.getLocation())) {
+    public static SpaceConfiguration validateAndConvertToInternal(String clientKey, SpaceConfigurationOutgoing sco, boolean isNew) {
+        if (StringUtils.isEmpty(sco.getLocation())) {
             throw new IllegalArgumentException("Location URL is required");
-        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getClientId())) {
+        } else if (StringUtils.isEmpty(sco.getClientId())) {
             throw new IllegalArgumentException("Client ID is required");
-        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getClientSecret())) {
+        } else if (StringUtils.isEmpty(sco.getClientSecret())) {
             throw new IllegalArgumentException("Client secret is required");
-        } else if (StringUtils.isEmpty(spaceConfigurationOutgoing.getName())) {
+        } else if (StringUtils.isEmpty(sco.getName())) {
             throw new IllegalArgumentException("Name is required");
         }
 
-        SpaceConfiguration spaceConf = new SpaceConfiguration();
         if (isNew) {
-            if (StringUtils.isNotEmpty(spaceConfigurationOutgoing.getId())) {
+            if (StringUtils.isNotEmpty(sco.getId())) {
                 throw new IllegalArgumentException("New space configuration cannot contain configuration id");
             }
-            spaceConf.setId(UUID.randomUUID().toString());
+            sco.setId(UUID.randomUUID().toString());
         } else {
-            if (StringUtils.isEmpty(spaceConfigurationOutgoing.getId())) {
+            if (StringUtils.isEmpty(sco.getId())) {
                 throw new IllegalArgumentException("Configuration id is missing");
             }
-            spaceConf.setId(spaceConfigurationOutgoing.getId());
+            sco.setId(sco.getId());
         }
 
-        spaceConf.setName(spaceConfigurationOutgoing.getName());
-        spaceConf.setLocation(spaceConfigurationOutgoing.getLocation());
-        spaceConf.setClientId(spaceConfigurationOutgoing.getClientId());
-        spaceConf.setLocationParts(parseUiLocation(spaceConfigurationOutgoing.getLocation()));
-
-        String clientSecret = spaceConfigurationOutgoing.getClientSecret();
+        String clientSecret = sco.getClientSecret();
         if (PluginConstants.PASSWORD_REPLACEMENT.equals(clientSecret) && !isNew) {
-            Optional<SpaceConfiguration> opt = ConfigurationManager.getInstance().getSpaceConfigurationById(clientKey, spaceConfigurationOutgoing.getId());
+            Optional<SpaceConfiguration> opt = ConfigurationManager.getInstance().getSpaceConfigurationById(clientKey, sco.getId());
             if (opt.isPresent()) {
                 clientSecret = opt.get().getClientSecret();
             }
         }
-        spaceConf.setClientSecret(clientSecret);
-        return spaceConf;
+
+        SpaceConfiguration sc = new SpaceConfiguration().setId(sco.getId())
+                .setName(sco.getName())
+                .setLocation(sco.getLocation())
+                .setClientId(sco.getClientId())
+                .setLocationParts(parseUiLocation(sco.getLocation()))
+                .setClientSecret(clientSecret);
+        return sc;
     }
 
-    public static SpaceConfigurationOutgoing convert(SpaceConfiguration internalSpaceConf) {
-        SpaceConfigurationOutgoing spaceConf = new SpaceConfigurationOutgoing();
-        spaceConf.setId(internalSpaceConf.getId());
-        spaceConf.setName(internalSpaceConf.getName());
-        spaceConf.setLocation(internalSpaceConf.getLocation());
-        spaceConf.setClientSecret(PluginConstants.PASSWORD_REPLACEMENT);
-        spaceConf.setClientId(internalSpaceConf.getClientId());
-        return spaceConf;
+    public static SpaceConfigurationOutgoing convertToOutgoing(SpaceConfiguration sc) {
+        SpaceConfigurationOutgoing sco = new SpaceConfigurationOutgoing()
+                .setId(sc.getId())
+                .setName(sc.getName())
+                .setLocation(sc.getLocation())
+                .setClientSecret(PluginConstants.PASSWORD_REPLACEMENT)
+                .setClientId(sc.getClientId());
+        return sco;
     }
 
     public static void doFullSpaceConfigurationValidation(String clientKey, SpaceConfiguration spaceConfiguration) {
@@ -155,29 +155,66 @@ public class ConfigurarionUtil {
         OctaneRestService.getWorkspaces(spaceConfig);
     }
 
-    public static void validateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration, boolean isNew) {
-        if (StringUtils.isEmpty(workspaceConfiguration.getOctaneUdf())) {
+    public static WorkspaceConfiguration validateAndConvertToInternal(WorkspaceConfigurationOutgoing wco, boolean isNew) {
+        if (StringUtils.isEmpty(wco.getOctaneUdf())) {
             throw new IllegalArgumentException("Octane UDF is required");
-        } else if (StringUtils.isEmpty(workspaceConfiguration.getSpaceConfigurationId())) {
+        } else if (StringUtils.isEmpty(wco.getSpaceConfigurationId())) {
             throw new IllegalArgumentException("Space configuration ID is required");
-        } else if (workspaceConfiguration.getJiraIssueTypes() == null || workspaceConfiguration.getJiraIssueTypes().isEmpty()) {
+        } else if (wco.getJiraIssueTypes() == null || wco.getJiraIssueTypes().isEmpty()) {
             throw new IllegalArgumentException("Jira issue types are required");
-        } else if (workspaceConfiguration.getJiraProjects() == null || workspaceConfiguration.getJiraProjects().isEmpty()) {
+        } else if (wco.getJiraProjects() == null || wco.getJiraProjects().isEmpty()) {
             throw new IllegalArgumentException("Jira projects are required");
-        } else if (workspaceConfiguration.getWorkspaceId() == 0) {
-            throw new IllegalArgumentException("Workspace id is required");
+        } else if (wco.getWorkspace() == null || StringUtils.isEmpty(wco.getWorkspace().getId())) {
+            throw new IllegalArgumentException("Workspace is required");
         }
 
         if (isNew) {
-            if (StringUtils.isNotEmpty(workspaceConfiguration.getId())) {
+            if (StringUtils.isNotEmpty(wco.getId())) {
                 throw new IllegalArgumentException("New workspace configuration cannot contain configuration id");
             }
-            workspaceConfiguration.setId(UUID.randomUUID().toString());
+            wco.setId(UUID.randomUUID().toString());
         } else {
-            if (StringUtils.isEmpty(workspaceConfiguration.getId())) {
+            if (StringUtils.isEmpty(wco.getId())) {
                 throw new IllegalArgumentException("Configuration id is missing");
             }
         }
+
+
+        List<String> octaneTypeKeys = wco.getOctaneEntityTypesLabels().stream()
+                .map(label -> OctaneEntityTypeManager.getByLabel(label).getTypeName())
+                .collect(Collectors.toList());
+
+
+
+        WorkspaceConfiguration wc = new WorkspaceConfiguration()
+                .setId(wco.getId())
+                .setOctaneUdf(wco.getOctaneUdf())
+                .setJiraIssueTypes(wco.getJiraIssueTypes())
+                .setJiraProjects(wco.getJiraProjects())
+                .setOctaneEntityTypes(octaneTypeKeys)
+                .setSpaceConfigurationId(wco.getSpaceConfigurationId())
+                .setWorkspace(wco.getWorkspace());
+        return wc;
+    }
+
+    public static WorkspaceConfigurationOutgoing convertToOutgoing(WorkspaceConfiguration wc) {
+
+        List<String> octaneTypes = wc.getOctaneEntityTypes().stream()
+                .map(typeName -> {
+                    OctaneEntityTypeDescriptor desc = OctaneEntityTypeManager.getByTypeName(typeName);
+                    return desc == null ? "" : desc.getLabel();
+                })
+                .sorted().collect(Collectors.toList());
+
+        WorkspaceConfigurationOutgoing wco = new WorkspaceConfigurationOutgoing()
+                .setId(wc.getId())
+                .setOctaneUdf(wc.getOctaneUdf())
+                .setJiraIssueTypes(wc.getJiraIssueTypes())
+                .setJiraProjects(wc.getJiraProjects())
+                .setOctaneEntityTypesLabels(octaneTypes)
+                .setSpaceConfigurationId(wc.getSpaceConfigurationId())
+                .setWorkspace(wc.getWorkspace());
+        return wco;
     }
 
 }
