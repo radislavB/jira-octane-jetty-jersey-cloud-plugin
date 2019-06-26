@@ -1,8 +1,14 @@
 var validateRequiredFieldsFilledAuto = false;
 var customData;
+var suggestedUdf;
 AP.dialog.disableCloseOnSubmit();
+
 AP.dialog.getCustomData(function (data) {
     customData = data;
+    initDialog();
+});
+
+function initDialog() {
     //set header
     $(".aui-dialog2-header-main").text(customData.header);
 
@@ -16,74 +22,33 @@ AP.dialog.getCustomData(function (data) {
         AP.dialog.close();
     });
 
-    //set fields
-
     if (isEditMode()) {
         console.log("edit mode ", customData.entity);
         $('#spaceSelector').val([customData.entity.spaceConfiguration.id]);
         $('#workspaceSelector').val([customData.entity.workspace.id]);
         $('#octaneUdf').val([customData.entity.octaneUdf]);
         $('#octaneEntityTypes').val([customData.entity.octaneEntityTypesLabels]);
-        $('#jiraIssueTypesSelector').val([customData.entity.jiraIssueTypes]);
-        $('#jiraProjectsSelector').val([customData.entity.jiraProjects]);
+        $('#jiraIssueTypesSelector').val(_.pluck(customData.entity.jiraIssueTypes, "id"));
+        $('#jiraProjectsSelector').val(_.pluck(customData.entity.jiraProjects, "id"));
 
+        loadPossibleOctaneUdf(customData.entity.workspace.id, customData.entity.spaceConfiguration.id);
         loadWorkspaces(customData.entity.spaceConfiguration.id);
-    }else{
-        setComboNoData("#workspaceSelector");
-        setComboNoData("#jiraProjectsSelector", true);
-        setComboNoData("#jiraIssueTypesSelector", true);
     }
+
+    setComboNoData("#workspaceSelector");
+    setComboNoData("#jiraProjectsSelector", true);
+    setComboNoData("#jiraIssueTypesSelector", true);
     setComboData("#spaceSelector", false, customData.spaces);
-
-    var suggestedUdf;
-
-
 
     $("#spaceSelector").change(function () {
         var spaceId = $("#spaceSelector").select2('data').id;
         loadWorkspaces(spaceId);
     });
 
-    function loadWorkspaces(spaceId){
-        setComboNoData("#workspaceSelector");
-        showLoadingIcon("#workspaceSelector");
-
-        var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId;
-
-        hostAjaxGet(url).then(function (result) {
-            console.log("setComboData",result);
-            setComboData("#workspaceSelector", false, result);
-        }).catch(function (error) {
-            showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
-        }).finally(function () {
-            hideLoadingIcon("#workspaceSelector");
-        });
-    }
-
     $("#workspaceSelector").change(function () {
-
-        suggestedUdf = null;
         var workspaceId = $("#workspaceSelector").val();
-        if (workspaceId) {
-            var space = $("#spaceSelector").select2('data');
-            var url = "/rest/octane/possible-jira-fields?space-configuration-id=" + space.id + "&workspace-id=" + workspaceId;
-            showLoadingIcon("#octaneUdf");
-            setTitle("#octaneUdfInfo", "Searching for suggested fields ...");
-            hostAjaxGet(url).then(function (data) {
-                if (data && data.length) {
-                    var msg = "Suggested ALM Octane fields: " + data.join(",  ") + ". Double-click to set '" + data[0] + "' as value.";
-                    suggestedUdf = data[0];
-                    setTitle("#octaneUdfInfo", msg, true);
-                } else {
-                    setTitle("#octaneUdfInfo", "No suggested fields are found.");
-                }
-            }).catch(function (error) {
-                setTitle("#octaneUdfInfo", "Failed to fetch possible-jira-fields  : " + error.message);
-                console.log("Failed to fetch possible-jira-fields  : " + error.message);
-            }).finally(function () {
-                hideLoadingIcon("#octaneUdf");
-            });
-        }
+        var space = $("#spaceSelector").select2('data');
+        loadPossibleOctaneUdf(workspaceId, space.id);
     });
 
     $("#octaneUdfInfo").dblclick(function (e) {
@@ -102,46 +67,80 @@ AP.dialog.getCustomData(function (data) {
         refreshOctaneEntityTypes();
     });
 
-    console.log("Get jira projects");
-    showLoadingIcon("#jiraProjectsSelector");
-    AP.require('request', function (request) {
-        request({
-            url: '/rest/api/latest/project',
-            success: function (response) {
-                var projectArr = JSON.parse(response);
-                var projects2Combo = _.map(projectArr, function (item) {
-                    return {id: item.id, text: item.name};
-                });
-                setComboData("#jiraProjectsSelector", true, projects2Combo);
-                hideLoadingIcon("#jiraProjectsSelector");
-            },
-            error: function (e) {
-                console.log(e);
-                hideLoadingIcon("#jiraProjectsSelector");
-            }
-        });
-    });
+    loadJiraProjects();
+    loadJiraIssueTypes();
+}
 
-    console.log("Get jira types");
-    showLoadingIcon("#jiraIssueTypesSelector");
+function loadPossibleOctaneUdf(workspaceId, spaceConfigurationId) {
+    suggestedUdf = null;
+    console.log("loadPossibleOctaneUdf", workspaceId, spaceConfigurationId);
+    if (workspaceId && spaceConfigurationId) {
+        var url = "/rest/octane/possible-jira-fields?space-configuration-id=" + spaceConfigurationId + "&workspace-id=" + workspaceId;
+        showLoadingIcon("#octaneUdf");
+        setTitle("#octaneUdfInfo", "Searching for suggested fields ...");
+        hostAjaxGet(url).then(function (data) {
+            if (data && data.length) {
+                var msg = "Suggested ALM Octane fields: " + data.join(",  ") + ". Double-click to set '" + data[0] + "' as value.";
+                suggestedUdf = data[0];
+                setTitle("#octaneUdfInfo", msg, true);
+            } else {
+                setTitle("#octaneUdfInfo", "No suggested fields are found.");
+            }
+        }).catch(function (error) {
+            setTitle("#octaneUdfInfo", "Failed to fetch possible-jira-fields  : " + error.message);
+            console.log("Failed to fetch possible-jira-fields  : " + error.message);
+        }).finally(function () {
+            hideLoadingIcon("#octaneUdf");
+        });
+    }
+    return suggestedUdf;
+}
+
+function loadWorkspaces(spaceId) {
+    setComboNoData("#workspaceSelector");
+    showLoadingIcon("#workspaceSelector");
+
+    var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId;
+
+    hostAjaxGet(url).then(function (result) {
+        console.log("setComboData", result);
+        setComboData("#workspaceSelector", false, result);
+    }).catch(function (error) {
+        showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
+    }).finally(function () {
+        hideLoadingIcon("#workspaceSelector");
+    });
+}
+
+function loadJiraProjects() {
+    loadDataFromJiraToCombo("#jiraProjectsSelector", '/rest/api/latest/project');
+}
+
+function loadJiraIssueTypes() {
+    loadDataFromJiraToCombo("#jiraIssueTypesSelector", '/rest/api/3/issuetype');
+}
+
+function loadDataFromJiraToCombo(selector, jiraRequestUrl) {
+    showLoadingIcon(selector);
     AP.require('request', function (request) {
         request({
-            url: '/rest/api/3/issuetype',
+            url: jiraRequestUrl,
             success: function (response) {
-                var typesArr = JSON.parse(response);
-                var type2Combo = _.map(typesArr, function (item) {
+                var arr = JSON.parse(response);
+                var arr2Combo = _.map(arr, function (item) {
                     return {id: item.id, text: item.name};
                 });
-                setComboData("#jiraIssueTypesSelector", true, type2Combo);
-                hideLoadingIcon("#jiraIssueTypesSelector");
+                setComboData(selector, true, arr2Combo);
+                hideLoadingIcon(selector);
             },
             error: function (e) {
                 console.log(e);
-                hideLoadingIcon("#jiraIssueTypesSelector");
+                hideLoadingIcon(selector);
             }
         });
     });
-});
+}
+
 
 function setComboNoData(selector, multiple) {
     AJS.$(selector).auiSelect2({

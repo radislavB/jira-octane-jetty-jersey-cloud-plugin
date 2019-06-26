@@ -37,7 +37,6 @@ public class ConfigurationResource {
         return spaces;
     }
 
-
     @POST
     @Path("spaces")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,7 +69,6 @@ public class ConfigurationResource {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
     }
-
 
     @DELETE
     @Path("spaces/{id}")
@@ -115,6 +113,21 @@ public class ConfigurationResource {
         try {
             WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, true);
             wc = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), wc);
+            WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(wc, getSpaceConfigurationId2Name());
+            return Response.ok(outputWco).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
+    }
+
+    @PUT
+    @Path("workspaces/{workspaceConfigurationId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateWorkspaceConfiguration(@PathParam("workspaceConfigurationId") String spaceId, WorkspaceConfigurationOutgoing wco) {
+        try {
+            WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, false);
+            wc = ConfigurationManager.getInstance().updateWorkspaceConfiguration(getTenantId(), wc);
             WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(wc, getSpaceConfigurationId2Name());
             return Response.ok(outputWco).build();
         } catch (Exception e) {

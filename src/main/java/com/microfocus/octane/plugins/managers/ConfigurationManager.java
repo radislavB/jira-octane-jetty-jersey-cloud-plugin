@@ -38,7 +38,6 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         conf.setClientSecret(spaceConfiguration.getClientSecret());
         save(clientKey, getItemOrCreateNew(clientKey));
         return conf;
-
     }
 
     public boolean removeSpaceConfiguration(String clientKey, String spaceConfigurationId) throws IOException {
@@ -90,10 +89,9 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
     public WorkspaceConfiguration updateWorkspaceConfiguration(String clientKey, WorkspaceConfiguration workspaceConfiguration) throws IOException {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         WorkspaceConfiguration workspaceConf = getWorkspaceConfigurationByIdOrThrowException(clientKey, workspaceConfiguration.getId());
-        conf.getWorkspaces().remove(conf);
+        conf.getWorkspaces().remove(workspaceConf);
         conf.getWorkspaces().add(workspaceConfiguration);
         save(clientKey, conf);
-
         return workspaceConf;
     }
 
