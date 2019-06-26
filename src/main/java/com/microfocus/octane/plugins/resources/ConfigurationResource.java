@@ -16,8 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -102,8 +100,7 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceConfigurationOutgoing> getAllWorkspaceConfigurations() {
 
-        Map<String, String> spaceConfigurationId2Name = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId()).stream()
-                .collect(Collectors.toMap(SpaceConfiguration::getId, SpaceConfiguration::getName));
+        Map<String, String> spaceConfigurationId2Name = getSpaceConfigurationId2Name();
         List<WorkspaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getWorkspaceConfigurations(getTenantId())
                 .stream().map(c -> ConfigurarionUtil.convertToOutgoing(c, spaceConfigurationId2Name)).collect(Collectors.toList());
 
@@ -117,8 +114,9 @@ public class ConfigurationResource {
     public Response addWorkspaceConfiguration(WorkspaceConfigurationOutgoing wco) {
         try {
             WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, true);
-            WorkspaceConfiguration myConfiguration = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), wc);
-            return Response.ok(myConfiguration).build();
+            wc = ConfigurationManager.getInstance().addWorkspaceConfiguration(getTenantId(), wc);
+            WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(wc, getSpaceConfigurationId2Name());
+            return Response.ok(outputWco).build();
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
@@ -134,6 +132,12 @@ public class ConfigurationResource {
 
     private String getTenantId() {
         return (String) httpRequest.getAttribute(PluginConstants.TENANT_ID);
+    }
+
+    private Map<String, String> getSpaceConfigurationId2Name() {
+        Map<String, String> spaceConfigurationId2Name = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId()).stream()
+                .collect(Collectors.toMap(SpaceConfiguration::getId, SpaceConfiguration::getName));
+        return spaceConfigurationId2Name;
     }
 
 }

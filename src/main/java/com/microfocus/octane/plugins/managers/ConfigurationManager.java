@@ -101,7 +101,7 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         Optional<WorkspaceConfiguration> opt = getWorkspaceConfigurationById(clientKey, workspaceConfigurationId);
         if (opt.isPresent()) {
-            conf.getSpaces().remove(opt.get());
+            conf.getWorkspaces().remove(opt.get());
             save(clientKey, conf);
             return true;
         } else {

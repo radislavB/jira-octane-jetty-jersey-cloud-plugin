@@ -229,8 +229,8 @@ function activateOctaneConfigPage() {
 
         function onCloseCallback(result) {
             if (result && result.entity) {
-                console.log(result.entity);
                 if (editMode) {
+                    console.log("edit mode");
                     //var rowModel = rowForEdit.model.attributes;
                     //rowModel.location = result.entity.location;
                     //rowModel.name = result.entity.name;

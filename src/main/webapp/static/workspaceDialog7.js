@@ -194,7 +194,6 @@ function getProperties() {
         data.id = customData.entity.id;
     }
 
-    console.log("getProperties", data);
     return data;
 }
 
