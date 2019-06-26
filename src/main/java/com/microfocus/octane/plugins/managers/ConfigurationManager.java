@@ -53,7 +53,6 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         }
     }
 
-
     public List<SpaceConfiguration> getSpaceConfigurations(String clientKey) {
         return getItemOrCreateNew(clientKey).getSpaces();
     }

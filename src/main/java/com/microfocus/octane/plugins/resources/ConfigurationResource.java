@@ -98,39 +98,14 @@ public class ConfigurationResource {
     }
 
     @GET
-    @Path("workspaces1")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Map<String, String>> getAllWorkspaceConfigurations1() {
-
-        List list = new ArrayList();
-
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("id", "1");
-        map1.put("workspaceName", "ws1");
-        list.add(map1);
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("id", "2");
-        map2.put("workspaceName", "ws2");
-        list.add(map2);
-
-        Map<String, String> map3 = new HashMap<>();
-        map3.put("id", "3");
-        map3.put("workspaceName", "ws3");
-        list.add(map3);
-
-
-        //return Response.ok(map).build();
-        return list;
-    }
-
-    @GET
     @Path("workspaces")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceConfigurationOutgoing> getAllWorkspaceConfigurations() {
 
+        Map<String, String> spaceConfigurationId2Name = ConfigurationManager.getInstance().getSpaceConfigurations(getTenantId()).stream()
+                .collect(Collectors.toMap(SpaceConfiguration::getId, SpaceConfiguration::getName));
         List<WorkspaceConfigurationOutgoing> spaces = ConfigurationManager.getInstance().getWorkspaceConfigurations(getTenantId())
-                .stream().map(c -> ConfigurarionUtil.convertToOutgoing(c)).collect(Collectors.toList());
+                .stream().map(c -> ConfigurarionUtil.convertToOutgoing(c, spaceConfigurationId2Name)).collect(Collectors.toList());
 
         return spaces;
     }
@@ -147,6 +122,14 @@ public class ConfigurationResource {
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
+    }
+
+    @DELETE
+    @Path("workspaces/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean deleteWorkspaceConfiguration(@PathParam("id") String id) throws IOException {
+        boolean isRemoved = ConfigurationManager.getInstance().removeWorkspaceConfiguration(getTenantId(), id);
+        return isRemoved;
     }
 
     private String getTenantId() {

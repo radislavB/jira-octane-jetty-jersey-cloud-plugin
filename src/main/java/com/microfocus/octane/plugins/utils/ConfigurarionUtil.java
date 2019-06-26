@@ -158,8 +158,8 @@ public class ConfigurarionUtil {
     public static WorkspaceConfiguration validateAndConvertToInternal(WorkspaceConfigurationOutgoing wco, boolean isNew) {
         if (StringUtils.isEmpty(wco.getOctaneUdf())) {
             throw new IllegalArgumentException("Octane UDF is required");
-        } else if (StringUtils.isEmpty(wco.getSpaceConfigurationId())) {
-            throw new IllegalArgumentException("Space configuration ID is required");
+        } else if (wco.getSpaceConfiguration() == null || StringUtils.isEmpty(wco.getSpaceConfiguration().getId())) {
+            throw new IllegalArgumentException("Space configuration is required");
         } else if (wco.getJiraIssueTypes() == null || wco.getJiraIssueTypes().isEmpty()) {
             throw new IllegalArgumentException("Jira issue types are required");
         } else if (wco.getJiraProjects() == null || wco.getJiraProjects().isEmpty()) {
@@ -185,19 +185,18 @@ public class ConfigurarionUtil {
                 .collect(Collectors.toList());
 
 
-
         WorkspaceConfiguration wc = new WorkspaceConfiguration()
                 .setId(wco.getId())
                 .setOctaneUdf(wco.getOctaneUdf())
                 .setJiraIssueTypes(wco.getJiraIssueTypes())
                 .setJiraProjects(wco.getJiraProjects())
                 .setOctaneEntityTypes(octaneTypeKeys)
-                .setSpaceConfigurationId(wco.getSpaceConfigurationId())
+                .setSpaceConfigurationId(wco.getSpaceConfiguration().getId())
                 .setWorkspace(wco.getWorkspace());
         return wc;
     }
 
-    public static WorkspaceConfigurationOutgoing convertToOutgoing(WorkspaceConfiguration wc) {
+    public static WorkspaceConfigurationOutgoing convertToOutgoing(WorkspaceConfiguration wc, Map<String,String> spaceConfigurationId2Name) {
 
         List<String> octaneTypes = wc.getOctaneEntityTypes().stream()
                 .map(typeName -> {
@@ -212,7 +211,7 @@ public class ConfigurarionUtil {
                 .setJiraIssueTypes(wc.getJiraIssueTypes())
                 .setJiraProjects(wc.getJiraProjects())
                 .setOctaneEntityTypesLabels(octaneTypes)
-                .setSpaceConfigurationId(wc.getSpaceConfigurationId())
+                .setSpaceConfiguration(new KeyValueItem(wc.getSpaceConfigurationId(), spaceConfigurationId2Name.get(wc.getSpaceConfigurationId())))
                 .setWorkspace(wc.getWorkspace());
         return wco;
     }

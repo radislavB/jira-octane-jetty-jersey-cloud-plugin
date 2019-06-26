@@ -182,7 +182,7 @@ function refreshOctaneEntityTypes() {
 
 function getProperties() {
     var data = {
-        spaceConfigurationId: $("#spaceSelector").select2('data').id,
+        spaceConfiguration: $("#spaceSelector").select2('data'),
         workspace: $("#workspaceSelector").select2('data'),
         octaneUdf: $("#octaneUdf").attr("value"),
         octaneEntityTypesLabels: ($("#octaneEntityTypes").val()) ? $("#octaneEntityTypes").attr("value").split(",") : [], //if empty value - send empty array

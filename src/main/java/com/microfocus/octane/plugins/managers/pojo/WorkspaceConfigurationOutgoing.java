@@ -23,7 +23,7 @@ import java.util.List;
 public class WorkspaceConfigurationOutgoing {
 
     private String id;
-    private String spaceConfigurationId;
+    private KeyValueItem spaceConfiguration;
     private KeyValueItem workspace;
     private String octaneUdf;
     private List<String> octaneEntityTypesLabels;
@@ -76,12 +76,12 @@ public class WorkspaceConfigurationOutgoing {
         return this;
     }
 
-    public String getSpaceConfigurationId() {
-        return spaceConfigurationId;
+    public KeyValueItem getSpaceConfiguration() {
+        return spaceConfiguration;
     }
 
-    public WorkspaceConfigurationOutgoing setSpaceConfigurationId(String spaceConfigurationId) {
-        this.spaceConfigurationId = spaceConfigurationId;
+    public WorkspaceConfigurationOutgoing setSpaceConfiguration(KeyValueItem spaceConfiguration) {
+        this.spaceConfiguration = spaceConfiguration;
         return this;
     }
 
