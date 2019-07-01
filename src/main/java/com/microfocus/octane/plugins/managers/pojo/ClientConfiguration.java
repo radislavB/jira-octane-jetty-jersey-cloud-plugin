@@ -17,6 +17,7 @@ package com.microfocus.octane.plugins.managers.pojo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientConfiguration {
 
@@ -37,5 +38,10 @@ public class ClientConfiguration {
 
     public void setWorkspaces(List<WorkspaceConfiguration> workspaces) {
         this.workspaces = workspaces;
+    }
+
+    public Optional<WorkspaceConfiguration> getSupportedWorkspaceConfiguration(String projectId, String issueTypeId) {
+        Optional<WorkspaceConfiguration> wcOpt = getWorkspaces().stream().filter(w -> w.isProjectIdSupported(projectId) && w.isIssueTypeIdSupported(issueTypeId)).findFirst();
+        return wcOpt;
     }
 }

@@ -15,9 +15,12 @@
 
 package com.microfocus.octane.plugins.managers.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WorkspaceConfiguration {
@@ -30,6 +33,26 @@ public class WorkspaceConfiguration {
     private List<KeyValueItem> jiraIssueTypes;
     private List<KeyValueItem> jiraProjects;
 
+    @JsonIgnore
+    private Set<String> jiraIssueTypesIds;
+
+    @JsonIgnore
+    private Set<String> jiraProjectsIds;
+
+
+    public boolean isProjectIdSupported(String projectId) {
+        if (jiraProjectsIds == null) {
+            jiraProjectsIds = jiraProjects.stream().map(KeyValueItem::getId).collect(Collectors.toSet());
+        }
+        return jiraProjectsIds.contains(projectId);
+    }
+
+    public boolean isIssueTypeIdSupported(String issueTypeId) {
+        if (jiraIssueTypesIds == null) {
+            jiraIssueTypesIds = jiraIssueTypes.stream().map(KeyValueItem::getId).collect(Collectors.toSet());
+        }
+        return jiraIssueTypesIds.contains(issueTypeId);
+    }
 
     public String getOctaneUdf() {
         return octaneUdf;
