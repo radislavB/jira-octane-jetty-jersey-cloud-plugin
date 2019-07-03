@@ -21,6 +21,10 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         return instance;
     }
 
+    public ClientConfiguration getClientConfiguration(String clientKey) {
+        return getItem(clientKey);
+    }
+
     public SpaceConfiguration addSpaceConfiguration(String clientKey, SpaceConfiguration spaceConfiguration) throws IOException {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         conf.getSpaces().add(spaceConfiguration);
@@ -28,14 +32,10 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         return spaceConfiguration;
     }
 
-    public SpaceConfiguration updateSpaceConfiguration(String clientKey, SpaceConfiguration spaceConfiguration) throws IOException {
-        SpaceConfiguration conf = getSpaceConfigurationByIdOrThrowException(clientKey, spaceConfiguration.getId());
-
-        conf.setName(spaceConfiguration.getName());
-        conf.setLocation(spaceConfiguration.getLocation());
-        conf.setLocationParts(spaceConfiguration.getLocationParts());
-        conf.setClientId(spaceConfiguration.getClientId());
-        conf.setClientSecret(spaceConfiguration.getClientSecret());
+    public SpaceConfiguration updateSpaceConfiguration(String clientKey, SpaceConfiguration updatedSpaceConfiguration) throws IOException {
+        SpaceConfiguration conf = getSpaceConfigurationByIdOrThrowException(clientKey, updatedSpaceConfiguration.getId());
+        getClientConfiguration(clientKey).getSpaces().remove(conf);
+        getClientConfiguration(clientKey).getSpaces().add(updatedSpaceConfiguration);
         save(clientKey, getItemOrCreateNew(clientKey));
         return conf;
     }

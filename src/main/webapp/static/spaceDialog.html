@@ -4,13 +4,33 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui.css" media="all">
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/6.0.9/css/aui-experimental.css" media="all">
-    <link rel="stylesheet" href="general.css" media="all">
 
     <!--script src="{{hostScriptUrl}}" data-options="margin:false" type="text/javascript"></script-->
     <!--PRODUCTION CONNECT JS API<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
     <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
     <script src="spaceDialog.js"></script>
     <script src="general.js"></script>
+
+    <style>
+        .statusSuccess{
+            color: green;
+        }
+
+        .statusFailed{
+            color: red;
+        }
+
+        #statusDialog{
+            margin-left: 145px;
+        }
+        #test-connection-button{
+            margin-top: 10px;
+            margin-left: 145px;
+            margin-bottom: 10px;
+        }
+
+
+    </style>
 </head>
 <body style="background: none">
 
@@ -50,6 +70,7 @@
                     <div class="description">Client secret used for logging into the ALM Octane server</div>
                 </div>
             </div>
+            <button id="test-connection-button" class="aui-button">Test connection</button>
             <div id="statusDialog"></div>
         </form>
     </div>
@@ -57,7 +78,7 @@
         <div class="aui-dialog2-footer-actions">
             <button id="confirm-button" class="aui-button aui-button-primary">Save</button>
             <button id="cancel-button" class="aui-button aui-button-link">Cancel</button>
-            <button id="test-connection-button" class="aui-button">Test connection</button>
+
         </div>
     </footer>
 </section>

@@ -16,7 +16,10 @@
 package com.microfocus.octane.plugins.managers.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.microfocus.octane.plugins.octane.rest.RestConnector;
+import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,6 +32,8 @@ public class SpaceConfiguration {
     private String clientId;
     private String clientSecret;
 
+    @JsonIgnore
+    private RestConnector restConnector;
 
     public String getLocation() {
         return location;
@@ -82,5 +87,13 @@ public class SpaceConfiguration {
     public SpaceConfiguration setName(String name) {
         this.name = name;
         return this;
+    }
+
+    @JsonIgnore
+    public RestConnector getRestConnector(){
+        if(restConnector==null){
+            //restConnector = ConfigurarionUtil.
+        }
+        return null;
     }
 }
