@@ -41,15 +41,18 @@ public class CoverageResource {
                               @QueryParam("issue_id") String issueId) throws IOException {
 
         ClientConfiguration config = ConfigurationManager.getInstance().getClientConfiguration(getTenantId());
-        Optional<WorkspaceConfiguration> optWc = config.getSupportedWorkspaceConfiguration(projectId, issueTypeId);
-        String body = null;
-        if (optWc.isPresent()) {
+        Optional<WorkspaceConfiguration> optWc = config.getSupportedWorkspaceConfiguration(projectId);
 
+        String body = null;
+        if (!optWc.isPresent()) {
+            body = "This project is not supporting ALM Octane Coverage.";
+        } else if (!optWc.get().isIssueTypeIdSupported(issueTypeId)) {
+            body = "This issue type is not supporting ALM Octane Coverage.";
         } else {
-            body = "Project/Issue Type does not support ALM Octane Coverage";
+            body = "Issue is supported.";
         }
 
-        return wrapElement("<div>Hello World FROM MF from Radi to Daniel3</div>");
+        return wrapElement(body);
     }
 
     private String wrapElement(String body) throws IOException {

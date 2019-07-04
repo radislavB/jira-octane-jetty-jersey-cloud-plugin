@@ -18,8 +18,8 @@ package com.microfocus.octane.plugins.managers.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
 import com.microfocus.octane.plugins.octane.rest.RestConnector;
-import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -90,10 +90,10 @@ public class SpaceConfiguration {
     }
 
     @JsonIgnore
-    public RestConnector getRestConnector(){
-        if(restConnector==null){
-            //restConnector = ConfigurarionUtil.
+    public RestConnector getRestConnector() {
+        if (restConnector == null) {
+            restConnector = OctaneRestService.getRestConnector(getLocationParts().getBaseUrl(), getClientId(), getClientSecret());
         }
-        return null;
+        return restConnector;
     }
 }

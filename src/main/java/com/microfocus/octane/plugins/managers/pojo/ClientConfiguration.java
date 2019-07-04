@@ -40,8 +40,8 @@ public class ClientConfiguration {
         this.workspaces = workspaces;
     }
 
-    public Optional<WorkspaceConfiguration> getSupportedWorkspaceConfiguration(String projectId, String issueTypeId) {
-        Optional<WorkspaceConfiguration> wcOpt = getWorkspaces().stream().filter(w -> w.isProjectIdSupported(projectId) && w.isIssueTypeIdSupported(issueTypeId)).findFirst();
+    public Optional<WorkspaceConfiguration> getSupportedWorkspaceConfiguration(String projectId) {
+        Optional<WorkspaceConfiguration> wcOpt = getWorkspaces().stream().filter(w -> w.isProjectIdSupported(projectId) ).findFirst();
         return wcOpt;
     }
 }
