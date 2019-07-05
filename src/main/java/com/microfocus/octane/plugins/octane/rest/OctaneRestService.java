@@ -22,7 +22,6 @@ import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntity;
 import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection;
 import com.microfocus.octane.plugins.octane.rest.entities.groups.GroupEntityCollection;
 import com.microfocus.octane.plugins.octane.rest.query.*;
-import com.microfocus.octane.plugins.utils.ConfigurarionUtil;
 import com.microfocus.octane.plugins.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,7 +179,7 @@ public class OctaneRestService {
         return foundTypes;
     }
 
-    private static  Map<String, String> createHeaderMapWithOctaneClientType() {
+    private static Map<String, String> createHeaderMapWithOctaneClientType() {
         Map<String, String> headers = new HashMap<>();
         headers.put("HPECLIENTTYPE", "HPE_CI_CLIENT");
         return headers;

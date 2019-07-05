@@ -27,7 +27,7 @@ public class OctaneEntity extends MapBasedObject {
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_TYPE = "type";
-
+    public static final String FIELD_LOGICAL = "logical_name";
 
     public String getId() {
         return getString(FIELD_ID);

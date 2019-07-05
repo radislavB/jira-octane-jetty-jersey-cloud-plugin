@@ -3,7 +3,9 @@ package com.microfocus.octane.plugins.resources;
 
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.pojo.ClientConfiguration;
+import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
+import com.microfocus.octane.plugins.utils.CoverageUiHelper;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import com.microfocus.octane.plugins.utils.ResourceUtils;
 
@@ -16,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -49,6 +52,8 @@ public class CoverageResource {
         } else if (!optWc.get().isIssueTypeIdSupported(issueTypeId)) {
             body = "This issue type is not supporting ALM Octane Coverage.";
         } else {
+            SpaceConfiguration sc = config.getSpaceConfigurationById(optWc.get().getSpaceConfigurationId());
+            Map<String, Object> contextMap = CoverageUiHelper.buildCoverageContextMap(sc, optWc.get(), projectId, issueKey, issueId);
             body = "Issue is supported.";
         }
 

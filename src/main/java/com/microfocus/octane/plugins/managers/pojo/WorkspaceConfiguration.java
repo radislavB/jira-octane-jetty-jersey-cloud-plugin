@@ -34,6 +34,9 @@ public class WorkspaceConfiguration {
     private List<KeyValueItem> jiraProjects;
 
     @JsonIgnore
+    private long workspaceId;
+
+    @JsonIgnore
     private Set<String> jiraIssueTypesIds;
 
     @JsonIgnore
@@ -115,5 +118,13 @@ public class WorkspaceConfiguration {
     public WorkspaceConfiguration setWorkspace(KeyValueItem workspace) {
         this.workspace = workspace;
         return this;
+    }
+
+    @JsonIgnore
+    public long getWorkspaceId() {
+        if (workspaceId == 0) {
+            workspaceId = Long.parseLong(workspace.getId());
+        }
+        return workspaceId;
     }
 }

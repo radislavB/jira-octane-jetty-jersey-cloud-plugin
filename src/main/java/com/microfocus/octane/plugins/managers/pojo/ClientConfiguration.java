@@ -15,8 +15,11 @@
 package com.microfocus.octane.plugins.managers.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class ClientConfiguration {
@@ -40,8 +43,18 @@ public class ClientConfiguration {
         this.workspaces = workspaces;
     }
 
+    @JsonIgnore
     public Optional<WorkspaceConfiguration> getSupportedWorkspaceConfiguration(String projectId) {
-        Optional<WorkspaceConfiguration> wcOpt = getWorkspaces().stream().filter(w -> w.isProjectIdSupported(projectId) ).findFirst();
+        Optional<WorkspaceConfiguration> wcOpt = getWorkspaces().stream().filter(w -> w.isProjectIdSupported(projectId)).findFirst();
         return wcOpt;
+    }
+
+    @JsonIgnore
+    public SpaceConfiguration getSpaceConfigurationById(String spaceConfigurationId) {
+        Optional<SpaceConfiguration> scOpt = getSpaces().stream().filter(s -> s.getId().equals(spaceConfigurationId)).findFirst();
+        if (!scOpt.isPresent()) {
+            throw new NoSuchElementException("Space configuration with id '" + spaceConfigurationId + "' is not found");
+        }
+        return scOpt.get();
     }
 }
