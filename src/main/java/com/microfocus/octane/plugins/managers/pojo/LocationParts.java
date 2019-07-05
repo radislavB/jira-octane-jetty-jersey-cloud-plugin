@@ -16,7 +16,9 @@
 package com.microfocus.octane.plugins.managers.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LocationParts {
 
     private String baseUrl;

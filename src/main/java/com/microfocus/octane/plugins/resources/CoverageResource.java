@@ -54,7 +54,13 @@ public class CoverageResource {
         } else {
             SpaceConfiguration sc = config.getSpaceConfigurationById(optWc.get().getSpaceConfigurationId());
             Map<String, Object> contextMap = CoverageUiHelper.buildCoverageContextMap(sc, optWc.get(), projectId, issueKey, issueId);
-            body = "Issue is supported.";
+            String status = (String) contextMap.get("status");
+            if (CoverageUiHelper.COVERAGE_STATUS_NO_DATA.equals(status)) {
+                body = "No corresponding entity is mapped in ALM Octane.";
+            } else {
+                body = "Issue is supported.";
+            }
+
         }
 
         return wrapElement(body);

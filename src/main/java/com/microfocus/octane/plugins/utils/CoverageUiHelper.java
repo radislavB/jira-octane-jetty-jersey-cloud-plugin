@@ -41,6 +41,11 @@ import java.util.stream.Collectors;
 
 public class CoverageUiHelper {
 
+    public static final String COVERAGE_STATUS_NO_DATA = "noData";
+    public static final String COVERAGE_STATUS_NO_VALID_CONFIGURATION = "noValidConfiguration";
+    public static final String COVERAGE_STATUS_HAS_DATA = "hasData";
+
+
     private static Map<String, TestStatusDescriptor> testStatusDescriptors = new HashMap<>();
     private static NumberFormat countFormat = NumberFormat.getInstance();
     private static NumberFormat percentFormatter = NumberFormat.getPercentInstance();
@@ -199,7 +204,7 @@ public class CoverageUiHelper {
 
         try {
 
-            QueryPhrase jiraKeyCondition = new InQueryPhrase(workspaceConfig.getOctaneUdf(), Arrays.asList(issueKey, issueId.toString()));
+            QueryPhrase jiraKeyCondition = new InQueryPhrase(workspaceConfig.getOctaneUdf(), Arrays.asList(issueKey, issueId));
             boolean found = false;
             for (AggregateDescriptor aggDescriptor : OctaneEntityTypeManager.getAggregators()) {
                 boolean isMatch = false;
@@ -240,7 +245,7 @@ public class CoverageUiHelper {
                         contextMap.put("coverageGroups", coverageGroups);
                         contextMap.put("totalTestsCount", totalTestCount);
                         //contextMap.put("atl.gh.issue.details.tab.count", total);
-                        contextMap.put("status", "hasData");
+                        contextMap.put("status", COVERAGE_STATUS_HAS_DATA);
                         found = true;
                         break;
                     }
@@ -248,7 +253,7 @@ public class CoverageUiHelper {
             }
 
             if (!found) {
-                contextMap.put("status", "noData");
+                contextMap.put("status", COVERAGE_STATUS_NO_DATA);
             } else {
                 //context map is filled
             }
@@ -277,7 +282,7 @@ public class CoverageUiHelper {
 
 
         if (!contextMap.containsKey("status")) {
-            contextMap.put("status", "noValidConfiguration");
+            contextMap.put("status", COVERAGE_STATUS_NO_VALID_CONFIGURATION);
         }
 
         /*ApplicationUser appuser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();

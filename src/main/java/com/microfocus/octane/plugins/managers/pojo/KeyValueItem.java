@@ -15,6 +15,9 @@
 
 package com.microfocus.octane.plugins.managers.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KeyValueItem {
 
     private String id;

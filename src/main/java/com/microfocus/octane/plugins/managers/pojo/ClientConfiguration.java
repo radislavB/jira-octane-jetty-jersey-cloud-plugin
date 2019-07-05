@@ -16,12 +16,14 @@ package com.microfocus.octane.plugins.managers.pojo;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientConfiguration {
 
     private List<SpaceConfiguration> spaces = new ArrayList<>();

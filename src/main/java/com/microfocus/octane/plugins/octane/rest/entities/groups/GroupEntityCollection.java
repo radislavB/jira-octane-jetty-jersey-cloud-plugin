@@ -15,12 +15,16 @@
 
 package com.microfocus.octane.plugins.octane.rest.entities.groups;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by berkovir on 21/11/2016.
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupEntityCollection {
 
     private int groupsTotalCount;

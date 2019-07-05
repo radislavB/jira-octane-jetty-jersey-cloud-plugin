@@ -15,7 +15,9 @@
 
 package com.microfocus.octane.plugins.octane.rest.entities.groups;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupEntity {
 
     private int count;
