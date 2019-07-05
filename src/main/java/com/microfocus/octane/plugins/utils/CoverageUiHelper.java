@@ -97,7 +97,7 @@ public class CoverageUiHelper {
 
     private static List<MapBasedObject> getCoverageGroups(SpaceConfiguration spaceConfiguration, OctaneEntity octaneEntity, OctaneEntityTypeDescriptor typeDescriptor, long workspaceId) {
         GroupEntityCollection coverage = OctaneRestService.getCoverage(spaceConfiguration, octaneEntity, typeDescriptor, workspaceId);
-        Map<String, GroupEntity> statusId2group = coverage.getGroups().stream().filter(gr -> gr.getValue() != null).collect(Collectors.toMap(g -> ((OctaneEntity) g.getValue()).getId(), Function.identity()));
+        Map<String, GroupEntity> statusId2group = coverage.getGroups().stream().filter(gr -> gr.getValue() != null).collect(Collectors.toMap(g -> (String) (((Map) g.getValue()).get("id")), Function.identity()));
         coverage.getGroups().stream().filter(gr -> gr.getValue() == null).findFirst();
 
         //Octane may return on coverage group without status - it will be assigned to skipped status
