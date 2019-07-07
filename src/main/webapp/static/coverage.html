@@ -60,7 +60,7 @@
             display: inline-block;
             width: 5px;
             height: 18px;
-            margin-bottom: -5px;
+            margin-bottom: -3px;
         }
 
         .octane-test-status-name {
@@ -117,10 +117,10 @@
         <!-- test status-->
         <div id="octane-total-runs"></div>
         <div id="octane-test-groups">
-            <span class="octane-test-status-icon" style="background:red"></span>
+            <!--<span class="octane-test-status-icon" style="background:red"></span>
             <span class="octane-test-status-name">group name</span>
             <span class="octane-test-status-count">2</span>
-            <span class="octane-test-status-percentage">4</span>
+            <span class="octane-test-status-percentage">4</span>-->
         </div>
 
         <div>
@@ -160,17 +160,18 @@
             $("#octane-total-tests").text(data.totalTestsCount);
         }
 
-        //coverage groups //  var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl, testConnectionButtonEl);
         data.coverageGroups.forEach(function (entry) {
-            var idSelector = "#" + entry.fields.id;
-            var countSelector = idSelector + " .octane-test-status-count";
-            var percentageSelector = idSelector + " .octane-test-status-percentage";
-            $(idSelector).removeClass("hidden");
-            $(countSelector).text(entry.fields.countStr);
-            $(percentageSelector).text(entry.fields.percentage);
+            var item = entry.fields;
+            console.log('coverageGroups', entry, entry.fields.color);
+            var grEl = $('<div>' +
+                '<span class="octane-test-status-icon" style="background:' + item.color + '"></span>' +
+                '<span class="octane-test-status-name">' + item.name + '</span>' +
+                '<span class="octane-test-status-count">' + item.countStr + '</span>' +
+                '<span class="octane-test-status-percentage">' + item.percentage + '</span>' +
+                '</div>');
+            $("#octane-test-groups").append(grEl);
         });
     }
-
 
 </script>
 </html>
