@@ -19,7 +19,7 @@ public class Main {
             webPort = "7071";
         }
 
-        final Server server = new Server(Integer.valueOf(webPort));
+        final Server server = new Server(Integer.parseInt(webPort));
         final WebAppContext root = new WebAppContext();
 
         root.setContextPath("/");

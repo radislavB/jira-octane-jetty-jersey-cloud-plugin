@@ -50,9 +50,9 @@ public abstract class BaseManager<T> {
         mapper.writeValue(file, item);
     }
 
-    protected void remove(String clientKey) {
+    protected boolean remove(String clientKey) {
         items.remove(clientKey);
-        getItemFile(clientKey).delete();
+        return getItemFile(clientKey).delete();
     }
 
     protected T getItem(String clientKey) {

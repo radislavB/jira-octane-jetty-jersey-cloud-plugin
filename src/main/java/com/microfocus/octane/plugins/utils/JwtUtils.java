@@ -29,13 +29,13 @@ public class JwtUtils {
             JiraTenantSecurityContext securityContext = SecurityContextManager.getInstance().getSecurityContext(decodedJWT.getIssuer());
 
             //validate qsh if exist
-            String qsh = extractQsh(decodedJWT);
+            /*String qsh = extractQsh(decodedJWT);
             if (qsh != null) {
                 String computedQsh = computeQsh(request);
                 if (!qsh.equals(computedQsh)) {
                     throw new JWTVerificationException("QSH validation is failed");
                 }
-            }
+            }*/
 
             //main validations
             Algorithm algorithm = Algorithm.HMAC256(securityContext.getSharedSecret());

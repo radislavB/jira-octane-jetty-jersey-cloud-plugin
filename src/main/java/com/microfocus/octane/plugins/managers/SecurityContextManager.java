@@ -9,7 +9,7 @@ public class SecurityContextManager extends BaseManager<JiraTenantSecurityContex
 
 
     public static SecurityContextManager instance = new SecurityContextManager();
-    private final String SECURITY_CONTEXT_FILE_PREFIX = "context_";
+    private static final String SECURITY_CONTEXT_FILE_PREFIX = "context_";
 
     private SecurityContextManager() {
 

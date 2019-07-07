@@ -1,60 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css" media="all">
-        <!--<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
-        <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css" media="all">
+    <!--<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
+    <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
 
 
-        <style>
+    <style>
+        .hidden {
+            display: none;
+        }
 
 
-        </style>
-    </head>
-    <body>
-        <section id="content" class="ac-content">
-            <div class="item-details">
-                <!-- octane  entity-->
-                <div id="octane-entity">
+        #octane-entity {
+            margin-bottom: 10px;
+        }
+
+        #octane-entity-icon {
+            display: inline-block;
+            position: relative;
+            text-align: center;
+            vertical-align: middle;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            margin-top: -2px;
+        }
+
+        #octane-entity-icon-text {
+            display: inline-block;
+            position: relative;
+            font-size: 14px;
+            color: #ffffff;
+            top: 4px;
+        }
+
+        #octane-entity-url {
+            margin-left: 5px;
+        }
+
+        .octane-entity-url2name-splitter {
+            color: #cccccc;
+            font-size: 20px;
+            line-height: 35px;
+        }
+
+        #octane-entity-name {
+            position: relative;
+            top: 4px;
+            display: inline-block;
+            white-space: nowrap;
+            width: 155px;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .octane-test-status-icon {
+            display: inline-block;
+            width: 5px;
+            height: 18px;
+            margin-bottom: -5px;
+        }
+
+        .octane-test-status-name {
+            display: inline-block;
+            margin-left: 4px;
+            width: 120px;
+        }
+
+        .octane-test-status-count {
+            display: inline-block;
+            width: 45px;
+            text-align: right;
+        }
+
+        .octane-test-status-percentage {
+            display: inline-block;
+            margin-left: 15px;
+            color: #888888;
+        }
+
+        #octane-total-runs {
+            color: #777777;
+            font-weight: bolder;
+            margin-bottom: 10px;
+        }
+
+        #octane-total-tests {
+            font-weight: bolder;
+        }
+
+        #view-tests-in-alm {
+            margin-top: 13px;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<section id="content" class="ac-content">
+    <div id="octane-entity-section" class="hidden">
+
+        <!-- octane  entity-->
+        <div id="octane-entity">
                 <span id="octane-entity-icon">
                     <span id="octane-entity-icon-text"></span>
                 </span>
-                    <span id="octane-entity-url">
+            <span id="octane-entity-url">
                     <a target="_blank"></a>
                 </span>
-                    <span class="octane-entity-url2name-splitter">|</span>
-                    <span id="octane-entity-name"></span>
-                </div>
+            <span class="octane-entity-url2name-splitter">|</span>
+            <span id="octane-entity-name"></span>
+        </div>
 
-                <!-- test status-->
-                <div id="octane-total-runs"></div>
-                <li>
-                    <!--#foreach( $group in $runGroups )
-                    <dl id="$group.get("id")" class="hidden">
-                    <dt>
-                        <div>
-                            <div class="octane-test-status-icon" style="background:$group.get("color")"/>
-                            <div class="octane-test-status-name" >$group.get("name")</div>
-                        </div>
-                    </dt>
-                    <dd>
-                        <span class="octane-test-status-count"></span>
-                        <span class="octane-test-status-percentage"></span>
-                    </dd>
+        <!-- test status-->
+        <div id="octane-total-runs"></div>
+        <div id="octane-test-groups">
+            <span class="octane-test-status-icon" style="background:red"></span>
+            <span class="octane-test-status-name">group name</span>
+            <span class="octane-test-status-count">2</span>
+            <span class="octane-test-status-percentage">4</span>
+        </div>
 
-                    </dl>
+        <div>
+            <a target="_blank" id="view-tests-in-alm">View <span id="octane-total-tests"></span> tests in ALM Octane</a>
+        </div>
 
-                    #end-->
-                </li>
-                <a target="_blank" id="view-tests-in-alm" >View <span id="octane-total-tests"></span> tests in ALM Octane</a>
 
-            </div>
-        </section>
-    </body>
-    <script>
-        var data;//{data};
-        console.log("Data", content);
+    </div>
+    <div id="octane-no-data-section" class="hidden">
 
+    </div>
+</section>
+</body>
+<script>
+    var data;//{data};
+    console.log("Data", data);
+    if (data.status === 'noData') {
+        console.log('noData', data.noDataMessage);
+        $("#octane-no-data-section").removeClass("hidden");
+        $("#octane-no-data-section").text(data.noDataMessage);
+    } else {
+        console.log('hasData');
+        $("#octane-entity-section").removeClass("hidden");
         var octaneEntity = data.octaneEntity.fields;
         $("#octane-entity-icon-text").text(octaneEntity.typeAbbreviation);
         $("#octane-entity-icon").css("background-color", octaneEntity.typeColor);
@@ -71,15 +160,17 @@
             $("#octane-total-tests").text(data.totalTestsCount);
         }
 
-        //coverage groups
-        /*data.coverageGroups.forEach(function (entry) {
+        //coverage groups //  var parentEl = $('<div></div>').append(editButtonEl, deleteButtonEl, testConnectionButtonEl);
+        data.coverageGroups.forEach(function (entry) {
             var idSelector = "#" + entry.fields.id;
             var countSelector = idSelector + " .octane-test-status-count";
             var percentageSelector = idSelector + " .octane-test-status-percentage";
             $(idSelector).removeClass("hidden");
             $(countSelector).text(entry.fields.countStr);
             $(percentageSelector).text(entry.fields.percentage);
-        });*/
+        });
+    }
 
-    </script>
+
+</script>
 </html>

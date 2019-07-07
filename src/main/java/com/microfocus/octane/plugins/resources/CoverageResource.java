@@ -19,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,8 +36,7 @@ public class CoverageResource {
     @Context
     private ServletContext context;
 
-    private String coverageEmptyHtml;
-    private String coverageExistHtml;
+    private String coverageHtml;
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -48,46 +48,32 @@ public class CoverageResource {
         ClientConfiguration config = ConfigurationManager.getInstance().getClientConfiguration(getTenantId());
         Optional<WorkspaceConfiguration> optWc = config.getSupportedWorkspaceConfiguration(projectId);
 
-        String emptyCoverageMessage = null;
-        Map<String, Object> contextMap = null;
-        boolean coverageExist = false;
+        Map<String, Object> contextMap = new HashMap<>();
+        contextMap.put(CoverageUiHelper.COVERAGE_STATUS_FIELD, CoverageUiHelper.COVERAGE_STATUS_NO_DATA);
         if (!optWc.isPresent()) {
-            emptyCoverageMessage = "This project is not supporting ALM Octane Coverage.";
+            contextMap.put(CoverageUiHelper.COVERAGE_STATUS_NO_DATA_MESSAGE, "This project is not supporting ALM Octane Coverage.");
         } else if (!optWc.get().isIssueTypeIdSupported(issueTypeId)) {
-            emptyCoverageMessage = "This issue type is not supporting ALM Octane Coverage.";
+            contextMap.put(CoverageUiHelper.COVERAGE_STATUS_NO_DATA_MESSAGE, "This issue type is not supporting ALM Octane Coverage.");
         } else {
             SpaceConfiguration sc = config.getSpaceConfigurationById(optWc.get().getSpaceConfigurationId());
             contextMap = CoverageUiHelper.buildCoverageContextMap(sc, optWc.get(), projectId, issueKey, issueId);
-            String status = (String) contextMap.get("status");
+            String status = (String) contextMap.get(CoverageUiHelper.COVERAGE_STATUS_FIELD);
             if (CoverageUiHelper.COVERAGE_STATUS_NO_DATA.equals(status)) {
-                emptyCoverageMessage = "No corresponding entity is mapped in ALM Octane.";
-            } else {
-                coverageExist = true;
-
+                contextMap.put(CoverageUiHelper.COVERAGE_STATUS_NO_DATA_MESSAGE, "No corresponding entity is mapped in ALM Octane.");
             }
         }
 
-        return coverageExist ? wrapCoverage(contextMap) : wrapEmptyCoverage(emptyCoverageMessage);
-    }
-
-    private String wrapEmptyCoverage(String body) throws IOException {
-        if (coverageEmptyHtml == null) {
-            String filename = "/static/coverageEmpty.html";
-            coverageEmptyHtml = ResourceUtils.readFile(context, filename);
-        }
-
-        String result = coverageEmptyHtml.replace("{body}", body);
-        return result;
+        return wrapCoverage(contextMap);
     }
 
     private String wrapCoverage(Map<String, Object> contextMap) throws IOException {
-        if (coverageExistHtml == null) {
+        if (coverageHtml == null) {
             String filename = "/static/coverage.html";
-            coverageExistHtml = ResourceUtils.readFile(context, filename);
+            coverageHtml = ResourceUtils.readFile(context, filename);
         }
 
         String json = JsonUtils.toJson(contextMap);
-        String result = coverageExistHtml.replace(";//{data}", "='" + json + "'");
+        String result = coverageHtml.replace(";//{data}", "=" + json);
         return result;
     }
 

@@ -31,8 +31,9 @@ public class AuthenticationFilter implements Filter {
             if (jwtToken != null) {
                 try {
                     DecodedJWT decodedJWT = JwtUtils.validateToken(req, jwtToken);
+                    //TODO print user id in log
+                    req.setAttribute(PluginConstants.USER_ID, decodedJWT.getSubject());//https://almoctanedev.atlassian.net/rest/api/2/user?accountId=557058:7364e317-e22e-45c7-a23d-d11532f46848
                     req.setAttribute(PluginConstants.TENANT_ID, decodedJWT.getIssuer());
-
                 } catch (Exception e) {
                     validationFailed = true;
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is invalid.");

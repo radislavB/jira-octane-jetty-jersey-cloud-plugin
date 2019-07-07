@@ -44,6 +44,8 @@ public class CoverageUiHelper {
     public static final String COVERAGE_STATUS_NO_DATA = "noData";
     public static final String COVERAGE_STATUS_NO_VALID_CONFIGURATION = "noValidConfiguration";
     public static final String COVERAGE_STATUS_HAS_DATA = "hasData";
+    public static final String COVERAGE_STATUS_FIELD = "status";
+    public static final String COVERAGE_STATUS_NO_DATA_MESSAGE = "noDataMessage";
 
 
     private static Map<String, TestStatusDescriptor> testStatusDescriptors = new HashMap<>();
@@ -107,7 +109,6 @@ public class CoverageUiHelper {
         if (groupWithoutStatusOpt.isPresent()) {
             GroupEntityCollection coverageOfRunsWithoutStatus = OctaneRestService.getNativeStatusCoverageForRunsWithoutStatus(spaceConfiguration, octaneEntity, typeDescriptor, workspaceId);
             int runsWithoutStatusCount = coverageOfRunsWithoutStatus.getGroups().stream().mapToInt(o -> o.getCount()).sum();
-            Map<String, Integer> runsWithoutStatusMap = new HashMap<>();
             //validate that count in group without status equals to received runsWithoutStatusCount
             if (groupWithoutStatusOpt.get().getCount() == runsWithoutStatusCount) {
                 coverageOfRunsWithoutStatus.getGroups().stream().forEach(gr -> {
@@ -245,7 +246,7 @@ public class CoverageUiHelper {
                         contextMap.put("coverageGroups", coverageGroups);
                         contextMap.put("totalTestsCount", totalTestCount);
                         //contextMap.put("atl.gh.issue.details.tab.count", total);
-                        contextMap.put("status", COVERAGE_STATUS_HAS_DATA);
+                        contextMap.put(COVERAGE_STATUS_FIELD, COVERAGE_STATUS_HAS_DATA);
                         found = true;
                         break;
                     }
@@ -282,7 +283,8 @@ public class CoverageUiHelper {
 
 
         if (!contextMap.containsKey("status")) {
-            contextMap.put("status", COVERAGE_STATUS_NO_VALID_CONFIGURATION);
+            contextMap.put(COVERAGE_STATUS_FIELD, COVERAGE_STATUS_NO_DATA);
+            contextMap.put(COVERAGE_STATUS_NO_VALID_CONFIGURATION, "No valid ALM Octane configuration");
         }
 
         /*ApplicationUser appuser = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();

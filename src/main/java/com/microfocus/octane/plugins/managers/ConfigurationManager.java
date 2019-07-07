@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public class ConfigurationManager extends BaseManager<ClientConfiguration> {
 
-    public static ConfigurationManager instance = new ConfigurationManager();
-    private final String FILE_PREFIX = "config_";
+    public final static ConfigurationManager instance = new ConfigurationManager();
+    private final static String FILE_PREFIX = "config_";
 
     private ConfigurationManager() {
     }

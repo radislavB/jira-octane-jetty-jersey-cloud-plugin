@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class OctaneRestService {
 
     private static final Logger log = LoggerFactory.getLogger(OctaneRestService.class);
-    public static int SPACE_CONTEXT = -1;
+    public static final int SPACE_CONTEXT = -1;
 
     public static RestConnector getRestConnector(String baseUrl, String clientId, String clientSecret) {
         try {
