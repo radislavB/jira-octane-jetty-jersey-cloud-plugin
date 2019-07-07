@@ -62,6 +62,10 @@
             height: 18px;
             margin-bottom: -3px;
         }
+        .octane-test-status-icon-wrapper {
+            height: 22px;
+            display: inline-block;
+        }
 
         .octane-test-status-name {
             display: inline-block;
@@ -164,7 +168,7 @@
             var item = entry.fields;
             console.log('coverageGroups', entry, entry.fields.color);
             var grEl = $('<div>' +
-                '<span class="octane-test-status-icon" style="background:' + item.color + '"></span>' +
+                '<span class="octane-test-status-icon-wrapper"><span class="octane-test-status-icon" style="background:' + item.color + '"></span></span>' +
                 '<span class="octane-test-status-name">' + item.name + '</span>' +
                 '<span class="octane-test-status-count">' + item.countStr + '</span>' +
                 '<span class="octane-test-status-percentage">' + item.percentage + '</span>' +
