@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/@atlaskit/css-reset@2.0.0/dist/bundle.css" media="all">
+        <!--<script src="https://connect-cdn.atl-paas.net/all.js" async></script>-->
+        <script src="https://connect-cdn.atl-paas.net/all-debug.js"></script>
+
+
+        <style>
+
+
+        </style>
+    </head>
+    <body>
+        <section id="content" class="ac-content">
+            <div class="item-details">
+                <!-- octane  entity-->
+                <div id="octane-entity">
+                <span id="octane-entity-icon">
+                    <span id="octane-entity-icon-text"></span>
+                </span>
+                    <span id="octane-entity-url">
+                    <a target="_blank"></a>
+                </span>
+                    <span class="octane-entity-url2name-splitter">|</span>
+                    <span id="octane-entity-name"></span>
+                </div>
+
+                <!-- test status-->
+                <div id="octane-total-runs"></div>
+                <li>
+                    <!--#foreach( $group in $runGroups )
+                    <dl id="$group.get("id")" class="hidden">
+                    <dt>
+                        <div>
+                            <div class="octane-test-status-icon" style="background:$group.get("color")"/>
+                            <div class="octane-test-status-name" >$group.get("name")</div>
+                        </div>
+                    </dt>
+                    <dd>
+                        <span class="octane-test-status-count"></span>
+                        <span class="octane-test-status-percentage"></span>
+                    </dd>
+
+                    </dl>
+
+                    #end-->
+                </li>
+                <a target="_blank" id="view-tests-in-alm" >View <span id="octane-total-tests"></span> tests in ALM Octane</a>
+
+            </div>
+        </section>
+    </body>
+    <script>
+        var data;//{data};
+        console.log("Data", content);
+
+        var octaneEntity = data.octaneEntity.fields;
+        $("#octane-entity-icon-text").text(octaneEntity.typeAbbreviation);
+        $("#octane-entity-icon").css("background-color", octaneEntity.typeColor);
+        $("#octane-entity-url a").attr("href", octaneEntity.url);
+        $("#octane-entity-url a").text(octaneEntity.id);
+        $("#view-tests-in-alm").attr("href", octaneEntity.testTabUrl);
+        $("#octane-entity-name").text(octaneEntity.name);
+        $("#octane-entity-name").attr("title", octaneEntity.name);
+
+        //totals
+        var totalRuns = data.totalExecutedTestsCount ? data.totalExecutedTestsCount + " last runs:" : "No last runs";
+        $("#octane-total-runs").text(totalRuns);
+        if (data.totalTestsCount) {
+            $("#octane-total-tests").text(data.totalTestsCount);
+        }
+
+        //coverage groups
+        /*data.coverageGroups.forEach(function (entry) {
+            var idSelector = "#" + entry.fields.id;
+            var countSelector = idSelector + " .octane-test-status-count";
+            var percentageSelector = idSelector + " .octane-test-status-percentage";
+            $(idSelector).removeClass("hidden");
+            $(countSelector).text(entry.fields.countStr);
+            $(percentageSelector).text(entry.fields.percentage);
+        });*/
+
+    </script>
+</html>

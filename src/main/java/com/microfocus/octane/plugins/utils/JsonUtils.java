@@ -1,5 +1,6 @@
 package com.microfocus.octane.plugins.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -20,5 +21,15 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse :" + e.getMessage(), e);
         }
+    }
+
+    public static String toJson(Object obj) {
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert to Json :" + e.getMessage(), e);
+        }
+
     }
 }

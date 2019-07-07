@@ -6,6 +6,7 @@ import com.microfocus.octane.plugins.managers.pojo.ClientConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.SpaceConfiguration;
 import com.microfocus.octane.plugins.managers.pojo.WorkspaceConfiguration;
 import com.microfocus.octane.plugins.utils.CoverageUiHelper;
+import com.microfocus.octane.plugins.utils.JsonUtils;
 import com.microfocus.octane.plugins.utils.PluginConstants;
 import com.microfocus.octane.plugins.utils.ResourceUtils;
 
@@ -34,7 +35,8 @@ public class CoverageResource {
     @Context
     private ServletContext context;
 
-    private String frameTemplate;
+    private String coverageEmptyHtml;
+    private String coverageExistHtml;
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -46,33 +48,46 @@ public class CoverageResource {
         ClientConfiguration config = ConfigurationManager.getInstance().getClientConfiguration(getTenantId());
         Optional<WorkspaceConfiguration> optWc = config.getSupportedWorkspaceConfiguration(projectId);
 
-        String body = null;
+        String emptyCoverageMessage = null;
+        Map<String, Object> contextMap = null;
+        boolean coverageExist = false;
         if (!optWc.isPresent()) {
-            body = "This project is not supporting ALM Octane Coverage.";
+            emptyCoverageMessage = "This project is not supporting ALM Octane Coverage.";
         } else if (!optWc.get().isIssueTypeIdSupported(issueTypeId)) {
-            body = "This issue type is not supporting ALM Octane Coverage.";
+            emptyCoverageMessage = "This issue type is not supporting ALM Octane Coverage.";
         } else {
             SpaceConfiguration sc = config.getSpaceConfigurationById(optWc.get().getSpaceConfigurationId());
-            Map<String, Object> contextMap = CoverageUiHelper.buildCoverageContextMap(sc, optWc.get(), projectId, issueKey, issueId);
+            contextMap = CoverageUiHelper.buildCoverageContextMap(sc, optWc.get(), projectId, issueKey, issueId);
             String status = (String) contextMap.get("status");
             if (CoverageUiHelper.COVERAGE_STATUS_NO_DATA.equals(status)) {
-                body = "No corresponding entity is mapped in ALM Octane.";
+                emptyCoverageMessage = "No corresponding entity is mapped in ALM Octane.";
             } else {
-                body = "Issue is supported.";
-            }
+                coverageExist = true;
 
+            }
         }
 
-        return wrapElement(body);
+        return coverageExist ? wrapCoverage(contextMap) : wrapEmptyCoverage(emptyCoverageMessage);
     }
 
-    private String wrapElement(String body) throws IOException {
-        if (frameTemplate == null) {
-            String filename = "/static/frameTemplate.html";
-            frameTemplate = ResourceUtils.readFile(context, filename);
+    private String wrapEmptyCoverage(String body) throws IOException {
+        if (coverageEmptyHtml == null) {
+            String filename = "/static/coverageEmpty.html";
+            coverageEmptyHtml = ResourceUtils.readFile(context, filename);
         }
 
-        String result = frameTemplate.replace("{body}", body);
+        String result = coverageEmptyHtml.replace("{body}", body);
+        return result;
+    }
+
+    private String wrapCoverage(Map<String, Object> contextMap) throws IOException {
+        if (coverageExistHtml == null) {
+            String filename = "/static/coverage.html";
+            coverageExistHtml = ResourceUtils.readFile(context, filename);
+        }
+
+        String json = JsonUtils.toJson(contextMap);
+        String result = coverageExistHtml.replace(";//{data}", "='" + json + "'");
         return result;
     }
 
