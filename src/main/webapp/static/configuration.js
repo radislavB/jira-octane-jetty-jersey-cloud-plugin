@@ -46,7 +46,7 @@ function activateOctaneConfigPage() {
         AP.dialog.create({
             key: 'space-dialog-key',
             width: '660px',
-            height: '510px',
+            height: '530px',
             chrome: false,
             customData: {editMode: editMode, entity: editEntity, header: header},
         }).on("close", onCloseCallback);
@@ -202,7 +202,7 @@ function activateOctaneConfigPage() {
                 {id: "workspaceName", header: "Workspace Name"},
                 {id: "octaneUdf", header: "Mapping Field"},
                 {id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
-                {id: "jiraIssueTypes", header: "Jira Issue Types", readView: ListReadView},
+                {id: "jiraIssueTypeNames", header: "Jira Issue Types", readView: ListReadView},
                 {id: "jiraProjects", header: "Jira Projects", readView: ListReadView}
             ],
             autoFocus: false,
@@ -223,6 +223,15 @@ function activateOctaneConfigPage() {
             return {id: item.attributes.id, text: item.attributes.name};
         });
 
+        var existingWorkspaceIds = _.map(workspaceTable.getModels().models, function (item) {
+            return item.attributes.workspaceId;
+        });
+
+        var existingJiraProjectIds = _.map(workspaceTable.getModels().models, function (item) {
+            return item.attributes.jiraIssueTypeIds;
+        });
+        existingJiraProjectIds = _.flatten(existingJiraProjectIds);
+
         var editMode = !!rowForEdit;
         var editEntity = editMode ? rowForEdit.model.attributes.original : null;
         var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
@@ -239,7 +248,7 @@ function activateOctaneConfigPage() {
                     rowModel.workspaceName = tableEntity.workspaceName;
                     rowModel.octaneUdf = tableEntity.octaneUdf;
                     rowModel.octaneEntityTypes = tableEntity.octaneEntityTypes;
-                    rowModel.jiraIssueTypes = tableEntity.jiraIssueTypes;
+                    rowModel.jiraIssueTypeNames = tableEntity.jiraIssueTypeNames;
                     rowModel.jiraProjects = tableEntity.jiraProjects;
                     rowModel.original = result.entity;
 
@@ -256,7 +265,14 @@ function activateOctaneConfigPage() {
             width: '660px',
             height: '550px',
             chrome: false,
-            customData: {editMode: editMode, entity: editEntity, header: header, spaces: spaces},
+            customData: {
+                editMode: editMode,
+                entity: editEntity,
+                header: header,
+                spaces: spaces,
+                existingWorkspaceIds: existingWorkspaceIds,
+                existingJiraProjectIds: existingJiraProjectIds
+            },
         }).on("close", onCloseCallback);
     }
 
@@ -295,8 +311,11 @@ function activateOctaneConfigPage() {
             workspaceName: item.workspace.text,
             octaneUdf: item.octaneUdf,
             octaneEntityTypes: item.octaneEntityTypesLabels,
-            jiraIssueTypes: _.map(item.jiraIssueTypes, function (t) {
+            jiraIssueTypeNames: _.map(item.jiraIssueTypes, function (t) {
                 return t.text;
+            }),
+            jiraIssueTypeIds: _.map(item.jiraIssueTypes, function (t) {
+                return t.id;
             }),
             jiraProjects: _.map(item.jiraProjects, function (t) {
                 return t.text;

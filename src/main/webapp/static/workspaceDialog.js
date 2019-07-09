@@ -4,6 +4,7 @@ var suggestedUdf;
 AP.dialog.disableCloseOnSubmit();
 
 AP.dialog.getCustomData(function (data) {
+    console.log("getCustomData", data);
     customData = data;
     initDialog();
 });
@@ -97,30 +98,33 @@ function loadPossibleOctaneUdf(workspaceId, spaceConfigurationId) {
 }
 
 function loadWorkspaces(spaceId) {
+
     setComboNoData("#workspaceSelector");
     showLoadingIcon("#workspaceSelector");
 
     var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId;
 
     hostAjaxGet(url).then(function (result) {
-        console.log("setComboData", result);
-        setComboData("#workspaceSelector", false, result);
+        var notUsedWorkspaces = _.filter(result, function (item) {
+            return !customData.existingWorkspaceIds.includes(item.id);
+        });
+        setComboData("#workspaceSelector", false, notUsedWorkspaces);
     }).catch(function (error) {
-        showFlag("Failed to fetch workspace from space '" + space.text + " : " + error.message, "error");
+        showFlag("Failed to fetch workspaces : " + error.message, "error");
     }).finally(function () {
         hideLoadingIcon("#workspaceSelector");
     });
 }
 
 function loadJiraProjects() {
-    loadDataFromJiraToCombo("#jiraProjectsSelector", '/rest/api/latest/project');
+    loadDataFromJiraToCombo("#jiraProjectsSelector", '/rest/api/latest/project', customData.existingJiraProjectIds);
 }
 
 function loadJiraIssueTypes() {
     loadDataFromJiraToCombo("#jiraIssueTypesSelector", '/rest/api/3/issuetype');
 }
 
-function loadDataFromJiraToCombo(selector, jiraRequestUrl) {
+function loadDataFromJiraToCombo(selector, jiraRequestUrl, excludeIds) {
     showLoadingIcon(selector);
     AP.require('request', function (request) {
         request({
@@ -130,6 +134,12 @@ function loadDataFromJiraToCombo(selector, jiraRequestUrl) {
                 var arr2Combo = _.map(arr, function (item) {
                     return {id: item.id, text: item.name};
                 });
+                if (excludeIds) {
+                    arr2Combo = _.filter(arr2Combo, function (item) {
+                        return !excludeIds.includes(item.id);
+                    });
+                }
+
                 setComboData(selector, true, arr2Combo);
                 hideLoadingIcon(selector);
             },

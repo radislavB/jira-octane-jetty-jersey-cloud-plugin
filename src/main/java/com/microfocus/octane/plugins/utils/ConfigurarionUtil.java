@@ -5,6 +5,7 @@ import com.microfocus.octane.plugins.managers.pojo.*;
 import com.microfocus.octane.plugins.octane.descriptors.OctaneEntityTypeDescriptor;
 import com.microfocus.octane.plugins.octane.descriptors.OctaneEntityTypeManager;
 import com.microfocus.octane.plugins.octane.rest.OctaneRestService;
+import com.microfocus.octane.plugins.octane.rest.RestStatusException;
 import com.microfocus.octane.plugins.octane.rest.UrlConstants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -122,8 +123,8 @@ public class ConfigurarionUtil {
     }
 
     public static void doFullSpaceConfigurationValidation(String clientKey, SpaceConfiguration spaceConfiguration) {
-        validateSpaceUrlIsUnique(clientKey, spaceConfiguration);
         validateSpaceNameIsUnique(clientKey, spaceConfiguration);
+        validateSpaceUrlIsUnique(clientKey, spaceConfiguration);
         validateSpaceConfigurationConnectivity(spaceConfiguration);
     }
 
@@ -134,7 +135,7 @@ public class ConfigurarionUtil {
                 .findFirst();
 
         if (opt.isPresent()) {
-            String msg = String.format("Space is already defined in space configuration '%s'", opt.get().getName());
+            String msg = String.format("Space location is already defined in space configuration '%s'", opt.get().getName());
             throw new IllegalArgumentException(msg);
         }
     }
@@ -152,7 +153,15 @@ public class ConfigurarionUtil {
     }
 
     public static void validateSpaceConfigurationConnectivity(SpaceConfiguration spaceConfig) {
-        OctaneRestService.getWorkspaces(spaceConfig);
+        try {
+            OctaneRestService.getWorkspaces(spaceConfig);
+        } catch (RestStatusException e) {
+            if (e.getStatus() == 404 && e.getMessage().contains("SharedSpaceNotFoundException")) {
+                throw new IllegalArgumentException(String.format("Space id '%d' is not exist", spaceConfig.getLocationParts().getSpaceId()));
+            } else {
+                throw e;
+            }
+        }
     }
 
     public static WorkspaceConfiguration validateAndConvertToInternal(WorkspaceConfigurationOutgoing wco, boolean isNew) {
@@ -196,7 +205,7 @@ public class ConfigurarionUtil {
         return wc;
     }
 
-    public static WorkspaceConfigurationOutgoing convertToOutgoing(WorkspaceConfiguration wc, Map<String,String> spaceConfigurationId2Name) {
+    public static WorkspaceConfigurationOutgoing convertToOutgoing(WorkspaceConfiguration wc, Map<String, String> spaceConfigurationId2Name) {
 
         List<String> octaneTypes = wc.getOctaneEntityTypes().stream()
                 .map(typeName -> {
