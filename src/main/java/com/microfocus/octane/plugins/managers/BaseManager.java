@@ -29,7 +29,7 @@ public abstract class BaseManager<T> {
 
     protected abstract String getItemFileName();
 
-    private File getItemFile(String clientKey) {
+    protected File getItemFile(String clientKey) {
         File f = Paths.get(repositoryFolder,"tenants", clientKey, getItemFileName()).toFile();
         return f;
     }
