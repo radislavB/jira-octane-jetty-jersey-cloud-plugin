@@ -42,5 +42,13 @@
         <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/rest/*</url-pattern>
     </filter-mapping>
+    <filter>
+        <filter-name>CacheFilter</filter-name>
+        <filter-class>com.microfocus.octane.plugins.resources.CacheFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CacheFilter</filter-name>
+        <url-pattern>/static/*</url-pattern>
+    </filter-mapping>
 
 </web-app>

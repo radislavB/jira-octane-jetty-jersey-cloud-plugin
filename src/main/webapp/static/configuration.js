@@ -227,8 +227,9 @@ function activateOctaneConfigPage() {
             return {id: item.attributes.id, text: item.attributes.name};
         });
 
-        console.log("showWorkspaceConfigurationDialog - edit entity", editEntity);
+        console.log("showWorkspaceConfigurationDialog - models", workspaceTable.getModels());
         var usedJiraProjectIds = _.map(workspaceTable.getModels().models, function (item) {
+            console.log("showWorkspaceConfigurationDialog - jiraProject", item.attributes.jiraProjectIds, item.attributes.jiraProjectNames);
             return item.attributes.jiraProjectIds;
         });
 
@@ -238,6 +239,7 @@ function activateOctaneConfigPage() {
             var excludeFromUsedJiraProjectIds = _.pluck(editEntity.jiraProjects, "id");
             usedJiraProjectIds = _.difference(usedJiraProjectIds, excludeFromUsedJiraProjectIds);
         }
+        console.log("showWorkspaceConfigurationDialog - final usedJiraProjectIds", usedJiraProjectIds);
 
         function onCloseCallback(result) {
             if (result && result.entity) {
@@ -252,6 +254,7 @@ function activateOctaneConfigPage() {
                     rowModel.octaneUdf = tableEntity.octaneUdf;
                     rowModel.octaneEntityTypes = tableEntity.octaneEntityTypes;
                     rowModel.jiraIssueTypeNames = tableEntity.jiraIssueTypeNames;
+                    rowModel.jiraProjectIds = tableEntity.jiraProjectIds;
                     rowModel.jiraProjectNames = tableEntity.jiraProjectNames;
                     rowModel.original = result.entity;
 
