@@ -33,7 +33,7 @@ function initDialog() {
         $('#jiraProjectsSelector').val(_.pluck(customData.entity.jiraProjects, "id"));
 
         loadPossibleOctaneUdf(customData.entity.workspace.id, customData.entity.spaceConfiguration.id);
-        loadWorkspaces(customData.entity.spaceConfiguration.id);
+        loadWorkspaces(customData.entity.spaceConfiguration.id, customData.entity.id);
     }
 
     setComboNoData("#workspaceSelector");
@@ -43,7 +43,7 @@ function initDialog() {
 
     $("#spaceSelector").change(function () {
         var spaceId = $("#spaceSelector").select2('data').id;
-        loadWorkspaces(spaceId);
+        loadWorkspaces(spaceId, isEditMode() ? customData.entity.id : null);
     });
 
     $("#workspaceSelector").change(function () {
@@ -97,18 +97,15 @@ function loadPossibleOctaneUdf(workspaceId, spaceConfigurationId) {
     return suggestedUdf;
 }
 
-function loadWorkspaces(spaceId) {
+function loadWorkspaces(spaceId, workspaceConfigurationId) {
 
     setComboNoData("#workspaceSelector");
     showLoadingIcon("#workspaceSelector");
 
-    var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId;
+    var url = "/rest/octane/workspaces?space-configuration-id=" + spaceId + "&workspace-configuration-id=" + workspaceConfigurationId;
 
     hostAjaxGet(url).then(function (result) {
-        var notUsedWorkspaces = _.filter(result, function (item) {
-            return !customData.existingWorkspaceIds.includes(item.id);
-        });
-        setComboData("#workspaceSelector", false, notUsedWorkspaces);
+        setComboData("#workspaceSelector", false, result);
     }).catch(function (error) {
         showFlag("Failed to fetch workspaces : " + error.message, "error");
     }).finally(function () {
@@ -117,7 +114,7 @@ function loadWorkspaces(spaceId) {
 }
 
 function loadJiraProjects() {
-    loadDataFromJiraToCombo("#jiraProjectsSelector", '/rest/api/latest/project', customData.existingJiraProjectIds);
+    loadDataFromJiraToCombo("#jiraProjectsSelector", '/rest/api/latest/project', customData.usedJiraProjectIds);
 }
 
 function loadJiraIssueTypes() {
@@ -258,7 +255,7 @@ function submit() {
     hostAjaxSend(requestType, url, JSON.stringify(entityProperties))
         .then(function (result) {
             showFlag('Workspace configuration saved successfully.');
-            console.log("submitted entity", result)
+            console.log("submitted entity", result);
             AP.dialog.close({entity: result});
         }).catch(function (error) {
         showFlag("Failed to save : " + error.message, "error");

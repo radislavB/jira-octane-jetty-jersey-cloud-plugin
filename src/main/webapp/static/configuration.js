@@ -203,7 +203,7 @@ function activateOctaneConfigPage() {
                 {id: "octaneUdf", header: "Mapping Field"},
                 {id: "octaneEntityTypes", header: "Entity Types", readView: ListReadView},
                 {id: "jiraIssueTypeNames", header: "Jira Issue Types", readView: ListReadView},
-                {id: "jiraProjects", header: "Jira Projects", readView: ListReadView}
+                {id: "jiraProjectNames", header: "Jira Projects", readView: ListReadView}
             ],
             autoFocus: false,
             allowEdit: false,
@@ -219,22 +219,25 @@ function activateOctaneConfigPage() {
     }
 
     function showWorkspaceConfigurationDialog(rowForEdit) {
+        var editMode = !!rowForEdit;
+        var editEntity = editMode ? rowForEdit.model.attributes.original : null;
+        var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
+
         var spaces = _.map(spaceTable.getModels().models, function (item) {
             return {id: item.attributes.id, text: item.attributes.name};
         });
 
-        var existingWorkspaceIds = _.map(workspaceTable.getModels().models, function (item) {
-            return item.attributes.workspaceId;
+        console.log("showWorkspaceConfigurationDialog - edit entity", editEntity);
+        var usedJiraProjectIds = _.map(workspaceTable.getModels().models, function (item) {
+            return item.attributes.jiraProjectIds;
         });
 
-        var existingJiraProjectIds = _.map(workspaceTable.getModels().models, function (item) {
-            return item.attributes.jiraIssueTypeIds;
-        });
-        existingJiraProjectIds = _.flatten(existingJiraProjectIds);
-
-        var editMode = !!rowForEdit;
-        var editEntity = editMode ? rowForEdit.model.attributes.original : null;
-        var header = editMode ? "Edit workspace configuration" : "Create workspace configuration";
+        //find all used jira project and exclude jira project that exist in current workspace configuration
+        usedJiraProjectIds = _.flatten(usedJiraProjectIds);
+        if (editMode) {
+            var excludeFromUsedJiraProjectIds = _.pluck(editEntity.jiraProjects, "id");
+            usedJiraProjectIds = _.difference(usedJiraProjectIds, excludeFromUsedJiraProjectIds);
+        }
 
         function onCloseCallback(result) {
             if (result && result.entity) {
@@ -249,7 +252,7 @@ function activateOctaneConfigPage() {
                     rowModel.octaneUdf = tableEntity.octaneUdf;
                     rowModel.octaneEntityTypes = tableEntity.octaneEntityTypes;
                     rowModel.jiraIssueTypeNames = tableEntity.jiraIssueTypeNames;
-                    rowModel.jiraProjects = tableEntity.jiraProjects;
+                    rowModel.jiraProjectNames = tableEntity.jiraProjectNames;
                     rowModel.original = result.entity;
 
                     console.log("edit mode");
@@ -270,8 +273,7 @@ function activateOctaneConfigPage() {
                 entity: editEntity,
                 header: header,
                 spaces: spaces,
-                existingWorkspaceIds: existingWorkspaceIds,
-                existingJiraProjectIds: existingJiraProjectIds
+                usedJiraProjectIds: usedJiraProjectIds
             },
         }).on("close", onCloseCallback);
     }
@@ -314,10 +316,10 @@ function activateOctaneConfigPage() {
             jiraIssueTypeNames: _.map(item.jiraIssueTypes, function (t) {
                 return t.text;
             }),
-            jiraIssueTypeIds: _.map(item.jiraIssueTypes, function (t) {
+            jiraProjectIds: _.map(item.jiraProjects, function (t) {
                 return t.id;
             }),
-            jiraProjects: _.map(item.jiraProjects, function (t) {
+            jiraProjectNames: _.map(item.jiraProjects, function (t) {
                 return t.text;
             }),
             original: item

@@ -5,18 +5,19 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseManager<T> {
 
-    private File repositoryFolderFile;
+    private String repositoryFolder;
     private Map<String, T> items = new HashMap<>();
 
     private static Object syncObject = new Object();
 
     public void init(String repositoryFolder) {
-        this.repositoryFolderFile = new File(repositoryFolder);
+        this.repositoryFolder = repositoryFolder;
 
         File repositoryFolderFile = new File(repositoryFolder);
         synchronized (syncObject) {
@@ -24,16 +25,13 @@ public abstract class BaseManager<T> {
         }
     }
 
-    private File getRepositoryFolder() {
-        return repositoryFolderFile;
-    }
-
     protected abstract Class<T> getTypeClass();
 
-    protected abstract String getItemFilePrefix();
+    protected abstract String getItemFileName();
 
     private File getItemFile(String clientKey) {
-        return new File(getRepositoryFolder(), getItemFilePrefix() + clientKey);
+        File f = Paths.get(repositoryFolder,"tenants", clientKey, getItemFileName()).toFile();
+        return f;
     }
 
     protected void save(String clientKey, T item) throws IOException {
@@ -46,6 +44,7 @@ public abstract class BaseManager<T> {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         File file = getItemFile(clientKey);
+        file.getParentFile().mkdirs();
         file.createNewFile();
         mapper.writeValue(file, item);
     }

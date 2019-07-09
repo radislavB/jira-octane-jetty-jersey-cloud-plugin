@@ -9,7 +9,7 @@ public class SecurityContextManager extends BaseManager<JiraTenantSecurityContex
 
 
     public static SecurityContextManager instance = new SecurityContextManager();
-    private static final String SECURITY_CONTEXT_FILE_PREFIX = "context_";
+    private static final String FILE_NAME = "security_context.json";
 
     private SecurityContextManager() {
 
@@ -37,7 +37,7 @@ public class SecurityContextManager extends BaseManager<JiraTenantSecurityContex
     }
 
     @Override
-    protected String getItemFilePrefix() {
-        return SECURITY_CONTEXT_FILE_PREFIX;
+    protected String getItemFileName() {
+        return FILE_NAME;
     }
 }

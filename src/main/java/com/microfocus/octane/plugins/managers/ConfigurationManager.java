@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ConfigurationManager extends BaseManager<ClientConfiguration> {
 
     public final static ConfigurationManager instance = new ConfigurationManager();
-    private final static String FILE_PREFIX = "config_";
+    private final static String FILE_NAME = "configuration.json";
 
     private ConfigurationManager() {
     }
@@ -132,7 +132,7 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
     }
 
     @Override
-    protected String getItemFilePrefix() {
-        return FILE_PREFIX;
+    protected String getItemFileName() {
+        return FILE_NAME;
     }
 }
