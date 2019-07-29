@@ -3,6 +3,8 @@ package com.microfocus.octane.plugins.resources;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.microfocus.octane.plugins.utils.JwtUtils;
 import com.microfocus.octane.plugins.utils.PluginConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AuthenticationFilter implements Filter {
+
+    private static final Logger log = LogManager.getLogger();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -20,6 +24,7 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
+        log.info(req.getRequestURI());
 
         boolean validationFailed = false;
         if (!skipValidation(req)) {
@@ -37,7 +42,7 @@ public class AuthenticationFilter implements Filter {
                 } catch (Exception e) {
                     validationFailed = true;
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is invalid.");
-                    //res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    log.error("Unathorized access to : ");
                 }
             } else {
                 validationFailed = true;

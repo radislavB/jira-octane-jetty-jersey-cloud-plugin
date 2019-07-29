@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ConfigurationManager extends BaseManager<ClientConfiguration> {
 
@@ -44,7 +45,11 @@ public class ConfigurationManager extends BaseManager<ClientConfiguration> {
         ClientConfiguration conf = getItemOrCreateNew(clientKey);
         Optional<SpaceConfiguration> opt = getSpaceConfigurationById(clientKey, spaceConfigurationId);
         if (opt.isPresent()) {
+            List<WorkspaceConfiguration> workspaceConfigs = conf.getWorkspaces().stream()
+                    .filter(wc->spaceConfigurationId.equals(wc.getSpaceConfigurationId()))
+                    .collect(Collectors.toList());
             conf.getSpaces().remove(opt.get());
+            conf.getWorkspaces().removeAll(workspaceConfigs);
             save(clientKey, conf);
             return true;
         } else {

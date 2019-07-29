@@ -16,15 +16,14 @@
 package com.microfocus.octane.plugins.octane.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microfocus.octane.plugins.octane.rest.*;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,10 +47,7 @@ public class RestConnector {
     private String user;
     private String password;
     //private ProxyConfiguration proxyConfiguration;
-    private static final Logger log = LoggerFactory.getLogger(RestConnector.class);
-
-    private String csrfHeaderName;
-    private String csrfCookieName;
+    private static final Logger log = LogManager.getLogger();
 
     public boolean login() {
         boolean ret = false;

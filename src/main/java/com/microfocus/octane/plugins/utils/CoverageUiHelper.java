@@ -31,8 +31,8 @@ import com.microfocus.octane.plugins.octane.rest.entities.groups.GroupEntityColl
 import com.microfocus.octane.plugins.octane.rest.query.InQueryPhrase;
 import com.microfocus.octane.plugins.octane.rest.query.QueryPhrase;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.NumberFormat;
 import java.util.*;
@@ -52,7 +52,7 @@ public class CoverageUiHelper {
     private static NumberFormat countFormat = NumberFormat.getInstance();
     private static NumberFormat percentFormatter = NumberFormat.getPercentInstance();
     private final static String UDF_NOT_DEFINED_IN_OCTANE = "platform.unknown_field";
-    private static final Logger log = LoggerFactory.getLogger(CoverageUiHelper.class);
+    private static final Logger log = LogManager.getLogger();
 
     //TEST TYPES
     private static final TestStatusDescriptor passedStatus = new TestStatusDescriptor("list_node.run_status.passed", "run_status_passed", "Passed", "#1aac60", 1);

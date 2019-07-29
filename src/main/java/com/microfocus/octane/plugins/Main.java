@@ -2,6 +2,9 @@ package com.microfocus.octane.plugins;
 
 import com.microfocus.octane.plugins.managers.ConfigurationManager;
 import com.microfocus.octane.plugins.managers.SecurityContextManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -11,7 +14,10 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class Main {
 
+    private static final Logger log = LogManager.getLogger();
+
     public static void main(String[] args) throws Exception{
+        log.info("main is started");
         // The port that we should run on can be set into an environment variable
         // Look for that variable and default to 8080 if it isn't there.
         String webPort = System.getenv("PORT");

@@ -23,8 +23,8 @@ import com.microfocus.octane.plugins.octane.rest.entities.OctaneEntityCollection
 import com.microfocus.octane.plugins.octane.rest.entities.groups.GroupEntityCollection;
 import com.microfocus.octane.plugins.octane.rest.query.*;
 import com.microfocus.octane.plugins.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.UnknownHostException;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class OctaneRestService {
 
-    private static final Logger log = LoggerFactory.getLogger(OctaneRestService.class);
+    private static final Logger log = LogManager.getLogger();
     public static final int SPACE_CONTEXT = -1;
 
     public static RestConnector getRestConnector(String baseUrl, String clientId, String clientSecret) {
