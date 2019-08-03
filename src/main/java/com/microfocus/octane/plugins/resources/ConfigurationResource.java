@@ -124,9 +124,12 @@ public class ConfigurationResource {
     @Path("workspaces/{workspaceConfigurationId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateWorkspaceConfiguration(@PathParam("workspaceConfigurationId") String spaceId, WorkspaceConfigurationOutgoing wco) {
+    public Response updateWorkspaceConfiguration(@PathParam("workspaceConfigurationId") String workspaceConfigurationId, WorkspaceConfigurationOutgoing wco) {
         try {
             WorkspaceConfiguration wc = ConfigurarionUtil.validateAndConvertToInternal(wco, false);
+            if (!wco.getId().equals(workspaceConfigurationId)) {
+                return Response.status(Response.Status.CONFLICT).entity("Workspace configuration id in entity should be equal to id in path parameter").build();
+            }
             WorkspaceConfiguration updatedWc = ConfigurationManager.getInstance().updateWorkspaceConfiguration(getTenantId(), wc);
             WorkspaceConfigurationOutgoing outputWco = ConfigurarionUtil.convertToOutgoing(updatedWc, getSpaceConfigurationId2Name());
             return Response.ok(outputWco).build();
