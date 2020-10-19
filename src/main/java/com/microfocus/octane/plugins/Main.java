@@ -14,6 +14,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class Main {
 
+    //need to set VM option :  -DrepositoryFolder=c:\Temp\5\
     private static final Logger log = LogManager.getLogger();
 
     public static void main(String[] args) throws Exception{

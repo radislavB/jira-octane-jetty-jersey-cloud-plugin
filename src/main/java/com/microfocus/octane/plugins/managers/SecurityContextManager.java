@@ -1,6 +1,7 @@
 package com.microfocus.octane.plugins.managers;
 
 import com.microfocus.octane.plugins.managers.pojo.JiraTenantSecurityContext;
+import org.apache.commons.codec.Charsets;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Date;
 public class SecurityContextManager extends BaseManager<JiraTenantSecurityContext> {
 
 
-    public static SecurityContextManager instance = new SecurityContextManager();
+    public final static SecurityContextManager instance = new SecurityContextManager();
     private static final String FILE_NAME = "security_context.json";
 
     private SecurityContextManager() {
@@ -46,7 +47,7 @@ public class SecurityContextManager extends BaseManager<JiraTenantSecurityContex
             String strDate = sdf.format(new Date());
 
             String textToAppend = String.format("%s\t%s\t%s%s", strDate, item.getClientKey(), item.getBaseUrl(), System.lineSeparator());
-            Files.write(path, textToAppend.getBytes(), StandardOpenOption.APPEND);  //Append mode
+            Files.write(path, textToAppend.getBytes(Charsets.UTF_8), StandardOpenOption.APPEND);  //Append mode
         } catch (Exception e) {
             //TODO add log
             int t = 5;

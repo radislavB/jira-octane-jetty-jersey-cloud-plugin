@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 /**
- * :ifecycle resource
+ * lifecycle resource
  */
 @Path("lifecycle")
 public class LifeCycleResource {
